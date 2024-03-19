@@ -1,3 +1,7 @@
 /.cache
 /build
 /LTTLIB
+
+/test
+!test/*.cpp
+!test/CMakeLists.txt
