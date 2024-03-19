@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "LLDB调试",
+        "type": "lldb",
+        "request": "launch",
+        "program": "${workspaceFolder}/test/${input:EXE}/${input:EXE}",
+        "args": [],
+        "cwd": "${workspaceFolder}"
+      },
+    ],
+    "inputs": [
+    {
+      "id": "EXE",
+      "type": "pickString",
+      "options": [
+        "ArrayDequeTest",
+        "ArrayListTest",
+        "ArrayQueueTest",
+        "ArrayStackTest",
+        "HashMapTest",
+        "LinkedListTest",
+        "SortingAlgorithmTest",
+        "UnionFindSet",
+        "UndigraphTest",
+      ],
+      "description": "请选择要调试的程序"
+    }
+    ]
+}
