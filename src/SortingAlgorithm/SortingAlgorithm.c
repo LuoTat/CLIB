@@ -1,3 +1,4 @@
+#include "SortingAlgorithm.h"
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
@@ -5,10 +6,8 @@
 #include <string.h>
 #include "../Predefined/Predefined.h"
 
-#define SWAPMODE 2
-
 //用来作为许多排序算法的临时存储空间
-static char  Temp[1024];
+static char  Temp[MAX_SIZEOFELEMENTS];
 static char* Temp_Merge;
 
 #if SWAPMODE == 1
