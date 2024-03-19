@@ -15,7 +15,7 @@ extern "C"
     //销毁一个无向图
     Status LTT_Undigraph_Destroy(AMLUndigraph* GP);
     //创建一个顶点
-    AMLVertexNode* LTT_Undigraph_MakeVertex(const char* const VertexID, void* const Data, const size_t DataSize);
+    AMLVertexNode* LTT_Undigraph_Make_Vertex(const char* const VertexID, void* const Data, const size_t DataSize);
     //插入一个顶点
     Status LTT_Undigraph_InsertVertex(AMLUndigraph* const GP, AMLVertexNode* const VP);
     //删除一个顶点
@@ -50,8 +50,12 @@ extern "C"
     //判断边是否存在
     EdgeNode* LTT_Undigraph_Edge_Exist_by_ID(const AMLUndigraph* const GP, const char* const IvertexID, const char* const JvertexID);
     bool      LTT_Undigraph_Edge_Exist_by_EP(const AMLUndigraph* const GP, const EdgeNode* const EP);
+    //获得顶点个数
+    int LTT_Undigraph_Get_VertexNum(const AMLUndigraph* const GP);
+    //获得边的个数
+    int LTT_Undigraph_Get_EdgeNum(const AMLUndigraph* const GP);
     //创建邻接矩阵
-    Status LTT_Undigraph_CreateAdjMatrix_AML(const AMLUndigraph* const GP, int*** const AdjMatrix);
+    int** LTT_Undigraph_Make_AdjMatrix(const AMLUndigraph* const GP);
     //返回第一个邻接顶点
     AMLVertexNode* LTT_Undigraph_First_Adj_Vertex_byIP(const AMLUndigraph* const GP, const char* const VertexID);
     AMLVertexNode* LTT_Undigraph_First_AML_Vertex_byVP(const AMLUndigraph* const GP, const AMLVertexNode* const VP);
