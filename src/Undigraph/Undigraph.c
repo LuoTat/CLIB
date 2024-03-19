@@ -9,8 +9,11 @@
 #include "LTT_HashMap.h"
 #include "LTT_UnionFindSet.h"
 
-#define VID_MAX_LENGTH (1 << 5)                     //顶点ID的最大长度
-#define EID_MAX_LENGTH (1 << 6)                     //边ID的最大长度
+#define VID_MAX_LENGTH (1 << 5)    //顶点ID的最大长度
+#define EID_MAX_LENGTH (1 << 6)    //边ID的最大长度
+
+//用来存储图的所有节点指针的数组，以方便后面的一些算法的实现
+static AMLVertexNode** __VertexArray = NULL;
 
 typedef struct _EdgeNode
 {
@@ -126,6 +129,10 @@ bool LTT_Undigraph_Edge_Exist_by_EP(const AMLUndigraph* const GP, const EdgeNode
     else return true;
 }
 
+int LTT_Undigraph_Get_VertexNum(const AMLUndigraph* const GP) { return GP->VertexNum; }
+
+int LTT_Undigraph_Get_EdgeNum(const AMLUndigraph* const GP) { return GP->EdgeNum; }
+
 Status LTT_Undigraph_Insert_Edge(AMLUndigraph* const GP, EdgeNode* const EP)
 {
     if (strcmp(EP->IvertexID, EP->JvertexID) == 0)
@@ -221,7 +228,7 @@ Status LTT_Undigraph_Destroy(AMLUndigraph* GP)
     return OK;
 }
 
-AMLVertexNode* LTT_Undigraph_MakeVertex(const char* const VertexID, void* const Data, const size_t DataSize)
+AMLVertexNode* LTT_Undigraph_Make_Vertex(const char* const VertexID, void* const Data, const size_t DataSize)
 {
     AMLVertexNode* VP = (AMLVertexNode*)malloc(sizeof(AMLVertexNode));
     if (VP == NULL)
@@ -490,47 +497,62 @@ Status LTT_Undigraph_Set_Data_From_Edge_byEP(const AMLUndigraph* const GP, EdgeN
     return OK;
 }
 
-//Status CreateAdjMatrix_AML(const AMLUndigraph* const GP, int*** const AdjMatrix)
-//{
-//	if (GP == NULL)
-//	{
-//		printf("图未声明\n");
-//		return ERROR;
-//	}
-//	if (AdjMatrix == NULL)
-//	{
-//		printf("二维数组未声明\n");
-//		return ERROR;
-//	}
-//	if (!(*AdjMatrix = (int**)malloc((GP->VertexNum + 1) * sizeof(int*))))
-//	{
-//		printf("邻接矩阵内存分配失败\n");
-//		return OVERFLOW;
-//	}
-//	for (int i = 0; i <= GP->VertexNum; ++i)
-//	{
-//		if (!((*AdjMatrix)[i] = (int*)calloc(GP->VertexNum + 1, sizeof(int))))
-//		{
-//			printf("邻接矩阵内存分配失败\n");
-//			return OVERFLOW;
-//		}
-//	}
-//	for (int i = 1; i <= GP->VertexNum; ++i)
-//	{
-//		for (int j = i + 1; j <= GP->VertexNum; ++j)
-//		{
-//			EdgeNode* EdgeP = Edge_Exist_by_ID_Unsafe(GP, i, j);
-//			if (EdgeP != NULL)
-//			{
-//				(*AdjMatrix)[i][j] = (*AdjMatrix)[j][i] = 1;
-//				++(*AdjMatrix)[i][0];
-//				++(*AdjMatrix)[0][i];
-//			}
-//			else (*AdjMatrix)[i][j] = (*AdjMatrix)[j][i] = 0;
-//		}
-//	}
-//	return OK;
-//}
+static Status LTT_Undigraph_Make_VertexArray(const AMLUndigraph* const GP)
+{
+    if (__VertexArray != NULL) free(__VertexArray);
+    __VertexArray = (AMLVertexNode**)malloc((GP->VertexNum + 1) * sizeof(AMLVertexNode*));
+    if (__VertexArray == NULL)
+    {
+        printf("数组内存分配失败\n");
+        return OVERFLOW;
+    }
+    Iterator VertexIterator = LTT_Undigraph_GetIterator_Vertex(GP);
+    for (int i = 1; VertexIterator.MoveNext(&VertexIterator); ++i) { __VertexArray[i] = LTT_Undigraph_GetCurrent_Vertex(&VertexIterator); }
+    return OK;
+}
+
+int** LTT_Undigraph_Make_AdjMatrix(const AMLUndigraph* const GP)
+{
+    if (GP == NULL)
+    {
+        printf("图未声明\n");
+        return NULL;
+    }
+    //初始化邻接矩阵,一共有VertexNum+1行,多的一行用来存储每个顶点的度
+    int** AdjMatrix = (int**)malloc((GP->VertexNum + 1) * sizeof(int*));
+    if (AdjMatrix == NULL)
+    {
+        printf("二维数组内存分配失败!\n");
+        return NULL;
+    }
+    for (int i = 0; i <= GP->VertexNum; ++i)
+    {
+        if (!(AdjMatrix[i] = (int*)calloc(GP->VertexNum + 1, sizeof(int))))
+        {
+            printf("邻接矩阵内存分配失败\n");
+            return NULL;
+        }
+    }
+    //先将__VertexArray填满
+    LTT_Undigraph_Make_VertexArray(GP);
+
+    for (int i = 1; i <= GP->VertexNum; ++i)
+    {
+        for (int j = i + 1; j <= GP->VertexNum; ++j)
+        {
+            EdgeNode* EdgeP = LTT_Undigraph_Edge_Exist_by_ID(GP, __VertexArray[i]->VertexID, __VertexArray[j]->VertexID);
+            if (EdgeP != NULL)
+            {
+                AdjMatrix[i][j] = AdjMatrix[j][i] = 1;
+                ++AdjMatrix[i][0];
+                ++AdjMatrix[j][0];
+                ++AdjMatrix[0][i];
+                ++AdjMatrix[0][j];
+            }
+        }
+    }
+    return AdjMatrix;
+}
 
 AMLVertexNode* LTT_Undigraph_First_Adj_Vertex_byIP(const AMLUndigraph* const GP, const char* const VertexID)
 {
@@ -859,7 +881,7 @@ AMLUndigraph* LTT_Undigraph_MiniSpanTree_Prim(const AMLUndigraph* const GP, cons
     while (VertexIterator.MoveNext(&VertexIterator))
     {
         Temp_VP                     = LTT_Undigraph_GetCurrent_Vertex(&VertexIterator);
-        MiTreeVertexArray[Temp_i++] = LTT_Undigraph_MakeVertex(Temp_VP->VertexID, Temp_VP->Data, Temp_VP->DataSize);
+        MiTreeVertexArray[Temp_i++] = LTT_Undigraph_Make_Vertex(Temp_VP->VertexID, Temp_VP->Data, Temp_VP->DataSize);
     }
 
 
@@ -982,7 +1004,7 @@ AMLUndigraph* LTT_Undigraph_MiniSpanTree_Kruskal(const AMLUndigraph* const GP, c
     while (VertexIterator.MoveNext(&VertexIterator))
     {
         Temp_VP                     = LTT_Undigraph_GetCurrent_Vertex(&VertexIterator);
-        MiTreeVertexArray[Temp_i++] = LTT_Undigraph_MakeVertex(Temp_VP->VertexID, Temp_VP->Data, Temp_VP->DataSize);
+        MiTreeVertexArray[Temp_i++] = LTT_Undigraph_Make_Vertex(Temp_VP->VertexID, Temp_VP->Data, Temp_VP->DataSize);
     }
 
 
