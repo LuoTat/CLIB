@@ -35,12 +35,12 @@ int main()
     AMLUndigraph*  G = NULL;
     AMLVertexNode* AMLVertexArray[6];
     EdgeNode*      EdgeArray[10];
-    AMLVertexArray[0] = LTT_Undigraph_MakeVertex("A", NULL, 0);
-    AMLVertexArray[1] = LTT_Undigraph_MakeVertex("B", NULL, 0);
-    AMLVertexArray[2] = LTT_Undigraph_MakeVertex("C", NULL, 0);
-    AMLVertexArray[3] = LTT_Undigraph_MakeVertex("D", NULL, 0);
-    AMLVertexArray[4] = LTT_Undigraph_MakeVertex("E", NULL, 0);
-    AMLVertexArray[5] = LTT_Undigraph_MakeVertex("F", NULL, 0);
+    AMLVertexArray[0] = LTT_Undigraph_Make_Vertex("A", NULL, 0);
+    AMLVertexArray[1] = LTT_Undigraph_Make_Vertex("B", NULL, 0);
+    AMLVertexArray[2] = LTT_Undigraph_Make_Vertex("C", NULL, 0);
+    AMLVertexArray[3] = LTT_Undigraph_Make_Vertex("D", NULL, 0);
+    AMLVertexArray[4] = LTT_Undigraph_Make_Vertex("E", NULL, 0);
+    AMLVertexArray[5] = LTT_Undigraph_Make_Vertex("F", NULL, 0);
 
     int distence[10]  = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
@@ -57,14 +57,21 @@ int main()
 
     G                 = LTT_Undigraph_New(AMLVertexArray, 6, EdgeArray, 10);
 
-    AMLUndigraph*  MST;
-    AMLVertexNode* FirstP = LTT_Undigraph_Vertex_Exist_byID_Safe(G, "A");
-    //MST                   = LTT_Undigraph_MiniSpanTree_Prim(G, FirstP);
-    MST                   = LTT_Undigraph_MiniSpanTree_Kruskal(G, FirstP, cmp);
-    LTT_Undigraph_DFS_Traverse_Recursive(MST, "A", VISIT);
-    printf("@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-    LTT_Undigraph_DFS_Traverse_Stack(MST, "A", VISIT);
-    printf("@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-    LTT_Undigraph_BFS_Traverse(MST, "A", VISIT);
-    printf("Test Over!\n");
+    // AMLUndigraph*  MST;
+    // AMLVertexNode* FirstP = LTT_Undigraph_Vertex_Exist_byID_Safe(G, "A");
+    // //MST                   = LTT_Undigraph_MiniSpanTree_Prim(G, FirstP);
+    // MST                   = LTT_Undigraph_MiniSpanTree_Kruskal(G, FirstP, cmp);
+    // LTT_Undigraph_DFS_Traverse_Recursive(MST, "A", VISIT);
+    // printf("@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+    // LTT_Undigraph_DFS_Traverse_Stack(MST, "A", VISIT);
+    // printf("@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+    // LTT_Undigraph_BFS_Traverse(MST, "A", VISIT);
+    // printf("Test Over!\n");
+    int** AdjMatrix   = LTT_Undigraph_Make_AdjMatrix(G);
+    int   VertexNum   = LTT_Undigraph_Get_VertexNum(G);
+    for (int i = 0; i <= VertexNum; ++i)
+    {
+        for (int j = 0; j <= VertexNum; ++j) { printf("%d ", AdjMatrix[i][j]); }
+        printf("\n");
+    }
 }
