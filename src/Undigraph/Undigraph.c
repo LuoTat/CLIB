@@ -7,6 +7,7 @@
 #include "LTT_ArrayQueue.h"
 #include "LTT_ArrayStack.h"
 #include "LTT_HashMap.h"
+#include "LTT_Undigraph.h"
 #include "LTT_UnionFindSet.h"
 
 #define VID_MAX_LENGTH (1 << 5)    //顶点ID的最大长度
@@ -17,14 +18,14 @@ static AMLVertexNode** __VertexArray = NULL;
 
 typedef struct _EdgeNode
 {
-    VisitIf           Mark;
-    char              IvertexID[VID_MAX_LENGTH];    //此处用字符串来唯一标识顶点，故此处没有存储顶点的指针
-    char              JvertexID[VID_MAX_LENGTH];
-    char              EdgeID[EID_MAX_LENGTH];
-    struct _EdgeNode* IEdge;
-    struct _EdgeNode* JEdge;
-    void*             Data;
-    size_t            DataSize;
+    VisitIf                Mark;
+    struct _AMLVertexNode* IVertex;    //用来标记边的两个顶点
+    struct _AMLVertexNode* JVertex;
+    char                   EdgeID[EID_MAX_LENGTH];
+    struct _EdgeNode*      IEdge;
+    struct _EdgeNode*      JEdge;
+    void*                  Data;
+    size_t                 DataSize;
 } _EdgeNode;
 
 typedef struct _AMLVertexNode
@@ -74,7 +75,7 @@ static EdgeNode** LTT_Undigraph_Get_Tail_EdgePP_Unsafe(const AMLUndigraph* const
     EdgeNode* Iterator = VP->FirstEdge;
     while (Iterator != NULL)
     {
-        if (!strcmp(VP->VertexID, Iterator->IvertexID))
+        if (!strcmp(VP->VertexID, Iterator->IVertex->VertexID))
         {
             if (Iterator->IEdge == NULL) return &(Iterator->IEdge);
             Iterator = Iterator->IEdge;
@@ -135,7 +136,7 @@ int LTT_Undigraph_Get_EdgeNum(const AMLUndigraph* const GP) { return GP->EdgeNum
 
 Status LTT_Undigraph_Insert_Edge(AMLUndigraph* const GP, EdgeNode* const EP)
 {
-    if (strcmp(EP->IvertexID, EP->JvertexID) == 0)
+    if (strcmp(EP->IVertex->VertexID, EP->JVertex->VertexID) == 0)
     {
         printf("插入的边非法\n");
         return ERROR;
@@ -146,8 +147,8 @@ Status LTT_Undigraph_Insert_Edge(AMLUndigraph* const GP, EdgeNode* const EP)
         return ERROR;
     }
 
-    AMLVertexNode* IP_In_Graph = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, EP->IvertexID);
-    AMLVertexNode* JP_In_Graph = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, EP->JvertexID);
+    AMLVertexNode* IP_In_Graph = EP->IVertex;    //LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, EP->IvertexID);
+    AMLVertexNode* JP_In_Graph = EP->JVertex;    //LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, EP->JvertexID);
     EdgeNode**     ITailEdgePP = LTT_Undigraph_Get_Tail_EdgePP_Unsafe(GP, IP_In_Graph);
     EdgeNode**     JTailEdgePP = LTT_Undigraph_Get_Tail_EdgePP_Unsafe(GP, JP_In_Graph);
     if (ITailEdgePP == NULL || JTailEdgePP == NULL)
@@ -162,6 +163,19 @@ Status LTT_Undigraph_Insert_Edge(AMLUndigraph* const GP, EdgeNode* const EP)
     return OK;
 }
 
+Status LTT_Undigraph_Insert_EdgeS(AMLUndigraph* const GP, EdgeNode** const EdgeArray, const int EdgeNum)
+{
+    for (int i = 0; i < EdgeNum; ++i)
+    {
+        if (LTT_Undigraph_Insert_Edge(GP, EdgeArray[i]) == ERROR)
+        {
+            printf("图在构建时插入边失败\n");
+            return ERROR;
+        }
+    }
+    return OK;
+}
+
 bool LTT_Undigraph_Vertex_Exist_byVP(const AMLUndigraph* const GP, const AMLVertexNode* const VP)
 {
     if (VP == NULL) return false;
@@ -170,7 +184,7 @@ bool LTT_Undigraph_Vertex_Exist_byVP(const AMLUndigraph* const GP, const AMLVert
     else return true;
 }
 
-Status LTT_Undigraph_InsertVertex(AMLUndigraph* const GP, AMLVertexNode* const VP)
+Status LTT_Undigraph_Insert_Vertex(AMLUndigraph* const GP, AMLVertexNode* const VP)
 {
     if (VP == NULL)
     {
@@ -187,7 +201,20 @@ Status LTT_Undigraph_InsertVertex(AMLUndigraph* const GP, AMLVertexNode* const V
     return OK;
 }
 
-AMLUndigraph* LTT_Undigraph_New(AMLVertexNode** const AMLVertexArray, const int VertexNum, EdgeNode** const EdgeArray, const int EdgeNum)
+Status LTT_Undigraph_Insert_VertexS(AMLUndigraph* const GP, AMLVertexNode** const AMLVertexArray, const int VertexNum)
+{
+    for (int i = 0; i < VertexNum; ++i)
+    {
+        if (LTT_Undigraph_Insert_Vertex(GP, AMLVertexArray[i]) == ERROR)
+        {
+            printf("图在构建时插入点失败\n");
+            return ERROR;
+        }
+    }
+    return OK;
+}
+
+AMLUndigraph* LTT_Undigraph_New(void)
 {
     AMLUndigraph* GP = (AMLUndigraph*)malloc(sizeof(AMLUndigraph));
     if (GP == NULL)
@@ -199,18 +226,9 @@ AMLUndigraph* LTT_Undigraph_New(AMLVertexNode** const AMLVertexArray, const int 
     GP->EdgeNum       = 0;
     GP->VertexHashMap = LTT_HashMap_New(VID_MAX_LENGTH * sizeof(char), sizeof(AMLVertexNode), NULL, NULL, NULL);
     GP->EdgeHashMap   = LTT_HashMap_New(EID_MAX_LENGTH * sizeof(char), sizeof(EdgeNode), NULL, NULL, NULL);
-    for (int i = 0; i < VertexNum; ++i)
-    {
-        if (LTT_Undigraph_InsertVertex(GP, AMLVertexArray[i]) == ERROR) { printf("图在构建时插入点失败\n"); }
-    }
-    for (int i = 0; i < EdgeNum; ++i)
-    {
-        if (LTT_Undigraph_Insert_Edge(GP, EdgeArray[i]) == ERROR) { printf("图在构建时插入边失败\n"); }
-    }
     return GP;
 }
 
-//清空一个无向图
 Status LTT_Undigraph_Clear(AMLUndigraph* const GP)
 {
     LTT_HashMap_Clear(GP->EdgeHashMap);
@@ -250,7 +268,7 @@ static EdgeNode** LTT_Undigraph_Get_Prior_EdgePP_Unsafe(const AMLUndigraph* cons
     EdgeNode* Iterator = VP->FirstEdge;
     while (Iterator)
     {
-        if (strcmp(VP->VertexID, Iterator->IvertexID) == 0)
+        if (strcmp(VP->VertexID, Iterator->IVertex->VertexID) == 0)
         {
             if (EP == Iterator->IEdge) return &(Iterator->IEdge);
             else Iterator = Iterator->IEdge;
@@ -266,8 +284,8 @@ static EdgeNode** LTT_Undigraph_Get_Prior_EdgePP_Unsafe(const AMLUndigraph* cons
 
 static Status LTT_Undigraph_Delete_Edge_byEP_Unsafe(AMLUndigraph* const GP, EdgeNode* EP)
 {
-    AMLVertexNode* IP_In_Graph  = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, EP->IvertexID);
-    AMLVertexNode* JP_In_Graph  = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, EP->JvertexID);
+    AMLVertexNode* IP_In_Graph  = EP->IVertex;    //LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, EP->IvertexID);
+    AMLVertexNode* JP_In_Graph  = EP->JVertex;    //LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, EP->JvertexID);
     EdgeNode**     IPriorEdgePP = LTT_Undigraph_Get_Prior_EdgePP_Unsafe(GP, IP_In_Graph, EP);
     EdgeNode**     JPriorEdgePP = LTT_Undigraph_Get_Prior_EdgePP_Unsafe(GP, JP_In_Graph, EP);
     (*IPriorEdgePP)             = EP->IEdge;
@@ -299,7 +317,7 @@ Status LTT_Undigraph_DeleteVertex_byID(AMLUndigraph* const GP, const char* const
     while (Iterator)
     {
         EdgeNode* Temp = Iterator;
-        if (strcmp(VP_In_Graph->VertexID, Iterator->IvertexID) == 0) Iterator = Iterator->IEdge;
+        if (strcmp(VP_In_Graph->VertexID, Iterator->IVertex->VertexID) == 0) Iterator = Iterator->IEdge;
         else Iterator = Iterator->JEdge;
         LTT_Undigraph_Delete_Edge_byEP_Unsafe(GP, Temp);
     }
@@ -326,7 +344,7 @@ Status LTT_Undigraph_Delete_Vertex_byVP(AMLUndigraph* const GP, AMLVertexNode* V
     while (Iterator)
     {
         EdgeNode* Temp = Iterator;
-        if (strcmp(VP->VertexID, Iterator->IvertexID) == 0) Iterator = Iterator->IEdge;
+        if (strcmp(VP->VertexID, Iterator->IVertex->VertexID) == 0) Iterator = Iterator->IEdge;
         else Iterator = Iterator->JEdge;
         LTT_Undigraph_Delete_Edge_byEP_Unsafe(GP, Temp);
     }
@@ -382,7 +400,7 @@ Status LTT_Undigraph_Set_Data_From_Vertex_byVP(const AMLUndigraph* const GP, AML
     return OK;
 }
 
-EdgeNode* LTT_Undigraph_Make_Edge(const char* const IvertexID, const char* const JvertexID, void* const Data, const size_t DataSize)
+static EdgeNode* LTT_Undigraph_Make_Edge_byVP_Unsafe(AMLVertexNode* const VIP, AMLVertexNode* const VJP, void* const Data, const size_t DataSize)
 {
     EdgeNode* EP = (EdgeNode*)malloc(sizeof(EdgeNode));
     if (EP == NULL)
@@ -395,8 +413,42 @@ EdgeNode* LTT_Undigraph_Make_Edge(const char* const IvertexID, const char* const
     EP->JEdge    = NULL;
     EP->Mark     = Unvisited;
     EP->DataSize = DataSize;
-    LTT_Undigraph_StandiardizeVertexID(EP->IvertexID, IvertexID);
-    LTT_Undigraph_StandiardizeVertexID(EP->JvertexID, JvertexID);
+    EP->IVertex  = VIP;
+    EP->JVertex  = VJP;
+    LTT_Undigraph_StandiardizeEdgeID(EP->EdgeID, VIP->VertexID, VJP->VertexID);
+    return EP;
+}
+
+EdgeNode* LTT_Undigraph_Make_Edge_byVP_Safe(const AMLUndigraph* const GP, AMLVertexNode* const VIP, AMLVertexNode* const VJP, void* const Data, const size_t DataSize)
+{
+    if (!LTT_Undigraph_Vertex_Exist_byVP(GP, VIP) || !LTT_Undigraph_Vertex_Exist_byVP(GP, VJP))
+    {
+        printf("边的顶点不存在\n");
+        return NULL;
+    }
+    return LTT_Undigraph_Make_Edge_byVP_Unsafe(VIP, VJP, Data, DataSize);
+}
+
+EdgeNode* LTT_Undigraph_Make_Edge_byID(const AMLUndigraph* const GP, const char* const IvertexID, const char* const JvertexID, void* const Data, const size_t DataSize)
+{
+    EdgeNode* EP = (EdgeNode*)malloc(sizeof(EdgeNode));
+    if (EP == NULL)
+    {
+        printf("边未声明\n");
+        return NULL;
+    }
+    EP->Data     = Data;
+    EP->IEdge    = NULL;
+    EP->JEdge    = NULL;
+    EP->Mark     = Unvisited;
+    EP->DataSize = DataSize;
+    EP->IVertex  = LTT_Undigraph_Vertex_Exist_byID_Safe(GP, IvertexID);
+    EP->JVertex  = LTT_Undigraph_Vertex_Exist_byID_Safe(GP, JvertexID);
+    if (EP->IVertex == NULL || EP->JVertex == NULL)
+    {
+        printf("边的顶点不存在\n");
+        return NULL;
+    }
     LTT_Undigraph_StandiardizeEdgeID(EP->EdgeID, IvertexID, JvertexID);
     return EP;
 }
@@ -424,7 +476,7 @@ Status LTT_Undigraph_Delete_Edge_byID(AMLUndigraph* const GP, const char* const 
     AMLVertexNode* JP_In_Graph  = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, NewJvertexID);
     EdgeNode**     IPriorEdgePP = LTT_Undigraph_Get_Prior_EdgePP_Unsafe(GP, IP_In_Graph, EP_In_Graph);
     EdgeNode**     JPriorEdgePP = LTT_Undigraph_Get_Prior_EdgePP_Unsafe(GP, JP_In_Graph, EP_In_Graph);
-    if (strcmp(IvertexID, EP_In_Graph->IvertexID) == 0)
+    if (strcmp(IvertexID, EP_In_Graph->IVertex->VertexID) == 0)
     {
         (*IPriorEdgePP) = EP_In_Graph->IEdge;
         (*JPriorEdgePP) = EP_In_Graph->JEdge;
@@ -554,7 +606,51 @@ int** LTT_Undigraph_Make_AdjMatrix(const AMLUndigraph* const GP)
     return AdjMatrix;
 }
 
-AMLVertexNode* LTT_Undigraph_First_Adj_Vertex_byIP(const AMLUndigraph* const GP, const char* const VertexID)
+int** LTT_Undigraph_Make_Weighted_AdjMatrix(const AMLUndigraph* const GP)
+{
+    if (GP == NULL)
+    {
+        printf("图未声明\n");
+        return NULL;
+    }
+    //初始化邻接矩阵,一共有VertexNum+1行,多的一行用来存储每个顶点的度
+    int** AdjMatrix = (int**)malloc((GP->VertexNum + 1) * sizeof(int*));
+    if (AdjMatrix == NULL)
+    {
+        printf("二维数组内存分配失败!\n");
+        return NULL;
+    }
+    for (int i = 0; i <= GP->VertexNum; ++i)
+    {
+        if (!(AdjMatrix[i] = (int*)calloc(GP->VertexNum + 1, sizeof(int))))
+        {
+            printf("邻接矩阵内存分配失败\n");
+            return NULL;
+        }
+    }
+    //先将__VertexArray填满
+    LTT_Undigraph_Make_VertexArray(GP);
+
+    for (int i = 1; i <= GP->VertexNum; ++i)
+    {
+        for (int j = i + 1; j <= GP->VertexNum; ++j)
+        {
+            EdgeNode* EdgeP = LTT_Undigraph_Edge_Exist_by_ID(GP, __VertexArray[i]->VertexID, __VertexArray[j]->VertexID);
+            if (EdgeP != NULL)
+            {
+                AdjMatrix[i][j] = AdjMatrix[j][i] = *(int*)EdgeP->Data;
+                ++AdjMatrix[i][0];
+                ++AdjMatrix[j][0];
+                ++AdjMatrix[0][i];
+                ++AdjMatrix[0][j];
+            }
+            else { AdjMatrix[i][j] = AdjMatrix[j][i] = INT_MAX; }
+        }
+    }
+    return AdjMatrix;
+}
+
+AMLVertexNode* LTT_Undigraph_First_Adj_Vertex_byID(const AMLUndigraph* const GP, const char* const VertexID)
 {
     AMLVertexNode* VP_In_Graph = LTT_Undigraph_Vertex_Exist_byID_Safe(GP, VertexID);
     if (VP_In_Graph == NULL)
@@ -567,8 +663,8 @@ AMLVertexNode* LTT_Undigraph_First_Adj_Vertex_byIP(const AMLUndigraph* const GP,
         printf("顶点无邻接点\n");
         return NULL;
     }
-    if (strcmp(VertexID, VP_In_Graph->FirstEdge->IvertexID) == 0) return LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, VP_In_Graph->FirstEdge->JvertexID);
-    else return LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, VP_In_Graph->FirstEdge->IvertexID);
+    if (strcmp(VertexID, VP_In_Graph->FirstEdge->IVertex->VertexID) == 0) return LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, VP_In_Graph->FirstEdge->JVertex->VertexID);
+    else return LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, VP_In_Graph->FirstEdge->IVertex->VertexID);
 }
 
 AMLVertexNode* LTT_Undigraph_First_AML_Vertex_byVP(const AMLUndigraph* const GP, const AMLVertexNode* const VP)
@@ -585,8 +681,8 @@ AMLVertexNode* LTT_Undigraph_First_AML_Vertex_byVP(const AMLUndigraph* const GP,
     }
     else
     {
-        if (strcmp(VP->VertexID, VP->FirstEdge->IvertexID) == 0) return LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, VP->FirstEdge->JvertexID);
-        else return LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, VP->FirstEdge->IvertexID);
+        if (strcmp(VP->VertexID, VP->FirstEdge->IVertex->VertexID) == 0) return LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, VP->FirstEdge->JVertex->VertexID);
+        else return LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, VP->FirstEdge->IVertex->VertexID);
     }
 }
 
@@ -606,15 +702,15 @@ AMLVertexNode* LTT_Undigraph_Frist_Unvisited_Adj_Vertex_byID(const AMLUndigraph*
     EdgeNode* Iterator = VP_In_Graph->FirstEdge;
     while (Iterator)
     {
-        if (strcmp(VP_In_Graph->VertexID, Iterator->IvertexID) == 0)
+        if (strcmp(VP_In_Graph->VertexID, Iterator->IVertex->VertexID) == 0)
         {
-            AMLVertexNode* Temp_J = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, Iterator->JvertexID);
+            AMLVertexNode* Temp_J = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, Iterator->JVertex->VertexID);
             if (Temp_J->Mark == Unvisited) return Temp_J;
             else Iterator = Iterator->IEdge;
         }
         else
         {
-            AMLVertexNode* Temp_I = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, Iterator->IvertexID);
+            AMLVertexNode* Temp_I = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, Iterator->IVertex->VertexID);
             if (Temp_I->Mark == Unvisited) return Temp_I;
             else Iterator = Iterator->JEdge;
         }
@@ -628,15 +724,15 @@ static AMLVertexNode* LTT_Undigraph_Frist_Unvisited_Adj_Vertex_byVP_Unsafe(const
     EdgeNode* Iterator = VP->FirstEdge;
     while (Iterator)
     {
-        if (strcmp(VP->VertexID, Iterator->IvertexID) == 0)
+        if (strcmp(VP->VertexID, Iterator->IVertex->VertexID) == 0)
         {
-            AMLVertexNode* Temp_J = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, Iterator->JvertexID);
+            AMLVertexNode* Temp_J = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, Iterator->JVertex->VertexID);
             if (Temp_J->Mark == Unvisited) return Temp_J;
             else Iterator = Iterator->IEdge;
         }
         else
         {
-            AMLVertexNode* Temp_I = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, Iterator->IvertexID);
+            AMLVertexNode* Temp_I = LTT_Undigraph_Vertex_Exist_byID_Unsafe(GP, Iterator->IVertex->VertexID);
             if (Temp_I->Mark == Unvisited) return Temp_I;
             else Iterator = Iterator->JEdge;
         }
@@ -698,7 +794,7 @@ EdgeNode** LTT_Undigraph_Get_Prior_EdgePP_byVE_Safe(const AMLUndigraph* const GP
 
 EdgeNode** LTT_Undigraph_Get_Tail_EdgePP_by_ID_Safe(const AMLUndigraph* const GP, const char* const VertexID)
 {
-    AMLVertexNode* VP_In_Graph = LTT_Undigraph_First_Adj_Vertex_byIP(GP, VertexID);
+    AMLVertexNode* VP_In_Graph = LTT_Undigraph_First_Adj_Vertex_byID(GP, VertexID);
     if (VP_In_Graph == NULL)
     {
         printf("顶点不存在\n");
@@ -943,7 +1039,7 @@ AMLUndigraph* LTT_Undigraph_MiniSpanTree_Prim(const AMLUndigraph* const GP, cons
 
         //记录最小生成树的边
         Temp_EP                = LTT_Undigraph_Edge_Exist_by_ID(GP, FindMin->VertexID, Temp_VDPP->ConnectedP->VertexID);
-        MiTreeEdgeArray[i - 1] = LTT_Undigraph_Make_Edge(Temp_EP->IvertexID, Temp_EP->JvertexID, Temp_EP->Data, Temp_EP->DataSize);
+        MiTreeEdgeArray[i - 1] = LTT_Undigraph_Make_Edge_byVP_Unsafe(Temp_EP->IVertex, Temp_EP->JVertex, Temp_EP->Data, Temp_EP->DataSize);
 
 
         //更新CloseEdge
@@ -959,7 +1055,9 @@ AMLUndigraph* LTT_Undigraph_MiniSpanTree_Prim(const AMLUndigraph* const GP, cons
             }
         }
     }
-    AMLUndigraph* MiTreep = LTT_Undigraph_New(MiTreeVertexArray, GP->VertexNum, MiTreeEdgeArray, GP->VertexNum - 1);
+    AMLUndigraph* MiTreep = LTT_Undigraph_New();
+    LTT_Undigraph_Insert_VertexS(MiTreep, MiTreeVertexArray, GP->VertexNum);
+    LTT_Undigraph_Insert_EdgeS(MiTreep, MiTreeEdgeArray, GP->VertexNum - 1);
     LTT_HashMap_Destroy(CloseEdge);
     free(MiTreeEdgeArray);
     free(MiTreeVertexArray);
@@ -992,7 +1090,6 @@ AMLUndigraph* LTT_Undigraph_MiniSpanTree_Kruskal(const AMLUndigraph* const GP, c
         printf("内存分配失败\n");
         return NULL;
     }
-
 
     //用来临时存储顶点和边
     AMLVertexNode* Temp_VP  = NULL;
@@ -1027,11 +1124,11 @@ AMLUndigraph* LTT_Undigraph_MiniSpanTree_Kruskal(const AMLUndigraph* const GP, c
     //使用并查集来防止构成环,并查集里面装的是顶点的ID
 
     UnionFindSet* UFSet = LTT_UnionFindSet_New(VID_MAX_LENGTH * sizeof(char), NULL);
-    int           Count = 0;                       //用来记录生成树中的边的数量
+    int           Count = 0;                               //用来记录生成树中的边的数量
     for (int i = 0; i < GP->EdgeNum; ++i)
     {
-        char* VIP = AllEdgeArray[i]->IvertexID;    //指向IvertexID的指针
-        char* VJP = AllEdgeArray[i]->JvertexID;    //指向JvertexID的指针
+        char* VIP = AllEdgeArray[i]->IVertex->VertexID;    //指向IvertexID的指针
+        char* VJP = AllEdgeArray[i]->JVertex->VertexID;    //指向JvertexID的指针
         //将两个顶点加入并查集中
         LTT_UnionFindSet_Put(UFSet, VIP);
         LTT_UnionFindSet_Put(UFSet, VJP);
@@ -1039,116 +1136,131 @@ AMLUndigraph* LTT_Undigraph_MiniSpanTree_Kruskal(const AMLUndigraph* const GP, c
         //将两个顶点合并到同一个集合中
         LTT_UnionFindSet_Unite(UFSet, VIP, VJP);
         //将此边加入生成树中
-        MiTreeEdgeArray[Count++] = LTT_Undigraph_Make_Edge(AllEdgeArray[i]->IvertexID, AllEdgeArray[i]->JvertexID, AllEdgeArray[i]->Data, AllEdgeArray[i]->DataSize);
+        MiTreeEdgeArray[Count++] = LTT_Undigraph_Make_Edge_byVP_Unsafe(AllEdgeArray[i]->IVertex, AllEdgeArray[i]->JVertex, AllEdgeArray[i]->Data, AllEdgeArray[i]->DataSize);
     }
-
-    AMLUndigraph* MiTreeP = LTT_Undigraph_New(MiTreeVertexArray, GP->VertexNum, MiTreeEdgeArray, GP->VertexNum - 1);
+    AMLUndigraph* MiTreeP = LTT_Undigraph_New();
+    LTT_Undigraph_Insert_VertexS(MiTreeP, MiTreeVertexArray, GP->VertexNum);
+    LTT_Undigraph_Insert_EdgeS(MiTreeP, MiTreeEdgeArray, GP->VertexNum - 1);
     free(MiTreeEdgeArray);
     free(MiTreeVertexArray);
     free(AllEdgeArray);
     return MiTreeP;
 }
 
-//Status ShortestPath_AML_Dijkstra(const AMLUndigraph* const GP, const int Vid)
-//{
-//	int* Distance = (int*)calloc(G.VertexNum + 1, sizeof(int));
-//	int* Path = (int*)calloc(G.VertexNum + 1, sizeof(int));
-//	for (int i = 1; i <= G.VertexNum; ++i)
-//	{
-//		G.AMLVertexList[i].Mark = Unvisited;
-//		Distance[i] = INT_MAX;
-//		Path[i] = -1;
-//	}
-//	Distance[Vid] = 0;
-//	Path[Vid] = 0;
-//	G.AMLVertexList[Vid].Mark = Visited;
-//	int MinIndex = Vid;
-//	for (int i = 1; i <= G.VertexNum - 1; ++i)
-//	{
-//		EdgeNode* Iterator = G.AMLVertexList[MinIndex].FirstEdge;
-//		while (Iterator)
-//		{
-//			if (MinIndex == Iterator->IvertexID)
-//			{
-//				if (G.AMLVertexList[Iterator->JvertexID].Mark == Unvisited && Distance[Iterator->JvertexID] > Distance[MinIndex] + *(int*)Iterator->Data)
-//				{
-//					Distance[Iterator->JvertexID] = Distance[MinIndex] + *(int*)Iterator->Data;
-//					Path[Iterator->JvertexID] = MinIndex;
-//
-//				}
-//				Iterator = Iterator->IEdge;
-//			}
-//			else
-//			{
-//				if (G.AMLVertexList[Iterator->IvertexID].Mark == Unvisited && Distance[Iterator->IvertexID] > Distance[MinIndex] + *(int*)Iterator->Data)
-//				{
-//					Distance[Iterator->IvertexID] = Distance[MinIndex] + *(int*)Iterator->Data;
-//					Path[Iterator->IvertexID] = MinIndex;
-//
-//				}
-//				Iterator = Iterator->JEdge;
-//			}
-//		}
-//		int MinDistance = INT_MAX;
-//		for (int i = 1; i <= G.VertexNum; ++i)
-//		{
-//			if (G.AMLVertexList[i].Mark == Unvisited && Distance[i] <= MinDistance)
-//			{
-//				MinDistance = Distance[i];
-//				MinIndex = i;
-//			}
-//		}
-//		G.AMLVertexList[MinIndex].Mark = Visited;
-//	}
-//	for (int i = 1; i <= G.VertexNum; ++i)
-//	{
-//		printf("%d ", Path[i]);
-//	}
-//}
-//
-//Status ShortestPath_AML_Floyd_Warshall(const AMLUndigraph* GP)
-//{
-//	int** DisMatrix;
-//	int** Path;
-//	if (!(Path = (int**)calloc(G.VertexNum + 1, sizeof(int*)))) return OVERFLOW;
-//	for (int i = 0; i <= G.VertexNum; ++i) Path[i] = (int*)calloc(G.VertexNum + 1, sizeof(int));
-//	CreateAdjMatrix_AML(G, &DisMatrix);
-//	for (int i = 1; i <= G.VertexNum; ++i)
-//	{
-//		for (int j = 1; j <= G.VertexNum; ++j)
-//		{
-//			if (DisMatrix[i][j] != INT_MAX) Path[i][j] = i;
-//			else if (i != j) Path[i][j] = -1;
-//		}
-//	}
-//	for (int i = 1; i <= G.VertexNum; ++i) DisMatrix[i][i] = 0;
-//	for (int k = 1; k <= G.VertexNum; ++k)
-//	{
-//		for (int i = 1; i <= G.VertexNum; ++i)//对i与j两个顶点之间，判断是当前距离短还是经过一点k更短
-//		{
-//			for (int j = 1; j <= G.VertexNum; ++j)
-//			{
-//				if (DisMatrix[i][k] == INT_MAX || DisMatrix[k][j] == INT_MAX) continue;
-//				if (DisMatrix[i][j] > DisMatrix[i][k] + DisMatrix[k][j])
-//				{
-//					DisMatrix[i][j] = DisMatrix[i][k] + DisMatrix[k][j];
-//					Path[i][j] = Path[k][j];
-//				}
-//				if (DisMatrix[i][i] < 0)
-//				{
-//					printf("存在负闭环");
-//					//printf("存在负闭环");
-//					return ERROR;
-//				}
-//			}
-//		}
-//	}
-//	for (int i = 1; i <= G.VertexNum; ++i)
-//	{
-//		for (int j = 1; j <= G.VertexNum; ++j)//对i与j两个顶点之间，判断是当前距离短还是经过一点k更短
-//		{
-//			printf("%d ", Path[i][j]);
-//		}
-//		printf("\n");
-//	}
-//}
+int LTT_Undigraph_Get_VertexIndex_by_VP(const AMLUndigraph* const GP, const AMLVertexNode* const VP)
+{
+    LTT_Undigraph_Make_VertexArray(GP);
+    for (int i = 1; i <= GP->VertexNum; ++i)
+    {
+        if (__VertexArray[i] == VP) return i;
+    }
+    return 0;
+}
+
+int LTT_Undigraph_Get_VertexIndex_by_ID(const AMLUndigraph* const GP, const char* const VertexID)
+{
+    LTT_Undigraph_Make_VertexArray(GP);
+    for (int i = 1; i <= GP->VertexNum; ++i)
+    {
+        if (strcmp(__VertexArray[i]->VertexID, VertexID) == 0) return i;
+    }
+    return 0;
+}
+
+Status LTT_Undigraph_ShortestPath_Dijkstra(const AMLUndigraph* const GP, const char* const VertexID, int** DisMatrix, int** Path)
+{
+    (*DisMatrix) = (int*)calloc(GP->VertexNum + 1, sizeof(int));
+    (*Path)      = (int*)calloc(GP->VertexNum + 1, sizeof(int));
+    if (!(*DisMatrix) || !(*Path)) return OVERFLOW;
+    //初始化DisMatrix和Path
+    //初始化所有顶点的访问性
+    Iterator VertexIterator = LTT_Undigraph_GetIterator_Vertex(GP);
+    for (int i = 1; VertexIterator.MoveNext(&VertexIterator); ++i)
+    {
+        (*DisMatrix)[i]                                        = INT_MAX;
+        (*Path)[i]                                             = 0;
+        LTT_Undigraph_GetCurrent_Vertex(&VertexIterator)->Mark = Unvisited;
+    }
+
+    //找到顶点VertexID对应的Vindex
+    int Vindex                  = LTT_Undigraph_Get_VertexIndex_by_ID(GP, VertexID);
+    (*DisMatrix)[Vindex]        = 0;
+    Path[Vindex]                = 0;
+    __VertexArray[Vindex]->Mark = Visited;
+    int MinIndex                = Vindex;
+    for (int i = 1; i <= GP->VertexNum - 1; ++i)
+    {
+        EdgeNode* Iterator = __VertexArray[MinIndex]->FirstEdge;
+        while (Iterator)
+        {
+            if (MinIndex == LTT_Undigraph_Get_VertexIndex_by_VP(GP, Iterator->IVertex))
+            {
+                if (__VertexArray[LTT_Undigraph_Get_VertexIndex_by_VP(GP, Iterator->JVertex)]->Mark == Unvisited && (*DisMatrix)[LTT_Undigraph_Get_VertexIndex_by_VP(GP, Iterator->JVertex)] > (*DisMatrix)[MinIndex] + *(int*)Iterator->Data)
+                {
+                    (*DisMatrix)[LTT_Undigraph_Get_VertexIndex_by_VP(GP, Iterator->JVertex)] = (*DisMatrix)[MinIndex] + *(int*)Iterator->Data;
+                    (*Path)[LTT_Undigraph_Get_VertexIndex_by_VP(GP, Iterator->JVertex)]      = MinIndex;
+                }
+                Iterator = Iterator->IEdge;
+            }
+            else
+            {
+                if (__VertexArray[LTT_Undigraph_Get_VertexIndex_by_VP(GP, Iterator->IVertex)]->Mark == Unvisited && (*DisMatrix)[LTT_Undigraph_Get_VertexIndex_by_VP(GP, Iterator->IVertex)] > (*DisMatrix)[MinIndex] + *(int*)Iterator->Data)
+                {
+                    (*DisMatrix)[LTT_Undigraph_Get_VertexIndex_by_VP(GP, Iterator->IVertex)] = (*DisMatrix)[MinIndex] + *(int*)Iterator->Data;
+                    (*Path)[LTT_Undigraph_Get_VertexIndex_by_VP(GP, Iterator->IVertex)]      = MinIndex;
+                }
+                Iterator = Iterator->JEdge;
+            }
+        }
+        int MinDistance = INT_MAX;
+        for (int i = 1; i <= GP->VertexNum; ++i)
+        {
+            if (__VertexArray[i]->Mark == Unvisited && (*DisMatrix)[i] <= MinDistance)
+            {
+                MinDistance = (*DisMatrix)[i];
+                MinIndex    = i;
+            }
+        }
+        __VertexArray[MinIndex]->Mark = Visited;
+    }
+    return OK;
+}
+
+Status LTT_Undigraph_ShortestPath_Floyd_Warshall(const AMLUndigraph* const GP, int*** DisMatrix, int*** Path)
+{
+    if (!((*Path) = (int**)calloc(GP->VertexNum + 1, sizeof(int*)))) return OVERFLOW;
+    for (int i = 0; i <= GP->VertexNum; ++i) (*Path)[i] = (int*)calloc(GP->VertexNum + 1, sizeof(int));
+    //初始化带权邻接矩阵
+    (*DisMatrix) = LTT_Undigraph_Make_Weighted_AdjMatrix(GP);
+    for (int i = 1; i <= GP->VertexNum; ++i)
+    {
+        for (int j = 1; j <= GP->VertexNum; ++j)
+        {
+            if ((*DisMatrix)[i][j] != INT_MAX) (*Path)[i][j] = i;
+            else if (i != j) (*Path)[i][j] = -1;
+        }
+    }
+    for (int i = 1; i <= GP->VertexNum; ++i) (*DisMatrix)[i][i] = 0;
+    for (int k = 1; k <= GP->VertexNum; ++k)
+    {
+        for (int i = 1; i <= GP->VertexNum; ++i)    //对i与j两个顶点之间，判断是当前距离短还是经过一点k更短
+        {
+            for (int j = 1; j <= GP->VertexNum; ++j)
+            {
+                if ((*DisMatrix)[i][k] == INT_MAX || (*DisMatrix)[k][j] == INT_MAX) continue;
+                if ((*DisMatrix)[i][j] > (*DisMatrix)[i][k] + (*DisMatrix)[k][j])
+                {
+                    (*DisMatrix)[i][j] = (*DisMatrix)[i][k] + (*DisMatrix)[k][j];
+                    (*Path)[i][j]      = (*Path)[k][j];
+                }
+                if ((*DisMatrix)[i][i] < 0)
+                {
+                    printf("存在负闭环");
+                    return ERROR;
+                }
+            }
+        }
+    }
+    for (int i = 1; i <= GP->VertexNum; ++i) { printf("%s:%d\n", __VertexArray[i]->VertexID, i); }
+    return OK;
+}
