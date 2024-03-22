@@ -19,11 +19,12 @@
         "ArrayListTest",
         "ArrayQueueTest",
         "ArrayStackTest",
+        "BinaryTreeTest",
         "HashMapTest",
         "LinkedListTest",
         "SortingAlgorithmTest",
-        "UnionFindSet",
         "UndigraphTest",
+        "UnionFindSet",
       ],
       "description": "请选择要调试的程序"
     }

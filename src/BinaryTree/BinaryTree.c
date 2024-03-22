@@ -1,360 +1,246 @@
 #include "BinaryTree.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "../Predefined/Predefined.h"
+#include "LTT_ArrayQueue.h"
+#include "LTT_ArrayStack.h"
 
-Status InitBiTree(BinaryTreePointer BiTreePointer)
+static BinaryTreeNode Node_NULL = {NULL, 0, NULL, NULL};
+#define NODE_NULL (&Node_NULL)
+
+//重载函数
+BinaryTreeNode* LTT_BiTree_Make_Node(void* const Data, const size_t DataSize)
 {
-    BiTreePointer->NodeNumber      = 0;
-    BiTreePointer->RootNodePointer = NULL;
-    return OK;
+    BinaryTreeNode* RootNode = (BinaryTreeNode*)malloc(sizeof(BinaryTreeNode));
+    if (RootNode == NULL)
+    {
+        printf("根节点制作失败!\n");
+        return NULL;
+    }
+    RootNode->Data       = Data;
+    RootNode->DataSize   = DataSize;
+    RootNode->LeftChild  = NODE_NULL;
+    RootNode->RightChild = NODE_NULL;
+    return RootNode;
 }
 
-Status CreateBiTree_PreandInOrder(BinaryTree BiTree, char* PreOrder, char* InOrder)
+//重载函数
+BinaryTree* LTT_BiTree_New(void* const Data, const size_t DataSize)
 {
-    if (strlen(PreOrder) != strlen(InOrder)) return ERROR;
-    else CreateBiTree_PreandInOrder_Kernel(&(BiTree.RootNodePointer), NULL, PreOrder, InOrder, 0, 0, strlen(PreOrder));
-    BiTree.NodeNumber = BiTreeNodeNumber(BiTree.RootNodePointer);
-    return OK;
+    BinaryTree* BiTree = (BinaryTree*)malloc(sizeof(BinaryTree));
+    if (BiTree == NULL)
+    {
+        printf("BiTree制作失败!\n");
+        return NULL;
+    }
+
+    //初始化虚函数表
+
+    //初始化根节点
+
+    BiTree->Root = LTT_BiTree_Make_Node(Data, DataSize);
+    return BiTree;
 }
 
-void CreateBiTree_PreandInOrder_Kernel(BinaryTreeNodePointer* BiTreeNodePP, BinaryTreeNodePointer ParentBiTreeNodePointer, char* PreOrder, char* InOrder, int PStart, int IStart, int Length)
+Status LTT_BiTree_Insert_Node(BinaryTreeNode* BeInserted_Node, BinaryTreeNode* Inserted_Node, bool LeftChild)
 {
-    if (Length == 0) *BiTreeNodePP = NULL;
+    //把Inserted_Node插入到BeInserted_Node的左子树或者右子树
+    if (LeftChild)
+    {
+        if (BeInserted_Node->LeftChild != NODE_NULL) return ERROR;     //如果左子树不为空，返回ERROR
+        BeInserted_Node->LeftChild = Inserted_Node;
+        return OK;
+    }
     else
     {
-        char* RootChar = strchr(InOrder, PreOrder[PStart]);
-        if (RootChar == NULL) *BiTreeNodePP = NULL;
-        else
+        if (BeInserted_Node->RightChild != NODE_NULL) return ERROR;    //如果右子树不为空，返回ERROR
+        BeInserted_Node->RightChild = Inserted_Node;
+        return OK;
+    }
+}
+
+Status LTT_BiTree_PreOrder_Traverse_Recursive(BinaryTreeNode* Root, VisitFunction Visit)
+{
+    if (Root != NODE_NULL)
+    {
+        if (Visit(Root) == ERROR) return ERROR;
+        LTT_BiTree_PreOrder_Traverse_Recursive(Root->LeftChild, Visit);
+        LTT_BiTree_PreOrder_Traverse_Recursive(Root->RightChild, Visit);
+    }
+    return OK;
+}
+
+Status LTT_BiTree_PreOrder_Traverse_Stack(BinaryTreeNode* Root, VisitFunction Visit)
+{
+    ArrayStack*     Stack = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
+    BinaryTreeNode* Temp;
+    LTT_ArrayStack_Push(Stack, Root);
+    while (!LTT_ArrayStack_IsEmpty(Stack))
+    {
+        Temp = LTT_ArrayStack_Pop(Stack);
+        if (Temp != NODE_NULL)    //如果Temp不是空节点
         {
-            int index                 = (int)(RootChar - InOrder);
-            (*BiTreeNodePP)           = (BinaryTreeNodePointer)malloc(sizeof(BinaryTreeNode));
-            (*BiTreeNodePP)->Data     = (void*)malloc(sizeof(char));
-            (*BiTreeNodePP)->Data     = memcpy((*BiTreeNodePP)->Data, PreOrder + PStart, sizeof(char));
-            (*BiTreeNodePP)->DataSize = sizeof(char);
-            (*BiTreeNodePP)->Parent   = ParentBiTreeNodePointer;
-            if (index == IStart) (*BiTreeNodePP)->LeftChild = NULL;
-            else CreateBiTree_PreandInOrder_Kernel(&((*BiTreeNodePP)->LeftChild), *BiTreeNodePP, PreOrder, InOrder, PStart + 1, IStart, index - IStart);
-            if (index == IStart + Length - 1) (*BiTreeNodePP)->RightChild = NULL;
-            else CreateBiTree_PreandInOrder_Kernel(&((*BiTreeNodePP)->RightChild), *BiTreeNodePP, PreOrder, InOrder, PStart + 1 + index - IStart, index + 1, Length - index + IStart - 1);
+            if (Visit(Temp) == ERROR) return ERROR;
+            LTT_ArrayStack_Push(Stack, Temp->RightChild);
+            LTT_ArrayStack_Push(Stack, Temp->LeftChild);
         }
     }
+    LTT_ArrayStack_Destroy(Stack);
+    return OK;
 }
 
-Status MakeBinaryTreeNode(BinaryTreeNodePointer BiTreeNodePointer, void* Data, size_t DataSize)
+Status LTT_BiTree_InOrder_Traverse_Recursive(BinaryTreeNode* Root, VisitFunction Visit)
 {
-    BiTreeNodePointer->DataSize = DataSize;
-    if (!(BiTreeNodePointer->Data = (void*)malloc(DataSize))) return OVERFLOW;
-    memcpy(BiTreeNodePointer->Data, Data, DataSize);
-    BiTreeNodePointer->LeftChild  = NULL;
-    BiTreeNodePointer->Parent     = NULL;
-    BiTreeNodePointer->RightChild = NULL;
-}
-
-bool BiTreeNodeExist(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer BiTreeNodePointer)
-{
-    SqQueue Queue;
-    InitQueue(&Queue, sizeof(BinaryTreeNodePointer));
-    BinaryTreeNodePointer Temp;
-    if (BiTreePointer->RootNodePointer) EnQueue(&Queue, &BiTreePointer->RootNodePointer);
-    while (!QueueEmpty(Queue))
+    if (Root != NODE_NULL)
     {
-        DeQueue(&Queue, &Temp);
-        if (Temp == BiTreeNodePointer) return true;
-        if (Temp->LeftChild) EnQueue(&Queue, &Temp->LeftChild);
-        if (Temp->RightChild) EnQueue(&Queue, &Temp->RightChild);
+        LTT_BiTree_InOrder_Traverse_Recursive(Root->LeftChild, Visit);
+        if (Visit(Root) == ERROR) return ERROR;
+        LTT_BiTree_InOrder_Traverse_Recursive(Root->RightChild, Visit);
     }
-    return false;
-}
-
-Status DestroyBiTree(BinaryTreePointer BiTreePointer)
-{
-    ClearBiTree(BiTreePointer);
-    free(BiTreePointer);
-    BiTreePointer = NULL;
     return OK;
 }
 
-Status ClearBiTree(BinaryTreePointer BiTreePointer)
+Status LTT_BiTree_InOrder_Traverse_Stack(BinaryTreeNode* Root, VisitFunction Visit)
 {
-    PreOrderTraverse_Stack(BiTreePointer->RootNodePointer, ClearBiTreeVisit);
-    BiTreePointer->NodeNumber      = 0;
-    BiTreePointer->RootNodePointer = NULL;
-    return OK;
-}
-
-bool BiTreeEmpty(BinaryTree BiTree)
-{
-    if (BiTree.RootNodePointer) return false;
-    else return true;
-}
-
-int BiTreeNodeNumber(BinaryTreeNodePointer BiTreeNodePointer)
-{
-    int     Num = 0;
-    SqQueue Queue;
-    InitQueue(&Queue, sizeof(BinaryTreeNodePointer));
-    BinaryTreeNodePointer Temp;
-    if (BiTreeNodePointer) EnQueue(&Queue, &BiTreeNodePointer);
-    while (!QueueEmpty(Queue))
+    ArrayStack*     Stack = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
+    BinaryTreeNode* Temp;
+    LTT_ArrayStack_Push(Stack, Root);
+    while (!LTT_ArrayStack_IsEmpty(Stack))
     {
-        DeQueue(&Queue, &Temp);
+        while ((Temp = LTT_ArrayStack_Peek(Stack)) != NODE_NULL) LTT_ArrayStack_Push(Stack, Temp->LeftChild);
+        Temp = LTT_ArrayStack_Pop(Stack);    //弹出上面压入栈的一个NULL
+        if (!LTT_ArrayStack_IsEmpty(Stack))
+        {
+            Temp = LTT_ArrayStack_Pop(Stack);
+            if (Visit(Temp) == ERROR) return ERROR;
+            LTT_ArrayStack_Push(Stack, Temp->RightChild);
+        }
+    }
+    LTT_ArrayStack_Destroy(Stack);
+    return OK;
+}
+
+Status LTT_BiTree_PostOrder_Traverse_Recursive(BinaryTreeNode* Root, VisitFunction Visit)
+{
+    if (Root != NODE_NULL)
+    {
+        LTT_BiTree_PostOrder_Traverse_Recursive(Root->LeftChild, Visit);
+        LTT_BiTree_PostOrder_Traverse_Recursive(Root->RightChild, Visit);
+        if (Visit(Root) == ERROR) return ERROR;
+    }
+    return OK;
+}
+
+Status LTT_BiTree_PostOrder_Traverse_Stack(BinaryTreeNode* Root, VisitFunction Visit)
+{
+    ArrayStack*     Stack       = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
+    ArrayStack*     OutputStack = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
+    BinaryTreeNode* Temp;
+    LTT_ArrayStack_Push(Stack, Root);
+    while (!LTT_ArrayStack_IsEmpty(Stack))
+    {
+        Temp = LTT_ArrayStack_Pop(Stack);
+        if (Temp != NODE_NULL)
+        {
+            LTT_ArrayStack_Push(OutputStack, Temp);
+            LTT_ArrayStack_Push(Stack, Temp->LeftChild);
+            LTT_ArrayStack_Push(Stack, Temp->RightChild);
+        }
+    }
+    while (!LTT_ArrayStack_IsEmpty(OutputStack))
+    {
+        Temp = LTT_ArrayStack_Pop(OutputStack);
+        if (Visit(Temp) == ERROR) return ERROR;
+    }
+    LTT_ArrayStack_Destroy(Stack);
+    LTT_ArrayStack_Destroy(OutputStack);
+    return OK;
+}
+
+Status LTT_BiTree_LevelOrder_Traverse_Queue(BinaryTreeNode* Root, VisitFunction Visit)
+{
+    ArrayQueue*     Queue = LTT_ArrayQueue_New(sizeof(BinaryTreeNode), NULL);
+    BinaryTreeNode* Temp;
+    if (Root != NODE_NULL) LTT_ArrayQueue_Push(Queue, Root);
+    while (!LTT_ArrayQueue_IsEmpty(Queue))
+    {
+        Temp = LTT_ArrayQueue_Pop(Queue);
+        if (Visit(Temp) == ERROR) return ERROR;
+        if (Temp->LeftChild != NODE_NULL) LTT_ArrayQueue_Push(Queue, Temp->LeftChild);
+        if (Temp->RightChild != NODE_NULL) LTT_ArrayQueue_Push(Queue, Temp->RightChild);
+    }
+    return OK;
+}
+
+int LTT_BiTree_Get_NodeNumber(BinaryTreeNode* Root)
+{
+    int             Num   = 0;
+    ArrayQueue*     Queue = LTT_ArrayQueue_New(sizeof(BinaryTreeNode), NULL);
+    BinaryTreeNode* Temp;
+    if (Root != NODE_NULL) LTT_ArrayQueue_Push(Queue, Root);
+    while (!LTT_ArrayQueue_IsEmpty(Queue))
+    {
+        Temp = LTT_ArrayQueue_Pop(Queue);
         ++Num;
-        if (Temp->LeftChild) EnQueue(&Queue, &Temp->LeftChild);
-        if (Temp->RightChild) EnQueue(&Queue, &Temp->RightChild);
+        if (Temp->LeftChild != NODE_NULL) LTT_ArrayQueue_Push(Queue, Temp->LeftChild);
+        if (Temp->RightChild != NODE_NULL) LTT_ArrayQueue_Push(Queue, Temp->RightChild);
     }
     return Num;
 }
 
-int BiTreeNodeLeafNumber(BinaryTreeNodePointer BiTreeNodePointer)
+int LTT_BiTree_Get_LeafNumber(BinaryTreeNode* Root)
 {
     int Num = 0;
-    if (!BiTreeNodePointer) return 0;
-    if ((!BiTreeNodePointer->LeftChild) && (!BiTreeNodePointer->RightChild)) Num++;
-    Num += BiTreeNodeLeafNumber(BiTreeNodePointer->LeftChild);
-    Num += BiTreeNodeLeafNumber(BiTreeNodePointer->RightChild);
+    if (Root == NODE_NULL) return 0;
+    if ((Root->LeftChild == NODE_NULL) && (Root->RightChild == NODE_NULL)) ++Num;
+    Num += LTT_BiTree_Get_LeafNumber(Root->LeftChild);
+    Num += LTT_BiTree_Get_LeafNumber(Root->RightChild);
     return Num;
 }
 
-int BiTreeNodeDepth(BinaryTreeNodePointer BiTreeNodePointer)
+int LTT_BiTree_Get_Depth(BinaryTreeNode* Root)
 {
     int Depth = 0;
-    if (!BiTreeNodePointer) return 0;
+    if (Root == NODE_NULL) return 0;
     else
     {
-        int DepthLeft  = BiTreeNodeDepth(BiTreeNodePointer->LeftChild);
-        int DepthRight = BiTreeNodeDepth(BiTreeNodePointer->RightChild);
+        int DepthLeft  = LTT_BiTree_Get_Depth(Root->LeftChild);
+        int DepthRight = LTT_BiTree_Get_Depth(Root->RightChild);
         Depth          = 1 + (DepthLeft > DepthRight ? DepthLeft : DepthRight);
     }
     return Depth;
 }
 
-BinaryTreeNodePointer Root(BinaryTree BiTree) { return BiTree.RootNodePointer; }
-
-void*                 Value(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer BiTreeNodePointer)
+void LTT_BiTree_Clear(BinaryTreeNode* Root)
 {
-    if (!BiTreeNodeExist(BiTreePointer, BiTreeNodePointer)) return NULL;
-    return BiTreeNodePointer->Data;
-}
-
-Status Assign(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer BiTreeNodePointer, void* Data)
-{
-    if (!BiTreeNodeExist(BiTreePointer, BiTreeNodePointer)) return ERROR;
-    memcpy(BiTreeNodePointer->Data, Data, BiTreeNodePointer->DataSize);
-    return OK;
-}
-
-BinaryTreeNodePointer Parent(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer BiTreeNodePointer)
-{
-    if (!BiTreeNodeExist(BiTreePointer, BiTreeNodePointer)) return ERROR;
-    return BiTreeNodePointer->Parent;
-}
-
-BinaryTreeNodePointer LeftChild(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer BiTreeNodePointer)
-{
-    if (!BiTreeNodeExist(BiTreePointer, BiTreeNodePointer)) return ERROR;
-    return BiTreeNodePointer->LeftChild;
-}
-
-BinaryTreeNodePointer RightChild(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer BiTreeNodePointer)
-{
-    if (!BiTreeNodeExist(BiTreePointer, BiTreeNodePointer)) return ERROR;
-    return BiTreeNodePointer->RightChild;
-}
-
-BinaryTreeNodePointer LeftSibling(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer BiTreeNodePointer)
-{
-    if (!BiTreeNodeExist(BiTreePointer, BiTreeNodePointer)) return ERROR;
-    if (BiTreeNodePointer == BiTreeNodePointer->Parent->RightChild) return BiTreeNodePointer->Parent->LeftChild;
-    else return NULL;
-}
-
-BinaryTreeNodePointer RightSibling(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer BiTreeNodePointer)
-{
-    if (!BiTreeNodeExist(BiTreePointer, BiTreeNodePointer)) return ERROR;
-    if (BiTreeNodePointer == BiTreeNodePointer->Parent->LeftChild) return BiTreeNodePointer->Parent->RightChild;
-    else return NULL;
-}
-
-Status InsertBinaryTreeNode(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer InsertedPositionNodePointer, bool LeftChild, BinaryTreeNodePointer InsertedBiTreeNodePointer)
-{
-    if (!BiTreeNodeExist(BiTreePointer, InsertedPositionNodePointer)) return ERROR;
-    if (LeftChild)
+    //后序遍历,释放每个节点
+    ArrayStack*     Stack       = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
+    ArrayStack*     OutputStack = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
+    BinaryTreeNode* Temp;
+    LTT_ArrayStack_Push(Stack, Root);
+    while (!LTT_ArrayStack_IsEmpty(Stack))
     {
-        if (InsertedPositionNodePointer->LeftChild) return ERROR;
-        BiTreePointer->NodeNumber              += BiTreeNodeNumber(InsertedBiTreeNodePointer);
-        InsertedPositionNodePointer->LeftChild  = InsertedBiTreeNodePointer;
-        InsertedBiTreeNodePointer->Parent       = InsertedPositionNodePointer;
-        return OK;
-    }
-    else
-    {
-        if (InsertedPositionNodePointer->RightChild) return ERROR;
-        BiTreePointer->NodeNumber               += BiTreeNodeNumber(InsertedBiTreeNodePointer);
-        InsertedPositionNodePointer->RightChild  = InsertedBiTreeNodePointer;
-        InsertedBiTreeNodePointer->Parent        = InsertedPositionNodePointer;
-        ++BiTreePointer->NodeNumber;
-        return OK;
-    }
-}
-
-Status DeleteChild(BinaryTreePointer BiTreePointer, BinaryTreeNodePointer DeletedBiTreeNodePointer, bool LeftChild)
-{
-    if (!BiTreeNodeExist(BiTreePointer, DeletedBiTreeNodePointer)) return ERROR;
-    if (LeftChild)
-    {
-        SqStack Stack;
-        InitStack(&Stack, sizeof(BinaryTreeNodePointer));
-        Push(&Stack, &DeletedBiTreeNodePointer->LeftChild);
-        while (!StackEmpty(Stack))
+        Temp = LTT_ArrayStack_Pop(Stack);
+        if (Temp != NODE_NULL)
         {
-            BinaryTreeNodePointer Temp;
-            Pop(&Stack, &Temp);
-            if (Temp)
-            {
-                --BiTreePointer->NodeNumber;
-                if (!(*ClearBiTreeVisit)(Temp)) return ERROR;
-                Push(&Stack, &Temp->RightChild);
-                Push(&Stack, &Temp->LeftChild);
-            }
-        }
-        return OK;
-    }
-    else
-    {
-        SqStack               Stack;
-        BinaryTreeNodePointer Temp;
-        InitStack(&Stack, sizeof(BinaryTreeNodePointer));
-        Push(&Stack, &DeletedBiTreeNodePointer->RightChild);
-        while (!StackEmpty(Stack))
-        {
-            Pop(&Stack, &Temp);
-            if (Temp)
-            {
-                --BiTreePointer->NodeNumber;
-                if (!(*ClearBiTreeVisit)(Temp)) return ERROR;
-                Push(&Stack, &Temp->RightChild);
-                Push(&Stack, &Temp->LeftChild);
-            }
-        }
-        return OK;
-    }
-}
-
-Status PreOrderTraverse_Recursive(BinaryTreeNodePointer BiTreeNodePointer, Status (*Visit)(BinaryTreeNodePointer))
-{
-    if (BiTreeNodePointer)
-    {
-        (*Visit)(BiTreeNodePointer);
-        PreOrderTraverse_Recursive(BiTreeNodePointer->LeftChild, Visit);
-        PreOrderTraverse_Recursive(BiTreeNodePointer->RightChild, Visit);
-        return OK;
-    }
-}
-
-Status PreOrderTraverse_Stack(BinaryTreeNodePointer BiTreeNodePointer, Status (*Visit)(BinaryTreeNodePointer))
-{
-    SqStack               Stack;
-    BinaryTreeNodePointer Temp;
-    InitStack(&Stack, sizeof(BinaryTreeNodePointer));
-    Push(&Stack, &BiTreeNodePointer);
-    while (!StackEmpty(Stack))
-    {
-        Pop(&Stack, &Temp);
-        if (Temp)
-        {
-            if (!(*Visit)(Temp)) return ERROR;
-            Push(&Stack, &Temp->RightChild);
-            Push(&Stack, &Temp->LeftChild);
+            LTT_ArrayStack_Push(OutputStack, Temp);
+            LTT_ArrayStack_Push(Stack, Temp->LeftChild);
+            LTT_ArrayStack_Push(Stack, Temp->RightChild);
         }
     }
-    return OK;
+    while (!LTT_ArrayStack_IsEmpty(OutputStack))
+    {
+        Temp = LTT_ArrayStack_Pop(OutputStack);
+        free(Temp->Data);
+        free(Temp);
+    }
+    LTT_ArrayStack_Destroy(Stack);
+    LTT_ArrayStack_Destroy(OutputStack);
 }
 
-Status InOrderTraverse_Recursive(BinaryTreeNodePointer BiTreeNodePointer, Status (*Visit)(BinaryTreeNodePointer))
+void LTT_Bitree_Destroy(BinaryTree* BiTree)
 {
-    if (BiTreeNodePointer)
-    {
-        InOrderTraverse_Recursive(BiTreeNodePointer->LeftChild, Visit);
-        (*Visit)(BiTreeNodePointer);
-        InOrderTraverse_Recursive(BiTreeNodePointer->RightChild, Visit);
-        return OK;
-    }
-}
-
-Status InOrderTraverse_Stack(BinaryTreeNodePointer BiTreeNodePointer, Status (*Visit)(BinaryTreeNodePointer))
-{
-    SqStack               Stack;
-    BinaryTreeNodePointer Temp;
-    InitStack(&Stack, sizeof(BinaryTreeNodePointer));
-    Push(&Stack, &BiTreeNodePointer);
-    while (!StackEmpty(Stack))
-    {
-        while (GetTop(Stack, &Temp) && Temp) Push(&Stack, &Temp->LeftChild);
-        Pop(&Stack, &Temp);    //弹出上面压入栈的一个NULL
-        if (!StackEmpty(Stack))
-        {
-            Pop(&Stack, &Temp);
-            if (!(*Visit)(Temp)) return ERROR;
-            Push(&Stack, &Temp->RightChild);
-        }
-    }
-    return OK;
-}
-
-Status PostOrderTraverse_Recursive(BinaryTreeNodePointer BiTreeNodePointer, Status (*Visit)(BinaryTreeNodePointer))
-{
-    if (BiTreeNodePointer)
-    {
-        PostOrderTraverse_Recursive(BiTreeNodePointer->LeftChild, Visit);
-        PostOrderTraverse_Recursive(BiTreeNodePointer->RightChild, Visit);
-        (*Visit)(BiTreeNodePointer);
-        return OK;
-    }
-}
-
-Status PostOrderTraverse_Stack(BinaryTreeNodePointer BiTreeNodePointer, Status (*Visit)(BinaryTreeNodePointer))
-{
-    SqStack               Stack;
-    SqStack               OutputStack;
-    BinaryTreeNodePointer Temp;
-    InitStack(&Stack, sizeof(BinaryTreeNodePointer));
-    InitStack(&OutputStack, sizeof(BinaryTreeNodePointer));
-    Push(&Stack, &BiTreeNodePointer);
-    while (!StackEmpty(Stack))
-    {
-        Pop(&Stack, &Temp);
-        if (Temp)
-        {
-            Push(&OutputStack, &Temp);
-            Push(&Stack, &Temp->LeftChild);
-            Push(&Stack, &Temp->RightChild);
-        }
-    }
-    while (!StackEmpty(OutputStack))
-    {
-        Pop(&OutputStack, &Temp);
-        if (!(*Visit)(Temp)) return ERROR;
-    }
-    return OK;
-}
-
-Status LevelOrderTraverse(BinaryTreeNodePointer BiTreeNodePointer, Status (*Visit)(BinaryTreeNodePointer))
-{
-    SqQueue Queue;
-    InitQueue(&Queue, sizeof(BinaryTreeNodePointer));
-    BinaryTreeNodePointer Temp;
-    if (BiTreeNodePointer) EnQueue(&Queue, &BiTreeNodePointer);
-    while (!QueueEmpty(Queue))
-    {
-        DeQueue(&Queue, &Temp);
-        (*Visit)(Temp);
-        if (Temp->LeftChild) EnQueue(&Queue, &Temp->LeftChild);
-        if (Temp->RightChild) EnQueue(&Queue, &Temp->RightChild);
-    }
-}
-
-Status ClearBiTreeVisit(BinaryTreeNodePointer BiTreeNodePointer)
-{
-    free(BiTreeNodePointer->Data);
-    free(BiTreeNodePointer);
-    BiTreeNodePointer = NULL;
-    return OK;
+    LTT_BiTree_Clear(BiTree->Root);
+    free(BiTree->P_VTL);
+    free(BiTree);
 }

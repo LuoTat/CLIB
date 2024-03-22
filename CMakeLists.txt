@@ -75,3 +75,6 @@ add_subdirectory(test/UndigraphTest)
 
 add_subdirectory(src/SortingAlgorithm)
 add_subdirectory(test/SortingAlgorithmTest)
+
+add_subdirectory(src/BinaryTree)
+add_subdirectory(test/BinaryTreeTest)
