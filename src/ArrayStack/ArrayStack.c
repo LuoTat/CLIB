@@ -149,7 +149,7 @@ void* LTT_ArrayStack_Peek(const ArrayStack* const ArrayStack)
     void* Data = ArrayStack->Array[ArrayStack->index - 1];
     if (Data == NULL)
     {
-        printf("栈为空\n");
+        printf("栈为空!\n");
         return NULL;
     }
     return Data;
