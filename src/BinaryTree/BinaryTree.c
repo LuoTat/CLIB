@@ -59,6 +59,50 @@ Status LTT_BiTree_Insert_Node(BinaryTreeNode* BeInserted_Node, BinaryTreeNode* I
     }
 }
 
+Status LTT_BiTree_Insert_Node_byComparator(BinaryTreeNode* Root, BinaryTreeNode* InsertedNode, CompareFunction Comparator)
+{
+    BinaryTreeNode* Iterator = Root;
+    if (Iterator == NODE_NULL)
+    {
+        printf("根节点为空!\n");
+        return ERROR;
+    }
+    while (true)
+    {
+        int Delta = Comparator(InsertedNode->Data, Iterator->Data);
+        if (Delta == 0)
+        {
+            //printf("插入的节点已经存在!\n");
+            return ERROR;
+        }
+        else if (Delta < 0)
+        {
+            if (Iterator->LeftChild != NODE_NULL) Iterator = Iterator->LeftChild;
+            else
+            {
+                Iterator->LeftChild = InsertedNode;
+                return OK;
+            }
+        }
+        else
+        {
+            if (Iterator->RightChild != NODE_NULL) Iterator = Iterator->RightChild;
+            else
+            {
+                Iterator->RightChild = InsertedNode;
+                return OK;
+            }
+        }
+    }
+}
+
+Status LTT_BiTree_Insert_Data(BinaryTreeNode* Root, void* Data, size_t DataSize, CompareFunction Comparator)
+{
+    BinaryTreeNode* InsertedNode = LTT_BiTree_Make_Node(Data, DataSize);
+    LTT_BiTree_Insert_Node_byComparator(Root, InsertedNode, Comparator);
+    return OK;
+}
+
 Status LTT_BiTree_PreOrder_Traverse_Recursive(BinaryTreeNode* Root, VisitFunction Visit)
 {
     if (Root != NODE_NULL)
@@ -209,6 +253,20 @@ int LTT_BiTree_Get_Depth(BinaryTreeNode* Root)
         Depth          = 1 + (DepthLeft > DepthRight ? DepthLeft : DepthRight);
     }
     return Depth;
+}
+
+BinaryTreeNode* LTT_BiTree_Search_Data(BinaryTreeNode* Root, void* Data, CompareFunction Comparator)
+{
+    BinaryTreeNode* Iterator = Root;
+    if (Iterator == NODE_NULL) return NULL;
+    while (Iterator != NODE_NULL)
+    {
+        int Delta = Comparator(Data, Iterator->Data);
+        if (Delta == 0) return Iterator;
+        else if (Delta < 0) Iterator = Iterator->LeftChild;
+        else Iterator = Iterator->RightChild;
+    }
+    return NULL;
 }
 
 void LTT_BiTree_Clear(BinaryTreeNode* Root)
