@@ -40,41 +40,11 @@ endif()
 # LIBRARY_OUTPUT_PATH：默认存放库文件的位置，如果产生的是静态库并且没有指定 CMAKE_ARCHIVE_OUTPUT_DIRECTORY 则存放在该目录下，动态库也类似
 # EXECUTABLE_OUTPUT_PATH：默认存放可执行文件的位置，如果没有指定 CMAKE_RUNTIME_OUTPUT_DIRECTORY 则存放在该目录下
 
-# 设置输出库文件的名称前缀和后缀
-set(CMAKE_DEBUG_POSTFIX "_d")
-
 # 设置头文件的路径
 include_directories(${PROJECT_SOURCE_DIR}/include)
 link_directories(${PROJECT_SOURCE_DIR}/LTTLIB/Debug/lib)
 link_directories(${PROJECT_SOURCE_DIR}/LTTLIB/Release/lib)
 
 
-add_subdirectory(src/ArrayDeque)
-add_subdirectory(test/ArrayDequeTest)
-
-add_subdirectory(src/ArrayList)
-add_subdirectory(test/ArrayListTest)
-
-add_subdirectory(src/ArrayQueue)
-add_subdirectory(test/ArrayQueueTest)
-
-add_subdirectory(src/ArrayStack)
-add_subdirectory(test/ArrayStackTest)
-
-add_subdirectory(src/LinkedList)
-add_subdirectory(test/LinkedListTest)
-
-add_subdirectory(src/HashMap)
-add_subdirectory(test/HashMapTest)
-
-add_subdirectory(src/UnionFindSet)
-add_subdirectory(test/UnionFindSetTest)
-
-add_subdirectory(src/Undigraph)
-add_subdirectory(test/UndigraphTest)
-
-add_subdirectory(src/SortingAlgorithm)
-add_subdirectory(test/SortingAlgorithmTest)
-
-add_subdirectory(src/BinaryTree)
-add_subdirectory(test/BinaryTreeTest)
+add_subdirectory(src)
+add_subdirectory(test)

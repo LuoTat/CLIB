@@ -7,5 +7,3 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     target_link_libraries(UnionFindSetTest UnionFindSet) # 添加库文件路径
 endif()
-
-set_target_properties(UnionFindSetTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
