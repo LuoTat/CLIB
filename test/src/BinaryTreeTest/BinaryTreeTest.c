@@ -120,5 +120,11 @@ int main()
 
     LTT_Bitree_Destroy(BiTree);
 
+    printf("Optimal_BST\n");
+    double P[6]      = {0, 0.15, 0.1, 0.05, 0.1, 0.2};
+    double Q[6]      = {0.05, 0.1, 0.05, 0.05, 0.05, 0.1};
+    int    Number[6] = {0, 1, 2, 3, 4, 5};
+    int*   Data[6]   = {&Number[0], &Number[1], &Number[2], &Number[3], &Number[4], &Number[5]};
+    LTT_BiTree_Build_Optimal_BST((void**)Data, sizeof(int), P, Q, 6);
     printf("Test Over!\n");
 }

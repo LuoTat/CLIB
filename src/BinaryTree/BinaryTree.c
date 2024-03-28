@@ -1,9 +1,11 @@
 #include "BinaryTree.h"
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "../Predefined/Predefined.h"
 #include "LTT_ArrayQueue.h"
 #include "LTT_ArrayStack.h"
+
 
 static BinaryTreeNode Node_NULL = {NULL, 0, NULL, NULL};
 #define NODE_NULL (&Node_NULL)
@@ -70,11 +72,7 @@ Status LTT_BiTree_Insert_Node_byComparator(BinaryTreeNode* Root, BinaryTreeNode*
     while (true)
     {
         int Delta = Comparator(InsertedNode->Data, Iterator->Data);
-        if (Delta == 0)
-        {
-            //printf("插入的节点已经存在!\n");
-            return ERROR;
-        }
+        if (Delta == 0) { return ERROR; }
         else if (Delta < 0)
         {
             if (Iterator->LeftChild != NODE_NULL) Iterator = Iterator->LeftChild;
@@ -99,7 +97,11 @@ Status LTT_BiTree_Insert_Node_byComparator(BinaryTreeNode* Root, BinaryTreeNode*
 Status LTT_BiTree_Insert_Data(BinaryTreeNode* Root, void* Data, size_t DataSize, CompareFunction Comparator)
 {
     BinaryTreeNode* InsertedNode = LTT_BiTree_Make_Node(Data, DataSize);
-    LTT_BiTree_Insert_Node_byComparator(Root, InsertedNode, Comparator);
+    if (LTT_BiTree_Insert_Node_byComparator(Root, InsertedNode, Comparator) == ERROR)
+    {
+        free(InsertedNode);
+        return ERROR;
+    }
     return OK;
 }
 
@@ -301,4 +303,72 @@ void LTT_Bitree_Destroy(BinaryTree* BiTree)
     LTT_BiTree_Clear(BiTree->Root);
     free(BiTree->P_VTL);
     free(BiTree);
+}
+
+/*
+    void** Data是一个指针数组
+    DataSize是每个数据的大小
+    P是查找概率
+    Q是失败概率
+    Length是数组长度
+*/
+BinaryTree* LTT_BiTree_Build_Optimal_BST(void** Data, size_t DataSize, double* P, double* Q, int Length)
+{
+    //使用动态规划算法构造最优二叉查找树
+    // Data[1..n]是关键字，P[1..n]是查找概率，Q[0..n]是失败概率
+    //
+    //
+    //
+    //
+    //构造三个二维数组e[1..n+1,0..n]和w[1..n+1,0..n]和root[1..n,1..n]
+    //e[i,j]表示在包含关键字Data[i],Data[i+1],...,Data[j]的子树中进行一次查找的期望代价
+    //w[i,j]表示在包含关键字Data[i],Data[i+1],...,Data[j]的子树成为另外一个节点的子树时增加的进行一次查找的期望代价
+    //root[i,j]表示以i为根，j个节点的最优二叉查找树的根节点
+    double** e    = (double**)malloc((Length + 2) * sizeof(double*));
+    double** w    = (double**)malloc((Length + 2) * sizeof(double*));
+    int**    root = (int**)malloc((Length + 1) * sizeof(int*));
+    for (int i = 0; i < Length + 2; ++i)
+    {
+        e[i] = (double*)calloc((Length + 1), sizeof(double));
+        w[i] = (double*)calloc((Length + 1), sizeof(double));
+    }
+    for (int i = 0; i < Length + 1; ++i) root[i] = (int*)calloc((Length + 1), sizeof(int));
+
+    //初始化e和w
+    for (int i = 1; i <= Length + 1; ++i)
+    {
+        e[i][i - 1] = Q[i - 1];
+        w[i][i - 1] = Q[i - 1];
+    }
+    //开始动态规划
+    for (int i = 1; i <= Length; ++i)
+    {
+        for (int j = 1; j <= Length - i + 1; ++j)
+        {
+            int Temp   = i + j - 1;
+            e[j][Temp] = 1e9;
+            w[j][Temp] = w[j][Temp - 1] + P[Temp] + Q[Temp];
+            for (int k = j; k <= Temp; ++k)
+            {
+                double t = e[j][k - 1] + e[k + 1][Temp] + w[j][Temp];
+                if (t < e[j][Temp])
+                {
+                    e[j][Temp]    = t;
+                    root[j][Temp] = k;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < Length + 1; ++i)
+    {
+        for (int j = 0; j < Length + 1; ++j) { printf("%d ", root[i][j]); }
+        printf("\n");
+    }
+    for (int i = 0; i < Length + 2; ++i)
+    {
+        for (int j = 0; j < Length + 1; ++j) { printf("%lf ", e[i][j]); }
+        printf("\n");
+    }
+    return NULL;
 }

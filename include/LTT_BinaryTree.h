@@ -26,9 +26,6 @@ extern "C"
     void LTT_BiTree_Clear(BinaryTreeNode* Root);
     // 销毁二叉树
     void LTT_Bitree_Destroy(BinaryTree* BiTree);
-
-
-
     //前序遍历
     Status LTT_BiTree_PreOrder_Traverse_Recursive(BinaryTreeNode* BiTreeNode, VisitFunction Visit);
     Status LTT_BiTree_PreOrder_Traverse_Stack(BinaryTreeNode* BiTreeNode, VisitFunction Visit);
@@ -40,6 +37,8 @@ extern "C"
     Status LTT_BiTree_PostOrder_Traverse_Stack(BinaryTreeNode* BiTreeNode, VisitFunction Visit);
     //层序遍历
     Status LTT_BiTree_LevelOrder_Traverse_Queue(BinaryTreeNode* BiTreeNode, VisitFunction Visit);
+    //构建最优二叉搜索树
+    BinaryTree* LTT_BiTree_Build_Optimal_BST(void** Data, size_t DataSize, double* P, double* Q, int Length);
 #ifdef __cplusplus
 }
 #endif
