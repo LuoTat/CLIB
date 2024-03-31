@@ -346,7 +346,7 @@ BinaryTree* LTT_BiTree_Build_Optimal_BST(void** Data, size_t DataSize, double* P
         for (int j = 1; j <= Length - i + 1; ++j)
         {
             int Temp   = i + j - 1;
-            e[j][Temp] = 1e9;
+            e[j][Temp] = 10000;
             w[j][Temp] = w[j][Temp - 1] + P[Temp] + Q[Temp];
             for (int k = j; k <= Temp; ++k)
             {
@@ -360,14 +360,14 @@ BinaryTree* LTT_BiTree_Build_Optimal_BST(void** Data, size_t DataSize, double* P
         }
     }
 
-    for (int i = 0; i < Length + 1; ++i)
+    for (int i = 1; i <= Length; ++i)
     {
-        for (int j = 0; j < Length + 1; ++j) { printf("%d ", root[i][j]); }
+        for (int j = i; j <= Length; ++j) { printf("%d ", root[i][j]); }
         printf("\n");
     }
-    for (int i = 0; i < Length + 2; ++i)
+    for (int i = 1; i <= Length; ++i)
     {
-        for (int j = 0; j < Length + 1; ++j) { printf("%lf ", e[i][j]); }
+        for (int j = i; j <= Length; ++j) { printf("%lf ", e[i][j]); }
         printf("\n");
     }
     return NULL;
