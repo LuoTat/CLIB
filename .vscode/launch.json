@@ -5,7 +5,7 @@
         "name": "LLDB调试",
         "type": "lldb",
         "request": "launch",
-        "program": "${workspaceFolder}/test/bin/${input:EXE}",
+        "program": "${workspaceFolder}/test/bin/${input:EXE}.exe",
         "args": [],
         "cwd": "${workspaceFolder}"
       },

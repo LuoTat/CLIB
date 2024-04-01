@@ -4,7 +4,7 @@
 #include "LTT_BinaryTree.h"
 
 #define Mode       2
-#define NodeNum    1000000
+#define NodeNum    10000
 #define RandomSend (unsigned)time(NULL)
 
 void SWAP(int* a, int* b)
@@ -118,13 +118,19 @@ int main()
     printf("find %d\n", *(int*)findnode->Data);
 
 
-    LTT_Bitree_Destroy(BiTree);
+    //LTT_Bitree_Destroy(BiTree);
 
     printf("Optimal_BST\n");
-    double P[6]      = {0, 0.15, 0.1, 0.05, 0.1, 0.2};
-    double Q[6]      = {0.05, 0.1, 0.05, 0.05, 0.05, 0.1};
-    int    Number[6] = {0, 1, 2, 3, 4, 5};
-    int*   Data[6]   = {&Number[0], &Number[1], &Number[2], &Number[3], &Number[4], &Number[5]};
-    LTT_BiTree_Build_Optimal_BST((void**)Data, sizeof(int), P, Q, 5);
+    double      P[6]      = {0, 0.15, 0.1, 0.05, 0.1, 0.2};
+    double      Q[6]      = {0.05, 0.1, 0.05, 0.05, 0.05, 0.1};
+    int         Number[6] = {0, 1, 2, 3, 4, 5};
+    int*        Data[6]   = {&Number[0], &Number[1], &Number[2], &Number[3], &Number[4], &Number[5]};
+    BinaryTree* OPT       = LTT_BiTree_Build_Optimal_BST((void**)Data, sizeof(int), P, Q, 6);
+    LTT_BiTree_PreOrder_Traverse_Recursive(OPT->Root, PRINT);
+    printf("\n");
+    LTT_BiTree_InOrder_Traverse_Recursive(OPT->Root, PRINT);
+    printf("\n");
+    LTT_BiTree_PostOrder_Traverse_Recursive(OPT->Root, PRINT);
+    printf("\n");
     printf("Test Over!\n");
 }

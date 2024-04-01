@@ -37,7 +37,9 @@ extern "C"
     Status LTT_BiTree_PostOrder_Traverse_Stack(BinaryTreeNode* BiTreeNode, VisitFunction Visit);
     //层序遍历
     Status LTT_BiTree_LevelOrder_Traverse_Queue(BinaryTreeNode* BiTreeNode, VisitFunction Visit);
-    //构建最优二叉搜索树
+    //计算最优二叉搜索树的期望代价
+    double LTT_BiTree_Calculate_Optimal_BST(double* P, double* Q, int Length);
+    //构造最优二叉搜索树
     BinaryTree* LTT_BiTree_Build_Optimal_BST(void** Data, size_t DataSize, double* P, double* Q, int Length);
 #ifdef __cplusplus
 }
