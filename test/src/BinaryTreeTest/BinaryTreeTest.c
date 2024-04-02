@@ -125,7 +125,8 @@ int main()
     double      Q[6]      = {0.05, 0.1, 0.05, 0.05, 0.05, 0.1};
     int         Number[6] = {0, 1, 2, 3, 4, 5};
     int*        Data[6]   = {&Number[0], &Number[1], &Number[2], &Number[3], &Number[4], &Number[5]};
-    BinaryTree* OPT       = LTT_BiTree_Build_Optimal_BST((void**)Data, sizeof(int), P, Q, 6);
+    BinaryTree* OPT       = LTT_BiTree_Build_Optimal_BST((void**)Data, sizeof(int), P, Q, 5);
+
     LTT_BiTree_PreOrder_Traverse_Recursive(OPT->Root, PRINT);
     printf("\n");
     LTT_BiTree_InOrder_Traverse_Recursive(OPT->Root, PRINT);

@@ -1,5 +1,4 @@
 #include "BinaryTree.h"
-#include <corecrt.h>
 #include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -309,42 +308,48 @@ void LTT_Bitree_Destroy(BinaryTree* BiTree)
 /*
     P是查找成功概率
     Q是查找失败概率
-    Length是节点个数
+    N是节点个数
 */
-static int** LTT_BiTree_GetRoot_Optimal_BST(double* P, double* Q, int Length)
-{    //使用动态规划算法构造最优二叉查找树
-    // Data[1..n]是关键字，P[1..n]是查找概率，Q[0..n]是失败概率
-    //构造三个二维数组e[1..n+1,0..n]和w[1..n+1,0..n]和root[1..n,1..n]
+void LTT_BiTree_Calculate_Optimal_BST(double** e, int** root, double* P, double* Q, int N)
+{
+    //使用动态规划算法构造最优二叉查找树
+    // Data[1..N]是关键字，P[1..N]是查找概率，Q[0..N]是失败概率
+    //构造三个二维数组e[1..N+1,0..N]和w[1..N+1,0..N]和root[1..N,1..N]
     //e[i,j]表示在包含关键字Data[i],Data[i+1],...,Data[j]的子树中进行一次查找的期望代价
     //w[i,j]表示在包含关键字Data[i],Data[i+1],...,Data[j]的子树成为另外一个节点的子树时增加的进行一次查找的期望代价
     //root[i,j]表示以i为根，j个节点的最优二叉查找树的根节点
-    double** e    = (double**)malloc((Length + 2) * sizeof(double*));
-    double** w    = (double**)malloc((Length + 2) * sizeof(double*));
-    int**    root = (int**)malloc((Length + 1) * sizeof(int*));
-    for (int i = 0; i < Length + 2; ++i)
+
+    if (root == NULL)
     {
-        e[i] = (double*)calloc((Length + 1), sizeof(double));
-        w[i] = (double*)calloc((Length + 1), sizeof(double));
+        root = (int**)malloc((N + 1) * sizeof(int*));
+        for (int i = 0; i < N + 1; ++i) root[i] = (int*)calloc((N + 1), sizeof(int));
     }
-    for (int i = 0; i < Length + 1; ++i) root[i] = (int*)calloc((Length + 1), sizeof(int));
+    if (e == NULL)
+    {
+        e = (double**)malloc((N + 2) * sizeof(double*));
+        for (int i = 0; i < N + 2; ++i) { e[i] = (double*)calloc((N + 1), sizeof(double)); }
+    }
+
+    double** w = (double**)malloc((N + 2) * sizeof(double*));
+    for (int i = 0; i < N + 2; ++i) { w[i] = (double*)calloc((N + 1), sizeof(double)); }
 
     //初始化e和w
-    for (int i = 1; i <= Length + 1; ++i)
+    for (int i = 1; i <= N + 1; ++i)
     {
         e[i][i - 1] = Q[i - 1];
         w[i][i - 1] = Q[i - 1];
     }
     //开始动态规划
     /*
-        这里的i是控制迭代求解子树问题的长度,从0(e[i][i])到Length-1(e[1][n])
+        这里的i是控制迭代求解子树问题的长度,从0(e[i][i])到Length-1(e[1][N])
     */
-    for (int i = 0; i <= Length - 1; ++i)
+    for (int i = 0; i <= N - 1; ++i)
     {
         /*  
-            这里的j是控制子树的起始位置，从1到Length - i
-            因为子树的长度是i+1，所以子树的起始位置最大是Length - i
+            这里的j是控制子树的起始位置，从1到N - i
+            因为子树的长度是i+1，所以子树的起始位置最大是N - i
         */
-        for (int j = 1; j <= Length - i; ++j)
+        for (int j = 1; j <= N - i; ++j)
         {
             int Temp   = i + j;                                          //子树的终止位置
             e[j][Temp] = DBL_MAX;                                        //初始化e[j][Temp]为无穷大
@@ -360,14 +365,19 @@ static int** LTT_BiTree_GetRoot_Optimal_BST(double* P, double* Q, int Length)
             }
         }
     }
-    for (int i = 0; i < Length + 2; ++i)
+
+    if (root == NULL)
     {
-        free(e[i]);
-        free(w[i]);
+        for (int i = 0; i < N + 1; ++i) free(root[i]);
+        free(root);
     }
-    free(e);
+    if (e == NULL)
+    {
+        for (int i = 0; i < N + 2; ++i) { free(e[i]); }
+        free(e);
+    }
+    for (int i = 0; i < N + 2; ++i) { free(w[i]); }
     free(w);
-    return root;
 }
 
 static BinaryTree* LTT_BiTree_Build_Optimal_BST_Kernel(void** Data, size_t DataSize, int** Root, int Length)
@@ -380,8 +390,13 @@ static BinaryTree* LTT_BiTree_Build_Optimal_BST_Kernel(void** Data, size_t DataS
         int             Right;
     } NodeInfo;
 
-    NodeInfo*       Temp;
-    NodeInfo        LeftInfo, RightInfo;
+    NodeInfo* NodeInfoArray = (NodeInfo*)malloc((Length * 2) * sizeof(NodeInfo));
+    int       count         = 0;
+
+    NodeInfo* Temp;
+    NodeInfo* LeftInfo;
+    NodeInfo* RightInfo;
+
     BinaryTreeNode* RootNode;
     int             RootIndex;
 
@@ -391,107 +406,56 @@ static BinaryTree* LTT_BiTree_Build_Optimal_BST_Kernel(void** Data, size_t DataS
     BinaryTree* BiTree = LTT_BiTree_New(Data[RootIndex], DataSize);
     RootNode           = BiTree->Root;
 
-    LeftInfo.Node = RightInfo.Node = RootNode;
-    LeftInfo.Left                  = 1;
-    LeftInfo.Right                 = RootIndex - 1;
-    LeftInfo.IsLeft                = true;
-    RightInfo.Left                 = RootIndex + 1;
-    RightInfo.Right                = Length;
-    RightInfo.IsLeft               = false;
+    LeftInfo           = &NodeInfoArray[count++];
+    LeftInfo->Node     = RootNode;
+    LeftInfo->Left     = 1;
+    LeftInfo->Right    = RootIndex - 1;
+    LeftInfo->IsLeft   = true;
 
-    if (RightInfo.Left <= RightInfo.Right) LTT_ArrayStack_Push(Stack, &RightInfo);
-    if (LeftInfo.Left <= LeftInfo.Right) LTT_ArrayStack_Push(Stack, &LeftInfo);
+    RightInfo          = &NodeInfoArray[count++];
+    RightInfo->Node    = RootNode;
+    RightInfo->Left    = RootIndex + 1;
+    RightInfo->Right   = Length;
+    RightInfo->IsLeft  = false;
+
+    if (RightInfo->Left <= RightInfo->Right) LTT_ArrayStack_Push(Stack, RightInfo);
+    if (LeftInfo->Left <= LeftInfo->Right) LTT_ArrayStack_Push(Stack, LeftInfo);
 
     while (!LTT_ArrayStack_IsEmpty(Stack))
     {
         Temp      = LTT_ArrayStack_Pop(Stack);
         RootIndex = Root[Temp->Left][Temp->Right];
+
         RootNode  = LTT_BiTree_Make_Node(Data[RootIndex], DataSize);
         if (Temp->IsLeft == true) { Temp->Node->LeftChild = RootNode; }
         else { Temp->Node->RightChild = RootNode; }
-        NodeInfo LeftTemp, RightTemp;
-        LeftTemp.Node = RightInfo.Node = RootNode;
-        LeftTemp.Left                  = Temp->Left;
-        LeftTemp.Right                 = RootIndex - 1;
-        LeftTemp.IsLeft                = true;
-        RightTemp.Left                 = RootIndex + 1;
-        RightTemp.Right                = Temp->Right;
-        RightTemp.IsLeft               = false;
-        if (RightInfo.Left <= RightTemp.Right) LTT_ArrayStack_Push(Stack, &RightTemp);
-        if (LeftTemp.Left <= LeftTemp.Right) LTT_ArrayStack_Push(Stack, &LeftTemp);
+
+        LeftInfo          = &NodeInfoArray[count++];
+        LeftInfo->Node    = RootNode;
+        LeftInfo->Left    = Temp->Left;
+        LeftInfo->Right   = RootIndex - 1;
+        LeftInfo->IsLeft  = true;
+        RightInfo         = &NodeInfoArray[count++];
+        RightInfo->Node   = RootNode;
+        RightInfo->Left   = RootIndex + 1;
+        RightInfo->Right  = Temp->Right;
+        RightInfo->IsLeft = false;
+
+        if (RightInfo->Left <= RightInfo->Right) LTT_ArrayStack_Push(Stack, RightInfo);
+        if (LeftInfo->Left <= LeftInfo->Right) LTT_ArrayStack_Push(Stack, LeftInfo);
     }
     LTT_ArrayStack_Destroy(Stack);
+    free(NodeInfoArray);
     return BiTree;
 }
 
 BinaryTree* LTT_BiTree_Build_Optimal_BST(void** Data, size_t DataSize, double* P, double* Q, int Length)
 {
-    int**       Root   = LTT_BiTree_GetRoot_Optimal_BST(P, Q, Length);
+    int** Root = (int**)malloc((Length + 1) * sizeof(int*));
+    for (int i = 0; i < Length + 1; ++i) Root[i] = (int*)calloc((Length + 1), sizeof(int));
+    LTT_BiTree_Calculate_Optimal_BST(NULL, Root, P, Q, Length);
     BinaryTree* BiTree = LTT_BiTree_Build_Optimal_BST_Kernel(Data, DataSize, Root, Length);
     for (int i = 0; i < Length + 1; ++i) free(Root[i]);
     free(Root);
     return BiTree;
-}
-
-double LTT_BiTree_Calculate_Optimal_BST(double* P, double* Q, int Length)
-{
-    //使用动态规划算法构造最优二叉查找树
-    // Data[1..n]是关键字，P[1..n]是查找概率，Q[0..n]是失败概率
-    //构造三个二维数组e[1..n+1,0..n]和w[1..n+1,0..n]和root[1..n,1..n]
-    //e[i,j]表示在包含关键字Data[i],Data[i+1],...,Data[j]的子树中进行一次查找的期望代价
-    //w[i,j]表示在包含关键字Data[i],Data[i+1],...,Data[j]的子树成为另外一个节点的子树时增加的进行一次查找的期望代价
-    //root[i,j]表示以i为根，j个节点的最优二叉查找树的根节点
-    double** e    = (double**)malloc((Length + 2) * sizeof(double*));
-    double** w    = (double**)malloc((Length + 2) * sizeof(double*));
-    int**    root = (int**)malloc((Length + 1) * sizeof(int*));
-    for (int i = 0; i < Length + 2; ++i)
-    {
-        e[i] = (double*)calloc((Length + 1), sizeof(double));
-        w[i] = (double*)calloc((Length + 1), sizeof(double));
-    }
-    for (int i = 0; i < Length + 1; ++i) root[i] = (int*)calloc((Length + 1), sizeof(int));
-
-    //初始化e和w
-    for (int i = 1; i <= Length + 1; ++i)
-    {
-        e[i][i - 1] = Q[i - 1];
-        w[i][i - 1] = Q[i - 1];
-    }
-    //开始动态规划
-    /*
-        这里的i是控制迭代求解子树问题的长度,从0(e[i][i])到Length-1(e[1][n])
-    */
-    for (int i = 0; i <= Length - 1; ++i)
-    {
-        /*  
-            这里的j是控制子树的起始位置，从1到Length - i
-            因为子树的长度是i+1，所以子树的起始位置最大是Length - i
-        */
-        for (int j = 1; j <= Length - i; ++j)
-        {
-            int Temp   = i + j;                                          //子树的终止位置
-            e[j][Temp] = DBL_MAX;                                        //初始化e[j][Temp]为无穷大
-            w[j][Temp] = w[j][Temp - 1] + P[Temp] + Q[Temp];             //初始化w[j][Temp]
-            for (int k = j; k <= Temp; ++k)
-            {
-                double t = e[j][k - 1] + e[k + 1][Temp] + w[j][Temp];    //计算e[j][Temp]
-                if (t < e[j][Temp])                                      //如果t小于e[j][Temp]，更新e[j][Temp]和root[j][Temp]
-                {
-                    e[j][Temp]    = t;
-                    root[j][Temp] = k;
-                }
-            }
-        }
-    }
-    double Result = e[1][Length];
-    for (int i = 0; i < Length + 2; ++i)
-    {
-        free(e[i]);
-        free(w[i]);
-    }
-    free(e);
-    free(w);
-    for (int i = 0; i < Length + 1; ++i) free(root[i]);
-    free(root);
-    return Result;
 }
