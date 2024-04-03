@@ -4,7 +4,7 @@
 #include "LTT_BinaryTree.h"
 
 #define Mode       2
-#define NodeNum    10000
+#define NodeNum    1000
 #define RandomSend (unsigned)time(NULL)
 
 void SWAP(int* a, int* b)
@@ -121,11 +121,35 @@ int main()
     //LTT_Bitree_Destroy(BiTree);
 
     printf("Optimal_BST\n");
-    double      P[6]      = {0, 0.15, 0.1, 0.05, 0.1, 0.2};
-    double      Q[6]      = {0.05, 0.1, 0.05, 0.05, 0.05, 0.1};
-    int         Number[6] = {0, 1, 2, 3, 4, 5};
-    int*        Data[6]   = {&Number[0], &Number[1], &Number[2], &Number[3], &Number[4], &Number[5]};
-    BinaryTree* OPT       = LTT_BiTree_Build_Optimal_BST((void**)Data, sizeof(int), P, Q, 5);
+
+    double* random_num = (double*)malloc((NodeNum * 2 + 1) * sizeof(double));
+    double  sum        = 0;
+    for (int i = 0; i < NodeNum * 2 + 1; i++)
+    {
+        random_num[i]  = (double)rand() / RAND_MAX;
+        sum           += random_num[i];
+    }
+    for (int i = 0; i < NodeNum * 2 + 1; i++) random_num[i] /= sum;
+
+    int     count = 0;
+    double* P     = (double*)malloc((NodeNum + 1) * sizeof(double));
+    double* Q     = (double*)malloc((NodeNum + 1) * sizeof(double));
+    for (int i = 1; i < NodeNum + 1; i++)
+    {
+        P[i] = random_num[count++];
+        Q[i] = random_num[count++];
+    }
+    Q[0]        = random_num[count];
+
+    int* Number = (int*)malloc((NodeNum + 1) * sizeof(int));
+    for (int i = 0; i < NodeNum + 1; i++) Number[i] = i;
+    int** Data = (int**)malloc((NodeNum + 1) * sizeof(int*));
+    for (int i = 0; i < NodeNum + 1; i++) Data[i] = &Number[i];
+
+    Start           = clock();
+    BinaryTree* OPT = LTT_BiTree_Build_Optimal_BST((void**)Data, sizeof(int), P, Q, NodeNum);
+    End             = clock();
+    printf("Optimal BST Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
 
     LTT_BiTree_PreOrder_Traverse_Recursive(OPT->Root, PRINT);
     printf("\n");
