@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../LinearList/SqQueue.h"
-#include "..\Predefined\Predefined.h"
+#include "../Predefined/Predefined.h"
 
 
 #define LH +1
