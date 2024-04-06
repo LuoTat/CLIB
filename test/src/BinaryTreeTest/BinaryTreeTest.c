@@ -78,7 +78,7 @@ int main()
 
     clock_t Start, End;
     Start = clock();
-    for (int i = 1; i < NodeNum; i++) { LTT_BiTree_Insert_Data(BiTree->Root, intArray[i], sizeof(int), cmp); }
+    for (int i = 1; i < NodeNum; i++) { LTT_BiTreeNode_Insert_Data(BiTree->Root, intArray[i], sizeof(int), cmp); }
     End = clock();
     printf("Insert Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
 
@@ -105,16 +105,16 @@ int main()
     // LTT_BiTree_LevelOrder_Traverse_Queue(BiTree->Root, PRINT);
     // printf("\n");
 
-    int NodeNumber = LTT_BiTree_Get_NodeNumber(BiTree->Root);
+    int NodeNumber = LTT_BiTreeNode_Get_NodeNumber(BiTree->Root);
     printf("NodeNumber: %d\n", NodeNumber);
 
-    int LeafNum = LTT_BiTree_Get_LeafNumber(BiTree->Root);
+    int LeafNum = LTT_BiTreeNode_Get_LeafNumber(BiTree->Root);
     printf("LeafNumber: %d\n", LeafNum);
 
-    int Depth = LTT_BiTree_Get_Depth(BiTree->Root);
+    int Depth = LTT_BiTreeNode_Get_Depth(BiTree->Root);
     printf("Depth: %d\n", Depth);
 
-    BinaryTreeNode* findnode = LTT_BiTree_Search_Data(BiTree->Root, intArray[rand() % NodeNum], cmp);
+    BinaryTreeNode* findnode = LTT_BiTreeNode_Search_Data(BiTree->Root, intArray[rand() % NodeNum], cmp);
     printf("find %d\n", *(int*)findnode->Data);
 
 
@@ -151,11 +151,11 @@ int main()
     End             = clock();
     printf("Optimal BST Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
 
-    LTT_BiTree_PreOrder_Traverse_Recursive(OPT->Root, PRINT);
+    LTT_BiTreeNode_PreOrder_Traverse_Recursive(OPT->Root, PRINT);
     printf("\n");
-    LTT_BiTree_InOrder_Traverse_Recursive(OPT->Root, PRINT);
+    LTT_BiTreeNode_InOrder_Traverse_Recursive(OPT->Root, PRINT);
     printf("\n");
-    LTT_BiTree_PostOrder_Traverse_Recursive(OPT->Root, PRINT);
+    LTT_BiTreeNode_PostOrder_Traverse_Recursive(OPT->Root, PRINT);
     printf("\n");
     printf("Test Over!\n");
 }
