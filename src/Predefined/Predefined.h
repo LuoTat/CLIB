@@ -1,6 +1,9 @@
 #pragma once
 #include <stdbool.h>
+#include <stdio.h>     // IWYU pragma: export
+#include <stdlib.h>    // IWYU pragma: export
 #include <string.h>
+
 
 
 /*

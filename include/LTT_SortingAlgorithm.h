@@ -1,6 +1,14 @@
 #pragma once
 #include "../src/Predefined/Predefined.h"
 
+#ifndef SWAPMODE
+    #define SWAPMODE 2
+#endif
+#ifndef MAX_SIZEOFELEMENTS
+    #define MAX_SIZEOFELEMENTS 1024
+#endif
+
+
 #ifdef __cplusplus
 extern "C"
 {

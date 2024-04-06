@@ -1,6 +1,3 @@
-
-
-
 #pragma once
 #include "../src/Iterator/Iterator.h"
 #include "../src/Predefined/Predefined.h"

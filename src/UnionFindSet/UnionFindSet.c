@@ -1,6 +1,4 @@
 #include "UnionFindSet.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "../Iterator/Iterator.h"
 #include "../Predefined/Predefined.h"
 #include "LTT_HashMap.h"

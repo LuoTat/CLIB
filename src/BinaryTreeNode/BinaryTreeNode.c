@@ -1,7 +1,4 @@
 #include "BinaryTreeNode.h"
-#include <float.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "../Predefined/Predefined.h"
 #include "LTT_ArrayQueue.h"
 #include "LTT_ArrayStack.h"

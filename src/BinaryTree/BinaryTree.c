@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include "LTT_ArrayStack.h"
 
-
-
 // BinaryTreeNode* LTT_BiTree_Make_Node(void* const Data, const size_t DataSize)
 // {
 //     BinaryTreeNode* RootNode = (BinaryTreeNode*)malloc(sizeof(BinaryTreeNode));

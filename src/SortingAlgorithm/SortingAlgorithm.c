@@ -1,10 +1,8 @@
-#include "SortingAlgorithm.h"
 #include <limits.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "../../include/LTT_SortingAlgorithm.h"
 #include "../Predefined/Predefined.h"
+
 
 //用来作为许多排序算法的临时存储空间
 static char  Temp[MAX_SIZEOFELEMENTS];
@@ -605,11 +603,11 @@ void QuickSort_glibc(void* Base, size_t NumOfElements, size_t SizeOfElements, Co
             while (Left_ptr <= Right_ptr);
 
             //将未排序的部分放入栈中
-            if ((size_t)(Right_ptr - Low) <= Max_Thresh)                           //左边小
+            if ((size_t)(Right_ptr - Low) <= Max_Thresh)                        //左边小
             {
-                if ((size_t)(High - Left_ptr) <= Max_Thresh) POP(Low, High);       //左边小,右边小，直接弹出
-                else Low = Left_ptr;                                               //左边小,右边大，从右边开始
-            }                                                                      //左边大
+                if ((size_t)(High - Left_ptr) <= Max_Thresh) POP(Low, High);    //左边小,右边小，直接弹出
+                else Low = Left_ptr;                                            //左边小,右边大，从右边开始
+            }    //左边大
             else if ((size_t)(High - Left_ptr) <= Max_Thresh) High = Right_ptr;    //左边大,右边小，从左边开始
             else if ((Right_ptr - Low) > (High - Left_ptr))                        //两边均大,左边大于右边
             {
