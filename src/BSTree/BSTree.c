@@ -5,14 +5,9 @@
 
 BSTree* LTT_BSTree_New(const size_t DataSize, const CompareFunction Comparator)
 {
-    BSTree* BS_Tree = (BSTree*)malloc(sizeof(BSTree));
-    if (BS_Tree == NULL)
-    {
-        printf("BSTree制作失败!\n");
-        return NULL;
-    }
-    BinaryTree* BiTree = LTT_BiTree_New(DataSize);
-    if (BiTree == NULL)
+    BSTree*     BS_Tree = (BSTree*)malloc(sizeof(BSTree));
+    BinaryTree* BiTree  = LTT_BiTree_New(DataSize);
+    if (BS_Tree == NULL || BiTree == NULL)
     {
         printf("BSTree制作失败!\n");
         free(BS_Tree);
@@ -24,9 +19,9 @@ BSTree* LTT_BSTree_New(const size_t DataSize, const CompareFunction Comparator)
     return BS_Tree;
 }
 
-Status LTT_BSTree_Insert_Data(BSTree* BS_Tree, void* const Data)
+Status LTT_BSTree_InsertData(BSTree* BS_Tree, void* const Data)
 {
-    BinaryTreeNode* BeInsertedNode = LTT_BiTreeNode_Make_Node(Data);
+    BinaryTreeNode* BeInsertedNode = LTT_BiTreeNode_MakeNode(Data);
     if (BeInsertedNode == NULL) return ERROR;
     if (BS_Tree->BiTree.Root == NODE_NULL)
     {
@@ -63,12 +58,32 @@ Status LTT_BSTree_Insert_Data(BSTree* BS_Tree, void* const Data)
     }
 }
 
-Status LTT_BSTree_Delete_Data(BSTree* BS_Tree, void* const Data);
+static BinaryTreeNode** LTT_BSTreeNode_SearchData_UsedbyDeleteData(BSTree* const BS_Tree, const void* const Data)
+{
+    BinaryTreeNode** Iterator = &BS_Tree->BiTree.Root;
+    if (*Iterator == NODE_NULL) return NULL;
+    while (*Iterator != NODE_NULL)
+    {
+        int Delta = BS_Tree->Comparator(Data, (*Iterator)->Data);
+        if (Delta == 0) return Iterator;
+        else if (Delta < 0) Iterator = &(*Iterator)->LeftChild;
+        else Iterator = &(*Iterator)->RightChild;
+    }
+    return NULL;
+}
 
-BinaryTreeNode* LTT_BSTreeNode_Search_Data(const BSTree* const BS_Tree, const void* const Data)
+Status LTT_BSTree_DeleteData(BSTree* BS_Tree, void* const Data)
+{
+    BinaryTreeNode** FindNode = LTT_BSTreeNode_SearchData_UsedbyDeleteData(BS_Tree, Data);
+    if (FindNode == NULL) return ERROR;
+    LTT_BiTreeNode_DeleteNode(FindNode);
+    return OK;
+}
+
+BinaryTreeNode* LTT_BSTreeNode_SearchData(const BSTree* const BS_Tree, const void* const Data)
 {
     BinaryTreeNode* Iterator = BS_Tree->BiTree.Root;
-    if (Iterator == NODE_NULL) return NULL;
+    if (Iterator == NODE_NULL) return NODE_NULL;
     while (Iterator != NODE_NULL)
     {
         int Delta = BS_Tree->Comparator(Data, Iterator->Data);
@@ -187,7 +202,7 @@ static BSTree* LTT_BSTree_Build_Optimal_BST_Kernel(void** Data, size_t DataSize,
 
     RootIndex         = Root[1][Length];
     BSTree* BS_Tree   = LTT_BSTree_New(DataSize, Comparator);
-    LTT_BSTree_Insert_Data(BS_Tree, Data[RootIndex]);
+    LTT_BSTree_InsertData(BS_Tree, Data[RootIndex]);
     RootNode          = BS_Tree->BiTree.Root;
 
     LeftInfo          = &NodeInfoArray[count++];
@@ -210,7 +225,7 @@ static BSTree* LTT_BSTree_Build_Optimal_BST_Kernel(void** Data, size_t DataSize,
         Temp      = LTT_ArrayStack_Pop(Stack);
         RootIndex = Root[Temp->Left][Temp->Right];
 
-        RootNode  = LTT_BiTreeNode_Make_Node(Data[RootIndex]);
+        RootNode  = LTT_BiTreeNode_MakeNode(Data[RootIndex]);
         if (Temp->IsLeft == true) { Temp->Node->LeftChild = RootNode; }
         else { Temp->Node->RightChild = RootNode; }
 

@@ -26,21 +26,22 @@ int main()
     int int7               = 7;
 
     BinaryTree*     BiTree = LTT_BiTree_New(sizeof(int));
-    BinaryTreeNode* Node1  = LTT_BiTreeNode_Make_Node(&int1);
-    BinaryTreeNode* Node2  = LTT_BiTreeNode_Make_Node(&int2);
-    BinaryTreeNode* Node3  = LTT_BiTreeNode_Make_Node(&int3);
-    BinaryTreeNode* Node4  = LTT_BiTreeNode_Make_Node(&int4);
-    BinaryTreeNode* Node5  = LTT_BiTreeNode_Make_Node(&int5);
-    BinaryTreeNode* Node6  = LTT_BiTreeNode_Make_Node(&int6);
-    BinaryTreeNode* Node7  = LTT_BiTreeNode_Make_Node(&int7);
-    LTT_BiTree_Insert_Root(BiTree, Node1);
-    LTT_BiTree_Insert_Node(BiTree->Root, Node2, 1);
-    LTT_BiTree_Insert_Node(BiTree->Root, Node3, 0);
-    LTT_BiTree_Insert_Node(Node2, Node4, 1);
-    LTT_BiTree_Insert_Node(Node2, Node5, 0);
-    LTT_BiTree_Insert_Node(Node3, Node6, 1);
-    LTT_BiTree_Insert_Node(Node3, Node7, 0);
+    BinaryTreeNode* Node1  = LTT_BiTreeNode_MakeNode(&int1);
+    BinaryTreeNode* Node2  = LTT_BiTreeNode_MakeNode(&int2);
+    BinaryTreeNode* Node3  = LTT_BiTreeNode_MakeNode(&int3);
+    BinaryTreeNode* Node4  = LTT_BiTreeNode_MakeNode(&int4);
+    BinaryTreeNode* Node5  = LTT_BiTreeNode_MakeNode(&int5);
+    BinaryTreeNode* Node6  = LTT_BiTreeNode_MakeNode(&int6);
+    BinaryTreeNode* Node7  = LTT_BiTreeNode_MakeNode(&int7);
+    LTT_BiTree_InsertRoot(BiTree, Node1);
+    LTT_BiTree_InsertNode(BiTree->Root, Node2, 1);
+    LTT_BiTree_InsertNode(BiTree->Root, Node3, 0);
+    LTT_BiTree_InsertNode(Node2, Node4, 1);
+    LTT_BiTree_InsertNode(Node2, Node5, 0);
+    LTT_BiTree_InsertNode(Node3, Node6, 1);
+    LTT_BiTree_InsertNode(Node3, Node7, 0);
 
+    LTT_BiTreeNode_DeleteSubTree(&BiTree->Root->LeftChild);
 
     printf("PreOrder: \n");
     LTT_BiTreeNode_PreOrder_Traverse_Recursive(BiTree->Root, PRINT);
@@ -64,13 +65,13 @@ int main()
     LTT_BiTreeNode_LevelOrder_Traverse_Queue(BiTree->Root, PRINT);
     printf("\n");
 
-    int NodeNumber = LTT_BiTreeNode_Get_NodeNumber(BiTree->Root);
+    int NodeNumber = LTT_BiTreeNode_GetNodeNumber(BiTree->Root);
     printf("NodeNumber: %d\n", NodeNumber);
 
-    int LeafNum = LTT_BiTreeNode_Get_LeafNumber(BiTree->Root);
+    int LeafNum = LTT_BiTreeNode_GetLeafNumber(BiTree->Root);
     printf("LeafNumber: %d\n", LeafNum);
 
-    int Depth = LTT_BiTreeNode_Get_Depth(BiTree->Root);
+    int Depth = LTT_BiTreeNode_GetDepth(BiTree->Root);
     printf("Depth: %d\n", Depth);
 
     LTT_BiTree_Destroy(&BiTree);

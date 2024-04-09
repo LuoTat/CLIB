@@ -5,7 +5,7 @@
 
 BinaryTreeNode Node_NULL = {NULL, 0, NULL};
 
-BinaryTreeNode* LTT_BiTreeNode_Make_Node(void* const Data)
+BinaryTreeNode* LTT_BiTreeNode_MakeNode(void* const Data)
 {
     BinaryTreeNode* RootNode = (BinaryTreeNode*)malloc(sizeof(BinaryTreeNode));
     if (RootNode == NULL)
@@ -19,7 +19,30 @@ BinaryTreeNode* LTT_BiTreeNode_Make_Node(void* const Data)
     return RootNode;
 }
 
-void LTT_BiTreeNode_Destory(BinaryTreeNode** Root)
+static void* LTT_BiTreeNode_Get_PrecursorNode(BinaryTreeNode* Root)
+{
+    BinaryTreeNode* Iterator = Root->LeftChild;
+    if (Iterator == NODE_NULL) return NODE_NULL;
+    while (Iterator->RightChild != NODE_NULL) Iterator = Iterator->RightChild;
+    return Iterator;
+}
+
+void LTT_BiTreeNode_DeleteNode(BinaryTreeNode** Node)
+{
+    BinaryTreeNode* Temp = *Node;
+    if ((*Node)->LeftChild == NODE_NULL) { *Node = (*Node)->RightChild; }
+    else if ((*Node)->RightChild == NODE_NULL) { *Node = (*Node)->LeftChild; }
+    else
+    {
+        BinaryTreeNode* Precursor = LTT_BiTreeNode_Get_PrecursorNode(*Node);
+        Precursor->RightChild     = (*Node)->RightChild;
+        *Node                     = (*Node)->LeftChild;
+    }
+    free(Temp);
+    Temp = NODE_NULL;
+}
+
+void LTT_BiTreeNode_DeleteSubTree(BinaryTreeNode** Root)
 {
     //后序遍历,释放每个节点
     ArrayStack*      Stack       = LTT_ArrayStack_New(sizeof(BinaryTreeNode*), NULL);
@@ -46,7 +69,13 @@ void LTT_BiTreeNode_Destory(BinaryTreeNode** Root)
     LTT_ArrayStack_Destroy(&OutputStack);
 }
 
-int LTT_BiTreeNode_Get_NodeNumber(BinaryTreeNode* const Root)
+void LTT_BiTreeNode_DestroyNode(BinaryTreeNode** Node)
+{
+    free(*Node);
+    *Node = NODE_NULL;
+}
+
+int LTT_BiTreeNode_GetNodeNumber(BinaryTreeNode* const Root)
 {
     int             Num   = 0;
     ArrayQueue*     Queue = LTT_ArrayQueue_New(sizeof(BinaryTreeNode), NULL);
@@ -62,24 +91,24 @@ int LTT_BiTreeNode_Get_NodeNumber(BinaryTreeNode* const Root)
     return Num;
 }
 
-int LTT_BiTreeNode_Get_LeafNumber(BinaryTreeNode* const Root)
+int LTT_BiTreeNode_GetLeafNumber(BinaryTreeNode* const Root)
 {
     int Num = 0;
     if (Root == NODE_NULL) return 0;
     if ((Root->LeftChild == NODE_NULL) && (Root->RightChild == NODE_NULL)) ++Num;
-    Num += LTT_BiTreeNode_Get_LeafNumber(Root->LeftChild);
-    Num += LTT_BiTreeNode_Get_LeafNumber(Root->RightChild);
+    Num += LTT_BiTreeNode_GetLeafNumber(Root->LeftChild);
+    Num += LTT_BiTreeNode_GetLeafNumber(Root->RightChild);
     return Num;
 }
 
-int LTT_BiTreeNode_Get_Depth(BinaryTreeNode* const Root)
+int LTT_BiTreeNode_GetDepth(BinaryTreeNode* const Root)
 {
     int Depth = 0;
     if (Root == NODE_NULL) return 0;
     else
     {
-        int DepthLeft  = LTT_BiTreeNode_Get_Depth(Root->LeftChild);
-        int DepthRight = LTT_BiTreeNode_Get_Depth(Root->RightChild);
+        int DepthLeft  = LTT_BiTreeNode_GetDepth(Root->LeftChild);
+        int DepthRight = LTT_BiTreeNode_GetDepth(Root->RightChild);
         Depth          = 1 + (DepthLeft > DepthRight ? DepthLeft : DepthRight);
     }
     return Depth;
