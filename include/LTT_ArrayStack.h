@@ -24,7 +24,7 @@ extern "C"
     // 清空队列
     void LTT_ArrayStack_Clear(ArrayStack* const ArrayStack);
     // 销毁队列
-    void LTT_ArrayStack_Destroy(ArrayStack* ArrayStack);
+    void LTT_ArrayStack_Destroy(ArrayStack** ArrayStack);
     // 获得迭代器
     Iterator LTT_ArrayStack_GetIterator(const ArrayStack* const ArrayStack);
     // 获取迭代器当前元素

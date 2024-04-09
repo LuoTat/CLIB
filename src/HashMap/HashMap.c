@@ -236,7 +236,7 @@ static HashNode** LTT_HashMap_Resize(HashMap* const HashMap)
                             ChangeTail = Temp;
                         }
                     }
-                    while ((Temp = Next) != NULL);             //如果下一个节点不为空，则继续循环
+                    while ((Temp = Next) != NULL);    //如果下一个节点不为空，则继续循环
                     if (UnChangeTail != NULL)
                     {
                         UnChangeTail->Next = NULL;
@@ -444,9 +444,9 @@ void LTT_HashMap_Clear(HashMap* const HashMap)
     }
 }
 
-void LTT_HashMap_Destroy(HashMap* HashMap)
+void LTT_HashMap_Destroy(HashMap** HashMap)
 {
-    free(HashMap->Table);
-    free(HashMap);
-    HashMap = NULL;
+    free((*HashMap)->Table);
+    free(*HashMap);
+    *HashMap = NULL;
 }

@@ -262,9 +262,9 @@ void LTT_ArrayList_Clear(ArrayList* const ArrayList)
     for (int to = ArrayList->Size, i = ArrayList->Size = 0; i < to; ++i) { EA[i] = NULL; }
 }
 
-void LTT_ArrayList_Destroy(ArrayList* ArrayList)
+void LTT_ArrayList_Destroy(ArrayList** ArrayList)
 {
-    free(ArrayList->Array);
-    free(ArrayList);
-    ArrayList = NULL;
+    free((*ArrayList)->Array);
+    free(*ArrayList);
+    *ArrayList = NULL;
 }

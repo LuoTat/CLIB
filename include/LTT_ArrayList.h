@@ -34,7 +34,7 @@ extern "C"
     // 清空数组
     void LTT_ArrayList_Clear(ArrayList* const ArrayList);
     // 销毁数组
-    void LTT_ArrayList_Destroy(ArrayList* ArrayList);
+    void LTT_ArrayList_Destroy(ArrayList** ArrayList);
     // 获取迭代器
     Iterator LTT_ArrayList_GetIterator(const ArrayList* const ArrayList);
     // 获取迭代器当前元素

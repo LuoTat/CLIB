@@ -250,9 +250,9 @@ void LTT_ArrayDeque_Clear(ArrayDeque* const ArrayDeque)
     ArrayDeque->Head = ArrayDeque->Tail = 0;
 }
 
-void LTT_ArrayDeque_Destroy(ArrayDeque* ArrayDeque)
+void LTT_ArrayDeque_Destroy(ArrayDeque** ArrayDeque)
 {
-    free(ArrayDeque->Array);
-    free(ArrayDeque);
-    ArrayDeque = NULL;
+    free((*ArrayDeque)->Array);
+    free(*ArrayDeque);
+    *ArrayDeque = NULL;
 }

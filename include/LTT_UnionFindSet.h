@@ -21,7 +21,7 @@ extern "C"
     // 并查集的清空
     void LTT_UnionFindSet_Clear(UnionFindSet* const UFS);
     //并查集的销毁
-    void LTT_UnionFindSet_Destroy(UnionFindSet* UFS);
+    void LTT_UnionFindSet_Destroy(UnionFindSet** UFS);
     //获取迭代器
     Iterator LTT_UnionFindSet_GetIterator(const UnionFindSet* const UnionFindSet);
     // 获取迭代器当前元素

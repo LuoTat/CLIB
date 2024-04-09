@@ -190,20 +190,6 @@ Status DeleteAVLTree_Kernel(AVLTreeNodePointer* RootNodePP, void* Data, bool* Lo
     return OK;
 }
 
-void* SearchAVLTree(AVLTreePointer AVLTreeP, void* Data, CompareFunction Comparator)
-{
-    AVLTreeNodePointer Iterator = AVLTreeP->RootNode;
-    if (!Iterator) return NULL;
-    while (Iterator)
-    {
-        int Delta = Comparator(Data, Iterator->Data);
-        if (Delta == 0) return Iterator->Data;
-        else if (Delta < 0) Iterator = Iterator->LeftChild;
-        else Iterator = Iterator->RightChild;
-    }
-    return NULL;
-}
-
 Status LevelOrderTraverse_AVL(AVLTreeNodePointer RootNodeP, Status (*Visit)(AVLTreeNodePointer))
 {
     SqQueue Queue;

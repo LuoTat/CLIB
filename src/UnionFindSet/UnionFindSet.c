@@ -78,9 +78,9 @@ bool LTT_UnionFindSet_IsUnite(UnionFindSet* const UFS, void* const x, void* cons
 void LTT_UnionFindSet_Clear(UnionFindSet* const UFS) { LTT_HashMap_Clear(UFS->Set); }
 
 //并查集的销毁
-void LTT_UnionFindSet_Destroy(UnionFindSet* UFS)
+void LTT_UnionFindSet_Destroy(UnionFindSet** UFS)
 {
-    LTT_HashMap_Destroy(UFS->Set);
-    free(UFS);
-    UFS = NULL;
+    LTT_HashMap_Destroy(&(*UFS)->Set);
+    free(*UFS);
+    *UFS = NULL;
 }

@@ -244,14 +244,14 @@ void LTT_LinkedList_Clear(LinkedList* const LinkedList)
     LinkedList->Size                     = 0;
 }
 
-void LTT_LinkedList_Destroy(LinkedList* LinkedList)
+void LTT_LinkedList_Destroy(LinkedList** LinkedList)
 {
-    for (LinkedListNode* x = LinkedList->First; x != NULL;)
+    for (LinkedListNode* x = (*LinkedList)->First; x != NULL;)
     {
         LinkedListNode* Next = x->Next;
         free(x);
         x = Next;
     }
-    free(LinkedList);
-    LinkedList = NULL;
+    free(*LinkedList);
+    *LinkedList = NULL;
 }

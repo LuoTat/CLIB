@@ -177,9 +177,9 @@ void LTT_ArrayStack_Clear(ArrayStack* const ArrayStack)
     ArrayStack->index = 0;
 }
 
-void LTT_ArrayStack_Destroy(ArrayStack* ArrayStack)
+void LTT_ArrayStack_Destroy(ArrayStack** ArrayStack)
 {
-    free(ArrayStack->Array);
-    free(ArrayStack);
-    ArrayStack = NULL;
+    free((*ArrayStack)->Array);
+    free(*ArrayStack);
+    *ArrayStack = NULL;
 }

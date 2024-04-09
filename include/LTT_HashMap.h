@@ -39,7 +39,7 @@ extern "C"
     // 清空哈希表
     void LTT_HashMap_Clear(HashMap* const HashMap);
     // 销毁哈希表
-    void LTT_HashMap_Destroy(HashMap* HashMap);
+    void LTT_HashMap_Destroy(HashMap** HashMap);
     // 获取迭代器
     Iterator LTT_HashMap_GetIterator(const HashMap* const HashMap);
     // 获取迭代器当前元素

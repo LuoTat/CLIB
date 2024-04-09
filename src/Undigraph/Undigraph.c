@@ -227,21 +227,19 @@ AMLUndigraph* LTT_Undigraph_New(void)
     return GP;
 }
 
-Status LTT_Undigraph_Clear(AMLUndigraph* const GP)
+void LTT_Undigraph_Clear(AMLUndigraph* const GP)
 {
     LTT_HashMap_Clear(GP->EdgeHashMap);
     LTT_HashMap_Clear(GP->VertexHashMap);
     GP->EdgeNum   = 0;
     GP->VertexNum = 0;
-    return OK;
 }
 
-Status LTT_Undigraph_Destroy(AMLUndigraph* GP)
+void LTT_Undigraph_Destroy(AMLUndigraph** GPP)
 {
-    LTT_HashMap_Destroy(GP->EdgeHashMap);
-    LTT_HashMap_Destroy(GP->VertexHashMap);
-    GP = NULL;
-    return OK;
+    LTT_HashMap_Destroy(&(*GPP)->EdgeHashMap);
+    LTT_HashMap_Destroy(&(*GPP)->VertexHashMap);
+    *GPP = NULL;
 }
 
 AMLVertexNode* LTT_Undigraph_Make_Vertex(const char* const VertexID, void* const Data, const size_t DataSize)
@@ -1056,7 +1054,7 @@ AMLUndigraph* LTT_Undigraph_MiniSpanTree_Prim(const AMLUndigraph* const GP, cons
     AMLUndigraph* MiTreep = LTT_Undigraph_New();
     LTT_Undigraph_Insert_VertexS(MiTreep, MiTreeVertexArray, GP->VertexNum);
     LTT_Undigraph_Insert_EdgeS(MiTreep, MiTreeEdgeArray, GP->VertexNum - 1);
-    LTT_HashMap_Destroy(CloseEdge);
+    LTT_HashMap_Destroy(&CloseEdge);
     free(MiTreeEdgeArray);
     free(MiTreeVertexArray);
     return MiTreep;

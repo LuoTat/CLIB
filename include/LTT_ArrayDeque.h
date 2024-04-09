@@ -31,7 +31,7 @@ extern "C"
     // 清空队列
     void LTT_ArrayDeque_Clear(ArrayDeque* const ArrayDeque);
     // 销毁队列
-    void LTT_ArrayDeque_Destroy(ArrayDeque* ArrayDeque);
+    void LTT_ArrayDeque_Destroy(ArrayDeque** ArrayDeque);
     // 获取迭代器
     Iterator LTT_ArrayDeque_GetIterator(const ArrayDeque* const ArrayDeque);
     // 获取迭代器当前元素

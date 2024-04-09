@@ -24,7 +24,7 @@ extern "C"
     // 清空队列
     void LTT_ArrayQueue_Clear(ArrayQueue* const ArrayQueue);
     // 销毁队列
-    void LTT_ArrayQueue_Destroy(ArrayQueue* ArrayQueue);
+    void LTT_ArrayQueue_Destroy(ArrayQueue** ArrayQueue);
     // 获得迭代器
     Iterator LTT_ArrayQueue_GetIterator(const ArrayQueue* const ArrayQueue);
     // 获取迭代器当前元素

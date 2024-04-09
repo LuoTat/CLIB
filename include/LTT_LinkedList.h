@@ -37,7 +37,7 @@ extern "C"
     // 清空链表
     void LTT_LinkedList_Clear(LinkedList* const LinkedList);
     // 销毁链表
-    void LTT_LinkedList_Destroy(LinkedList* LinkedList);
+    void LTT_LinkedList_Destroy(LinkedList** LinkedList);
     // 获取迭代器
     Iterator LTT_LinkedList_GetIterator(const LinkedList* const LinkedList);
     // 获取迭代器当前元素

@@ -18,9 +18,9 @@ extern "C"
     //初始化一个无向图
     AMLUndigraph* LTT_Undigraph_New(void);
     //清空一个无向图
-    Status LTT_Undigraph_Clear(AMLUndigraph* const GP);
+    void LTT_Undigraph_Clear(AMLUndigraph* const GP);
     //销毁一个无向图
-    Status LTT_Undigraph_Destroy(AMLUndigraph* GP);
+    void LTT_Undigraph_Destroy(AMLUndigraph** GPP);
     //创建一个顶点
     AMLVertexNode* LTT_Undigraph_Make_Vertex(const char* const VertexID, void* const Data, const size_t DataSize);
     //插入一个顶点

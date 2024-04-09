@@ -203,9 +203,9 @@ void LTT_ArrayQueue_Clear(ArrayQueue* const ArrayQueue)
     ArrayQueue->Head = ArrayQueue->Tail = 0;
 }
 
-void LTT_ArrayQueue_Destroy(ArrayQueue* ArrayQueue)
+void LTT_ArrayQueue_Destroy(ArrayQueue** ArrayQueue)
 {
-    free(ArrayQueue->Array);
-    free(ArrayQueue);
-    ArrayQueue = NULL;
+    free((*ArrayQueue)->Array);
+    free(*ArrayQueue);
+    *ArrayQueue = NULL;
 }

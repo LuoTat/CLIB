@@ -45,4 +45,5 @@ link_directories( ${PROJECT_SOURCE_DIR}/LTTLIB/Debug/lib )
 link_directories( ${PROJECT_SOURCE_DIR}/LTTLIB/Release/lib )
 
 add_subdirectory( src )
+
 add_subdirectory( test )
