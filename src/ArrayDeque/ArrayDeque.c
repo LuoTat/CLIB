@@ -44,7 +44,7 @@ static int LTT_ArrayDeque_MoveNext(Iterator* const IP)
         return 1;
     }
     if (LTT_ArrayDeque_HasNext(IP) == 0) return 0;
-    int CurrentIndex = Current - ArrayDeque->Array;
+    int CurrentIndex = (int)(Current - ArrayDeque->Array);
     IP->Current      = &ArrayDeque->Array[INC(CurrentIndex, ArrayDeque->Capacity)];
     return 1;
 }

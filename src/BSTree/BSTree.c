@@ -19,80 +19,72 @@ BSTree* LTT_BSTree_New(const size_t DataSize, const CompareFunction Comparator)
     return BS_Tree;
 }
 
+static Status LTT_BSTree_InsertNode(BinaryTreeNode* Root, BinaryTreeNode* const Inserted_Node, const CompareFunction Comparator)
+{
+    // 双指针法，y指向x的父节点
+    // x指向当前节点
+    BinaryTreeNode* y     = NODE_NULL;
+    BinaryTreeNode* x     = Root;
+    int             Delta = 0;
+    while (x != NODE_NULL)
+    {
+        y     = x;
+        Delta = Comparator(Inserted_Node->Data, x->Data);
+        if (Delta < 0) x = x->LeftChild;
+        else if (Delta > 0) x = x->RightChild;
+        else return ERROR;
+    }
+    Inserted_Node->Parent = y;
+    if (y == NODE_NULL) Root = Inserted_Node;    //树为空
+    else if (Comparator(Inserted_Node->Data, y->Data) < 0) y->LeftChild = Inserted_Node;
+    else y->RightChild = Inserted_Node;
+    return OK;
+}
+
 Status LTT_BSTree_InsertData(BSTree* BS_Tree, void* const Data)
 {
     BinaryTreeNode* BeInsertedNode = LTT_BiTreeNode_MakeNode(Data);
     if (BeInsertedNode == NULL) return ERROR;
-    if (BS_Tree->BiTree.Root == NODE_NULL)
+    if (LTT_BSTree_InsertNode(BS_Tree->BiTree.Root, BeInsertedNode, BS_Tree->Comparator) == ERROR)
     {
-        BS_Tree->BiTree.Root = BeInsertedNode;
-        return OK;
+        LTT_BiTreeNode_DestroyNode(&BeInsertedNode);
+        return ERROR;
     }
-    BinaryTreeNode* Iterator = BS_Tree->BiTree.Root;
-    while (true)
-    {
-        int Delta = BS_Tree->Comparator(BeInsertedNode->Data, Iterator->Data);
-        if (Delta == 0)
-        {
-            free(BeInsertedNode);
-            return ERROR;
-        }
-        else if (Delta < 0)
-        {
-            if (Iterator->LeftChild != NODE_NULL) Iterator = Iterator->LeftChild;
-            else
-            {
-                Iterator->LeftChild = BeInsertedNode;
-                return OK;
-            }
-        }
-        else
-        {
-            if (Iterator->RightChild != NODE_NULL) Iterator = Iterator->RightChild;
-            else
-            {
-                Iterator->RightChild = BeInsertedNode;
-                return OK;
-            }
-        }
-    }
+    else return OK;
 }
 
-static BinaryTreeNode** LTT_BSTreeNode_SearchData_UsedbyDeleteData(BSTree* const BS_Tree, const void* const Data)
+// 此函数用于将以V为根的子树替换为以U为根的子树
+static void LTT_BSTree_Transplant(BSTree* const BS_Tree, BinaryTreeNode* const U, BinaryTreeNode* const V)
 {
-    BinaryTreeNode** Iterator = &BS_Tree->BiTree.Root;
-    if (*Iterator == NODE_NULL) return NULL;
-    while (*Iterator != NODE_NULL)
-    {
-        int Delta = BS_Tree->Comparator(Data, (*Iterator)->Data);
-        if (Delta == 0) return Iterator;
-        else if (Delta < 0) Iterator = &(*Iterator)->LeftChild;
-        else Iterator = &(*Iterator)->RightChild;
-    }
-    return NULL;
+    if (U->Parent == NODE_NULL) BS_Tree->BiTree.Root = V;
+    else if (U == U->Parent->LeftChild) U->Parent->LeftChild = V;
+    else U->Parent->RightChild = V;
+    if (V != NODE_NULL) V->Parent = U->Parent;
 }
 
 Status LTT_BSTree_DeleteData(BSTree* BS_Tree, void* const Data)
 {
-    BinaryTreeNode** FindNode = LTT_BSTreeNode_SearchData_UsedbyDeleteData(BS_Tree, Data);
+    BinaryTreeNode* FindNode = LTT_BiTreeNode_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator);
     if (FindNode == NULL) return ERROR;
-    LTT_BiTreeNode_DeleteNode(FindNode);
+    if (FindNode->LeftChild == NODE_NULL) LTT_BSTree_Transplant(BS_Tree, FindNode, FindNode->RightChild);
+    else if (FindNode->RightChild == NODE_NULL) LTT_BSTree_Transplant(BS_Tree, FindNode, FindNode->LeftChild);
+    else
+    {
+        BinaryTreeNode* Temp = LTT_BiTreeNode_GetMinNode(FindNode->RightChild, BS_Tree->Comparator);
+        if (Temp->Parent != FindNode)
+        {
+            LTT_BSTree_Transplant(BS_Tree, Temp, Temp->RightChild);
+            Temp->RightChild         = FindNode->RightChild;
+            Temp->RightChild->Parent = Temp;
+        }
+        LTT_BSTree_Transplant(BS_Tree, FindNode, Temp);
+        Temp->LeftChild         = FindNode->LeftChild;
+        Temp->LeftChild->Parent = Temp;
+    }
     return OK;
 }
 
-BinaryTreeNode* LTT_BSTreeNode_SearchData(const BSTree* const BS_Tree, const void* const Data)
-{
-    BinaryTreeNode* Iterator = BS_Tree->BiTree.Root;
-    if (Iterator == NODE_NULL) return NODE_NULL;
-    while (Iterator != NODE_NULL)
-    {
-        int Delta = BS_Tree->Comparator(Data, Iterator->Data);
-        if (Delta == 0) return Iterator;
-        else if (Delta < 0) Iterator = Iterator->LeftChild;
-        else Iterator = Iterator->RightChild;
-    }
-    return NULL;
-}
+BinaryTreeNode* LTT_BSTree_SearchData(const BSTree* const BS_Tree, const void* const Data) { return LTT_BiTreeNode_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator); }
 
 void LTT_BSTree_Clear(BSTree* const BS_Tree) { LTT_BiTree_Clear(&BS_Tree->BiTree); }
 

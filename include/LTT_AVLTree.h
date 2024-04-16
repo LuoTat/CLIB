@@ -1,6 +1,6 @@
 #pragma once
 #include "../src/AVLTree/AVLTree.h"
-#include "../src/AVLTreeNode/AVLTreeNode.h"    // IWYU pragma: export
+#include "../src/AVLTreeNode/AVLTreeNode.h"
 #include "../src/Predefined/Predefined.h"
 
 
@@ -8,11 +8,16 @@
 extern "C"
 {
 #endif
-    //初始化二叉树
+    // 初始化AVL树
     AVLTree* LTT_AVLTree_New(const size_t DataSize, const CompareFunction Comparator);
-    Status   LTT_AVLTree_Insert_Data(AVLTree* AVLTree, void* const Data);
-    // 销毁二叉树
-    void LTT_AVLTree_Destroy(AVLTree* AVLTree);
+    // 插入数据
+    Status LTT_AVLTree_InsertData(AVLTree* AVL_Tree, void* const Data);
+    // 删除数据
+    Status LTT_AVLTree_DeleteData(AVLTree* AVL_Tree, void* const Data);
+    // 清空AVL树
+    void LTT_AVLTree_Clear(AVLTree* const AVL_Tree);
+    // 销毁AVL树
+    void LTT_AVLTree_Destroy(AVLTree** AVL_Tree);
 #ifdef __cplusplus
 }
 #endif

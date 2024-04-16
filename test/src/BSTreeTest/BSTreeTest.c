@@ -56,12 +56,12 @@ int main()
     BinaryTreeNode* Node6   = LTT_BiTreeNode_MakeNode(&int6);
     BinaryTreeNode* Node7   = LTT_BiTreeNode_MakeNode(&int7);
     LTT_BiTree_InsertRoot((BinaryTree*)BS_Tree, Node1);
-    LTT_BiTree_InsertNode(BS_Tree->BiTree.Root, Node2, 1);
-    LTT_BiTree_InsertNode(BS_Tree->BiTree.Root, Node3, 0);
-    LTT_BiTree_InsertNode(Node2, Node4, 1);
-    LTT_BiTree_InsertNode(Node2, Node5, 0);
-    LTT_BiTree_InsertNode(Node3, Node6, 1);
-    LTT_BiTree_InsertNode(Node3, Node7, 0);
+    LTT_BiTreeNode_InsertNode(BS_Tree->BiTree.Root, Node2, 1);
+    LTT_BiTreeNode_InsertNode(BS_Tree->BiTree.Root, Node3, 0);
+    LTT_BiTreeNode_InsertNode(Node2, Node4, 1);
+    LTT_BiTreeNode_InsertNode(Node2, Node5, 0);
+    LTT_BiTreeNode_InsertNode(Node3, Node6, 1);
+    LTT_BiTreeNode_InsertNode(Node3, Node7, 0);
 
     //LTT_BiTree_DeleteNode(&BiTree->Root);
     LTT_BSTree_DeleteData(BS_Tree, &int2);

@@ -13,7 +13,7 @@ extern "C"
     // 删除数据
     Status LTT_BSTree_DeleteData(BSTree* BS_Tree, void* const Data);
     // 查询二叉搜索树中的数据
-    BinaryTreeNode* LTT_BSTreeNode_SearchData(const BSTree* const BS_Tree, const void* const Data);
+    BinaryTreeNode* LTT_BSTree_SearchData(const BSTree* const BS_Tree, const void* const Data);
     // 清空二叉搜索树
     void LTT_BSTree_Clear(BSTree* const BS_Tree);
     // 销毁二叉搜索树

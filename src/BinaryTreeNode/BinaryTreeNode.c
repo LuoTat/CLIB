@@ -16,35 +16,78 @@ BinaryTreeNode* LTT_BiTreeNode_MakeNode(void* const Data)
     RootNode->Data       = Data;
     RootNode->LeftChild  = NODE_NULL;
     RootNode->RightChild = NODE_NULL;
+    RootNode->Parent     = NODE_NULL;
     return RootNode;
 }
 
-static void* LTT_BiTreeNode_Get_PrecursorNode(BinaryTreeNode* Root)
+Status LTT_BiTreeNode_InsertNode(BinaryTreeNode* const BeInserted_Node, BinaryTreeNode* const Inserted_Node, const bool LeftChild)
 {
-    BinaryTreeNode* Iterator = Root->LeftChild;
-    if (Iterator == NODE_NULL) return NODE_NULL;
-    while (Iterator->RightChild != NODE_NULL) Iterator = Iterator->RightChild;
-    return Iterator;
-}
-
-void LTT_BiTreeNode_DeleteNode(BinaryTreeNode** Node)
-{
-    BinaryTreeNode* Temp = *Node;
-    if ((*Node)->LeftChild == NODE_NULL) { *Node = (*Node)->RightChild; }
-    else if ((*Node)->RightChild == NODE_NULL) { *Node = (*Node)->LeftChild; }
+    // 把Inserted_Node插入到BeInserted_Node的左子树或者右子树
+    if (LeftChild)
+    {
+        if (BeInserted_Node->LeftChild != NODE_NULL) return ERROR;    //如果左子树不为空，返回ERROR
+        BeInserted_Node->LeftChild = Inserted_Node;
+        Inserted_Node->Parent      = BeInserted_Node;
+        return OK;
+    }
     else
     {
-        BinaryTreeNode* Precursor = LTT_BiTreeNode_Get_PrecursorNode(*Node);
-        Precursor->RightChild     = (*Node)->RightChild;
-        *Node                     = (*Node)->LeftChild;
+        if (BeInserted_Node->RightChild != NODE_NULL) return ERROR;    //如果右子树不为空，返回ERROR
+        BeInserted_Node->RightChild = Inserted_Node;
+        Inserted_Node->Parent       = BeInserted_Node;
+        return OK;
     }
-    free(Temp);
-    Temp = NODE_NULL;
+}
+
+BinaryTreeNode* LTT_BiTreeNode_SearchNode(BinaryTreeNode* Root, const void* const Data, const CompareFunction Comparator)
+{
+    while (Root != NODE_NULL && Comparator(Data, Root->Data) != 0)
+    {
+        if (Comparator(Data, Root->Data) < 0) Root = Root->LeftChild;
+        else Root = Root->RightChild;
+    }
+    return Root;
+}
+
+BinaryTreeNode* LTT_BiTreeNode_GetMaxNode(BinaryTreeNode* Root, const CompareFunction Comparator)
+{
+    while (Root->RightChild != NODE_NULL) Root = Root->RightChild;
+    return Root;
+}
+
+BinaryTreeNode* LTT_BiTreeNode_GetMinNode(BinaryTreeNode* Root, const CompareFunction Comparator)
+{
+    while (Root->LeftChild != NODE_NULL) Root = Root->LeftChild;
+    return Root;
+}
+
+BinaryTreeNode* LTT_BiTreeNode_GetPredecessorNode(BinaryTreeNode* Root, const CompareFunction Comparator)
+{
+    if (Root->LeftChild != NODE_NULL) return LTT_BiTreeNode_GetMaxNode(Root->LeftChild, Comparator);
+    BinaryTreeNode* Temp = Root->Parent;
+    while (Temp != NODE_NULL && Root == Temp->LeftChild)
+    {
+        Root = Temp;
+        Temp = Temp->Parent;
+    }
+    return Temp;
+}
+
+BinaryTreeNode* LTT_BiTreeNode_GetSuccessorNode(BinaryTreeNode* Root, const CompareFunction Comparator)
+{
+    if (Root->RightChild != NODE_NULL) return LTT_BiTreeNode_GetMinNode(Root->RightChild, Comparator);
+    BinaryTreeNode* Temp = Root->Parent;
+    while (Temp != NODE_NULL && Root == Temp->RightChild)
+    {
+        Root = Temp;
+        Temp = Temp->Parent;
+    }
+    return Temp;
 }
 
 void LTT_BiTreeNode_DeleteSubTree(BinaryTreeNode** Root)
 {
-    //后序遍历,释放每个节点
+    // 后序遍历,释放每个节点
     ArrayStack*      Stack       = LTT_ArrayStack_New(sizeof(BinaryTreeNode*), NULL);
     ArrayStack*      OutputStack = LTT_ArrayStack_New(sizeof(BinaryTreeNode*), NULL);
     BinaryTreeNode** Temp;
@@ -69,10 +112,10 @@ void LTT_BiTreeNode_DeleteSubTree(BinaryTreeNode** Root)
     LTT_ArrayStack_Destroy(&OutputStack);
 }
 
-void LTT_BiTreeNode_DestroyNode(BinaryTreeNode** Node)
+void LTT_BiTreeNode_DestroyNode(BinaryTreeNode** Root)
 {
-    free(*Node);
-    *Node = NODE_NULL;
+    free(*Root);
+    *Root = NODE_NULL;
 }
 
 int LTT_BiTreeNode_GetNodeNumber(BinaryTreeNode* const Root)
@@ -133,7 +176,7 @@ Status LTT_BiTreeNode_PreOrder_Traverse_Stack(BinaryTreeNode* const Root, const 
     while (!LTT_ArrayStack_IsEmpty(Stack))
     {
         Temp = LTT_ArrayStack_Pop(Stack);
-        if (Temp != NODE_NULL)    //如果Temp不是空节点
+        if (Temp != NODE_NULL)    // 如果Temp不是空节点
         {
             if (Visit(Temp) == ERROR) return ERROR;
             LTT_ArrayStack_Push(Stack, Temp->RightChild);
@@ -163,7 +206,7 @@ Status LTT_BiTreeNode_InOrder_Traverse_Stack(BinaryTreeNode* const Root, const V
     while (!LTT_ArrayStack_IsEmpty(Stack))
     {
         while ((Temp = LTT_ArrayStack_Peek(Stack)) != NODE_NULL) LTT_ArrayStack_Push(Stack, Temp->LeftChild);
-        Temp = LTT_ArrayStack_Pop(Stack);    //弹出上面压入栈的一个NODE_NULL
+        Temp = LTT_ArrayStack_Pop(Stack);    // 弹出上面压入栈的一个NODE_NULL
         if (!LTT_ArrayStack_IsEmpty(Stack))
         {
             Temp = LTT_ArrayStack_Pop(Stack);

@@ -1,18 +1,10 @@
 #include "AVLTreeNode.h"
 #include "../Predefined/Predefined.h"
+#include "AVLTreeNode copy.h"
 
-#define LH                                    0X2
-#define EH                                    0X0
-#define RH                                    0X1
-#define BALANCE_MARK                          0X3
-
-#define Get_Node(Node)                        ((AVLTreeNode*)((size_t)(Node) & (~BALANCE_MARK)))
-#define Get_Balance_Factor(Node)              ((size_t)(Node) & BALANCE_MARK)
-#define Set_Balance_Factor(Node, BalanceMark) ((Node) = (AVLTreeNode*)((size_t)(Node) | (BalanceMark)))
-
-AVLTreeNode* LTT_AVLTreeNode_Make_Node(void* const Data, const size_t DataSize)
+AVLTreeNode* LTT_AVLTreeNode_MakeNode(void* const Data)
 {
-    AVLTreeNode* RootNode = (AVLTreeNode*)malloc(sizeof(AVLTreeNode));
+    AVLTreeNode* RootNode = LTT_BiTreeNode_MakeNode(Data);
     if (RootNode == NULL)
     {
         printf("根节点制作失败!\n");
@@ -22,25 +14,25 @@ AVLTreeNode* LTT_AVLTreeNode_Make_Node(void* const Data, const size_t DataSize)
     return RootNode;
 }
 
-void LTT_AVLTreeNode_LeftRotate(AVLTreeNode** Root)
+static void LTT_AVLTreeNode_LeftRotate(AVLTreeNode** Root)
 {
-    AVLTreeNode* RightChildP = (*Root)->RightChild;
-    (*Root)->RightChild      = RightChildP->LeftChild;
-    RightChildP->LeftChild   = (*Root);
-    (*Root)                  = RightChildP;
+    AVLTreeNode* RightChildP   = Get_RightChild(*Root);
+    Get_RightChild(*Root)      = Get_LeftChild(RightChildP);
+    Get_LeftChild(RightChildP) = (*Root);
+    (*Root)                    = RightChildP;
 }
 
-void LTT_AVLTreeNode_RightRotate(AVLTreeNode** Root)
+static void LTT_AVLTreeNode_RightRotate(AVLTreeNode** Root)
 {
-    AVLTreeNode* LeftChildP = (*Root)->LeftChild;
-    (*Root)->LeftChild      = LeftChildP->RightChild;
-    LeftChildP->RightChild  = (*Root);
-    (*Root)                 = LeftChildP;
+    AVLTreeNode* LeftChildP    = Get_LeftChild(*Root);
+    Get_LeftChild(*Root)       = Get_RightChild(LeftChildP);
+    Get_RightChild(LeftChildP) = (*Root);
+    (*Root)                    = LeftChildP;
 }
 
-void LTT_AVLTreeNode_LeftBalance_Insert(AVLTreeNode** Root)
+static void LTT_AVLTreeNode_LeftBalance_Insert(AVLTreeNode** Root)
 {
-    AVLTreeNode* LeftChildP = (*Root)->LeftChild;
+    AVLTreeNode* LeftChildP = Get_LeftChild(*Root);
     switch (Get_Balance_Factor(LeftChildP))
     {
         case LH :
@@ -52,7 +44,7 @@ void LTT_AVLTreeNode_LeftBalance_Insert(AVLTreeNode** Root)
         }
         case RH :
         {
-            AVLTreeNode* RightChildP = LeftChildP->RightChild;
+            AVLTreeNode* RightChildP = Get_RightChild(LeftChildP);
             switch (Get_Balance_Factor(RightChildP))
             {
                 case LH :
@@ -69,16 +61,16 @@ void LTT_AVLTreeNode_LeftBalance_Insert(AVLTreeNode** Root)
                     break;
             }
             Set_Balance_Factor(RightChildP, EH);
-            LTT_AVLTreeNode_LeftRotate(&(*Root)->LeftChild);
+            LTT_AVLTreeNode_LeftRotate(&Get_LeftChild(*Root));
             LTT_AVLTreeNode_RightRotate(Root);
             break;
         }
     }
 }
 
-void LTT_AVLTreeNode_RightBalance_Insert(AVLTreeNode** Root)
+static void LTT_AVLTreeNode_RightBalance_Insert(AVLTreeNode** Root)
 {
-    AVLTreeNode* RightChildP = (*Root)->RightChild;
+    AVLTreeNode* RightChildP = Get_RightChild(*Root);
     switch (Get_Balance_Factor(RightChildP))
     {
         case RH :
@@ -90,7 +82,7 @@ void LTT_AVLTreeNode_RightBalance_Insert(AVLTreeNode** Root)
         }
         case LH :
         {
-            AVLTreeNode* LeftChildP = RightChildP->LeftChild;
+            AVLTreeNode* LeftChildP = Get_LeftChild(RightChildP);
             switch (Get_Balance_Factor(LeftChildP))
             {
                 case RH :
@@ -107,14 +99,14 @@ void LTT_AVLTreeNode_RightBalance_Insert(AVLTreeNode** Root)
                     break;
             }
             Set_Balance_Factor(LeftChildP, EH);
-            LTT_AVLTreeNode_RightRotate(&(*Root)->RightChild);
+            LTT_AVLTreeNode_RightRotate(&Get_RightChild(*Root));
             LTT_AVLTreeNode_LeftRotate(Root);
             break;
         }
     }
 }
 
-Status LTT_AVLTreeNode_Insert_Node_byComparator_Kernel(AVLTreeNode** BeInserted_Node, AVLTreeNode* const Inserted_Node, bool* const Taller, const CompareFunction Comparator)
+static Status LTT_AVLTreeNode_InsertNode_Kernel(AVLTreeNode** BeInserted_Node, AVLTreeNode* const Inserted_Node, bool* const Taller, const CompareFunction Comparator)
 {
     if ((*BeInserted_Node) == NODE_NULL)
     {
@@ -124,15 +116,15 @@ Status LTT_AVLTreeNode_Insert_Node_byComparator_Kernel(AVLTreeNode** BeInserted_
     }
     else
     {
-        int Delta = Comparator(Inserted_Node->Data, (*BeInserted_Node)->Data);
+        int Delta = Comparator(Get_Data(Inserted_Node), Get_Data(*BeInserted_Node));
         if (Delta == 0)
         {
             *Taller = false;
-            return 0;
+            return ERROR;
         }
         if (Delta < 0)
         {
-            if (LTT_AVLTreeNode_Insert_Node_byComparator_Kernel(&(*BeInserted_Node)->LeftChild, Inserted_Node, Taller, Comparator) == ERROR) return ERROR;
+            if (LTT_AVLTreeNode_InsertNode_Kernel(&Get_LeftChild(*BeInserted_Node), Inserted_Node, Taller, Comparator) == ERROR) return ERROR;
             if (*Taller)
             {
                 switch (Get_Balance_Factor(*BeInserted_Node))
@@ -155,7 +147,7 @@ Status LTT_AVLTreeNode_Insert_Node_byComparator_Kernel(AVLTreeNode** BeInserted_
         }
         else
         {
-            if (LTT_AVLTreeNode_Insert_Node_byComparator_Kernel(&(*BeInserted_Node)->RightChild, Inserted_Node, Taller, Comparator) == ERROR) return ERROR;
+            if (LTT_AVLTreeNode_InsertNode_Kernel(&Get_RightChild(*BeInserted_Node), Inserted_Node, Taller, Comparator) == ERROR) return ERROR;
             if (*Taller)
             {
                 switch (Get_Balance_Factor(*BeInserted_Node))
@@ -179,20 +171,200 @@ Status LTT_AVLTreeNode_Insert_Node_byComparator_Kernel(AVLTreeNode** BeInserted_
     return OK;
 }
 
-Status LTT_AVLTreeNode_Insert_Node_byComparator(AVLTreeNode** Root, AVLTreeNode* const Inserted_Node, const CompareFunction Comparator)
+Status LTT_AVLTreeNode_InsertNode(AVLTreeNode** Root, AVLTreeNode* const Inserted_Node, const CompareFunction Comparator)
 {
     bool Taller = false;
-    return LTT_AVLTreeNode_Insert_Node_byComparator_Kernel(Root, Inserted_Node, &Taller, Comparator);
+    return LTT_AVLTreeNode_InsertNode_Kernel(Root, Inserted_Node, &Taller, Comparator);
 }
 
-Status LTT_AVLTreeNode_Insert_Data(AVLTreeNode** Root, void* const Data, const size_t DataSize, const CompareFunction Comparator)
+static void LTT_AVLTreeNode_LeftBalance_Delete(AVLTreeNode** Root, bool* Lower)
 {
-    AVLTreeNode* BeInsertedNode = LTT_AVLTreeNode_Make_Node(Data, DataSize);
-    if (BeInsertedNode == NULL) return ERROR;
-    if (LTT_AVLTreeNode_Insert_Node_byComparator(Root, BeInsertedNode, Comparator) == ERROR)
+    AVLTreeNodePointer RightChildP = (*RootNodePP)->RightChild;
+    switch (RightChildP->BalanceFactor)
     {
-        free(BeInsertedNode);
+        case LH :
+        {
+            AVLTreeNodePointer LeftChildP = RightChildP->LeftChild;
+            switch (LeftChildP->BalanceFactor)
+            {
+                case LH :
+                    (*Root)->BalanceFactor     = EH;
+                    RightChildP->BalanceFactor = RH;
+                    break;
+                case EH : (*Root)->BalanceFactor = RightChildP->BalanceFactor = EH; break;
+                case RH :
+                    (*Root)->BalanceFactor     = LH;
+                    RightChildP->BalanceFactor = EH;
+                    break;
+            }
+            LeftChildP->BalanceFactor = EH;
+            RightRotate(&(*Root)->RightChild);
+            LeftRotate(Root);
+            *Lower = true;
+            break;    //高度-1
+        }
+        case EH :
+        {
+            (*Root)->BalanceFactor     = RH;
+            RightChildP->BalanceFactor = LH;
+            LeftRotate(Root);
+            *Lower = false;
+            break;    //高度未变
+        }
+        case RH :
+        {
+            (*Root)->BalanceFactor = RightChildP->BalanceFactor = EH;
+            LeftRotate(Root);
+            *Lower = true;
+            break;    //高度-1
+        }
+    }
+}
+
+static void LTT_AVLTreeNode_RightBalance_Delete(AVLTreeNode** Root, bool* Lower)
+{
+    AVLTreeNodePointer LeftChildP = (*RootNodePP)->LeftChild;
+    switch (LeftChildP->BalanceFactor)
+    {
+        case LH :
+        {
+            (*RootNodePP)->BalanceFactor = LeftChildP->BalanceFactor = EH;
+            RightRotate(Root);
+            *Lower = true;
+            break;    //高度-1
+        }
+        case EH :
+        {
+            (*Root)->BalanceFactor    = LH;
+            LeftChildP->BalanceFactor = RH;
+            RightRotate(Root);
+            *Lower = false;
+            break;    //高度未变
+        }
+        case RH :
+        {
+            AVLTreeNodePointer RightChildP = LeftChildP->RightChild;
+            switch (RightChildP->BalanceFactor)
+            {
+                case LH :
+                    (*Root)->BalanceFactor    = RH;
+                    LeftChildP->BalanceFactor = EH;
+                    break;
+                case EH : (*RootNodePP)->BalanceFactor = LeftChildP->BalanceFactor = EH; break;
+                case RH :
+                    (*Root)->BalanceFactor    = EH;
+                    LeftChildP->BalanceFactor = LH;
+                    break;
+            }
+            RightChildP->BalanceFactor = EH;
+            LeftRotate(&(*Root)->LeftChild);
+            RightRotate(Root);
+            *Lower = true;
+            break;    //高度-1
+        }
+    }
+}
+
+Status LTT_AVLTreeNode_DeleteData_Kernel(AVLTreeNode** Root, void* Data, bool* Lower, CompareFunction Comparator)
+{
+    if (*Root == NODE_NULL)
+    {
+        *Lower = false;
         return ERROR;
+    }
+    int Delta = Comparator(Data, Get_Data(*Root));
+    if (Delta < 0)
+    {
+        if (LTT_AVLTreeNode_DeleteData_Kernel(&Get_LeftChild(*Root), Data, Lower, Comparator) == ERROR) return ERROR;
+        if (*Lower)
+        {
+            switch (Get_Balance_Factor(*Root))
+            {
+                case LH :
+                    Set_Balance_Factor(*Root, EH);
+                    *Lower = true;
+                    break;
+                case EH :
+                    Set_Balance_Factor(*Root, RH);
+                    *Lower = false;
+                    break;
+                case RH : LTT_AVLTreeNode_LeftBalance_Delete(Root, Lower); break;    //要进行旋转操作
+            }
+        }
+    }
+    else if (Delta > 0)
+    {
+        if (LTT_AVLTreeNode_DeleteData_Kernel(&Get_RightChild(*Root), Data, Lower, Comparator) == ERROR) return ERROR;
+        if (*Lower)
+        {
+            switch (Get_Balance_Factor(*Root))
+            {
+                case LH : LTT_AVLTreeNode_RightBalance_Delete(Root, Lower); break;    //要进行旋转操作
+                case EH :
+                    Set_Balance_Factor(*Root, LH);
+                    *Lower = false;
+                    break;
+                case RH :
+                    Set_Balance_Factor(*Root, EH);
+                    *Lower = true;
+                    break;
+            }
+        }
+    }
+    else    //找到节点，进行删除
+    {
+        //此节点为叶子节点
+        if (Get_LeftChild(*Root) == Get_RightChild(*Root) == NODE_NULL)
+        {
+            LTT_BiTreeNode_DestroyNode(Root);
+            *Lower = true;
+        }
+        //此节点只有左节点
+        else if (Get_LeftChild(*Root) != NODE_NULL && Get_RightChild(*Root) == NODE_NULL)
+        {
+            void* TempData = (void*)malloc((*Root)->DataSize);
+            memcpy(TempData, Get_Data(Get_LeftChild(*Root)), (*Root)->DataSize);
+            LTT_AVLTreeNode_DeleteData_Kernel(RootNodePP, TempData, LowerP, Comparator);
+            memcpy((*Root)->Data, TempData, (*Root)->DataSize);
+            Set_Balance_Factor(*Root, EH);    // = EH;
+            *Lower = true;
+            free(TempData);
+        }
+        //此节点只有右节点
+        else if (Get_LeftChild(*Root) == NODE_NULL && Get_RightChild(*Root) != NODE_NULL)
+        {
+            void* TempData = (void*)malloc((*Root)->DataSize);
+            memcpy(TempData, (*Root)->RightChild->Data, (*Root)->DataSize);
+            LTT_AVLTreeNode_DeleteData_Kernel(RootNodePP, TempData, LowerP, Comparator);
+            memcpy((*Root)->Data, TempData, (*Root)->DataSize);
+            (*Root)->BalanceFactor = EH;
+            *Lower                 = true;
+            free(TempData);
+        }
+        //此节点有左子树与右子树
+        else
+        {
+            void* PrecursorData = (void*)malloc((*Root)->DataSize);
+            memcpy(PrecursorData, GetThePrecursorData(*Root), (*Root)->DataSize);
+            LTT_AVLTreeNode_DeleteData_Kernel(&(*RootNodePP)->LeftChild, PrecursorData, LowerP, Comparator);
+            memcpy((*Root)->Data, PrecursorData, (*Root)->DataSize);
+            free(PrecursorData);
+            if (*Lower)
+            {
+                switch ((*Root)->BalanceFactor)
+                {
+                    case LH :
+                        (*Root)->BalanceFactor = EH;
+                        *Lower                 = true;
+                        break;
+                    case EH :
+                        (*Root)->BalanceFactor = RH;
+                        *Lower                 = false;
+                        break;
+                    case RH : LeftBalance_Delete(RootNodePP, LowerP); break;    //要进行旋转操作
+                }
+            }
+        }
     }
     return OK;
 }
