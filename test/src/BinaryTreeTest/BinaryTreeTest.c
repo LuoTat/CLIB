@@ -17,29 +17,22 @@ int main()
             /   \  /  \
             4   5  6   7
     */
-    int int1               = 1;
-    int int2               = 2;
-    int int3               = 3;
-    int int4               = 4;
-    int int5               = 5;
-    int int6               = 6;
-    int int7               = 7;
+    int int1           = 1;
+    int int2           = 2;
+    int int3           = 3;
+    int int4           = 4;
+    int int5           = 5;
+    int int6           = 6;
+    int int7           = 7;
 
-    BinaryTree*     BiTree = LTT_BiTree_New(sizeof(int));
-    BinaryTreeNode* Node1  = LTT_BiTreeNode_MakeNode(&int1);
-    BinaryTreeNode* Node2  = LTT_BiTreeNode_MakeNode(&int2);
-    BinaryTreeNode* Node3  = LTT_BiTreeNode_MakeNode(&int3);
-    BinaryTreeNode* Node4  = LTT_BiTreeNode_MakeNode(&int4);
-    BinaryTreeNode* Node5  = LTT_BiTreeNode_MakeNode(&int5);
-    BinaryTreeNode* Node6  = LTT_BiTreeNode_MakeNode(&int6);
-    BinaryTreeNode* Node7  = LTT_BiTreeNode_MakeNode(&int7);
-    LTT_BiTree_InsertRoot(BiTree, Node1);
-    LTT_BiTreeNode_InsertNode(BiTree->Root, Node2, 1);
-    LTT_BiTreeNode_InsertNode(BiTree->Root, Node3, 0);
-    LTT_BiTreeNode_InsertNode(Node2, Node4, 1);
-    LTT_BiTreeNode_InsertNode(Node2, Node5, 0);
-    LTT_BiTreeNode_InsertNode(Node3, Node6, 1);
-    LTT_BiTreeNode_InsertNode(Node3, Node7, 0);
+    BinaryTree* BiTree = LTT_BiTree_New(sizeof(int));
+    LTT_BiTree_InsertData(BiTree, NULL, &int1, 0);
+    LTT_BiTree_InsertData(BiTree, BiTree->Root, &int2, 1);
+    LTT_BiTree_InsertData(BiTree, BiTree->Root, &int3, 0);
+    LTT_BiTree_InsertData(BiTree, BiTree->Root->LeftChild, &int4, 1);
+    LTT_BiTree_InsertData(BiTree, BiTree->Root->LeftChild, &int5, 0);
+    LTT_BiTree_InsertData(BiTree, BiTree->Root->RightChild, &int6, 1);
+    LTT_BiTree_InsertData(BiTree, BiTree->Root->RightChild, &int7, 0);
 
     LTT_BiTreeNode_DeleteSubTree(&BiTree->Root->LeftChild);
 

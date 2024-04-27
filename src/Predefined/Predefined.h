@@ -1,10 +1,6 @@
 #pragma once
 #include <stdbool.h>
-#include <stdio.h>     // IWYU pragma: export
-#include <stdlib.h>    // IWYU pragma: export
 #include <string.h>
-
-
 
 /*
 	EQUALS_AND_GETHASHCODE_MODE为1时，使用指针地址作为哈希值，使用指针地址作为比较值
@@ -25,6 +21,8 @@ typedef int (*ValueFunction)(const void* const);
 typedef int (*CompareFunction)(const void* const, const void* const);
 typedef unsigned int (*GetHashCode_Function)(const void* const, const size_t);
 typedef bool (*Equals_Function)(const void* const, const void* const, const size_t);
+
+inline static bool LTT_DEFAULT_Compare(const void* const a, const void* const b, const size_t DataSize) { return memcmp(a, b, DataSize); }
 
 inline static bool LTT_DEFAULT_Equals(const void* const a, const void* const b, const size_t DataSize)
 {

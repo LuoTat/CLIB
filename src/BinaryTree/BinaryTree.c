@@ -1,7 +1,12 @@
 #include "BinaryTree.h"
-#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../BiTreeNodeUtil/BiTreeNodeUtil.h"
+#include "../Predefined/Predefined.h"
+
+
+
+BinaryTreeNode Node_NULL = {NULL, 0, NULL};
 
 BinaryTree* LTT_BiTree_New(const size_t DataSize)
 {
@@ -18,14 +23,32 @@ BinaryTree* LTT_BiTree_New(const size_t DataSize)
     return BiTree;
 }
 
-Status LTT_BiTree_InsertRoot(BinaryTree* const BiTree, BinaryTreeNode* const Inserted_Node)
+Status LTT_BiTree_InsertData(BinaryTree* const BiTree, BinaryTreeNode* const BeInserted_Node, void* const Inserted_Data, const bool LeftChild)
 {
-    if (BiTree->Root != NODE_NULL) return ERROR;    //如果根节点不为空，返回ERROR
-    BiTree->Root = Inserted_Node;
-    return OK;
+    BinaryTreeNode* Inserted_Node = LTT_BiTreeNode_MakeNode(Inserted_Data);
+    if (Inserted_Node == NULL) return ERROR;
+    if (BeInserted_Node == NULL)                                      // 如果BeInserted_Node为空，那么插入的节点就是根节点
+    {
+        BiTree->Root = Inserted_Node;
+        return OK;
+    }
+    if (LeftChild)                                                    // 把Inserted_Node插入到BeInserted_Node的左子树或者右子树
+    {
+        if (BeInserted_Node->LeftChild != NODE_NULL) return ERROR;    //如果左子树不为空，返回ERROR
+        BeInserted_Node->LeftChild = Inserted_Node;
+        Inserted_Node->Parent      = BeInserted_Node;
+        return OK;
+    }
+    else
+    {
+        if (BeInserted_Node->RightChild != NODE_NULL) return ERROR;    //如果右子树不为空，返回ERROR
+        BeInserted_Node->RightChild = Inserted_Node;
+        Inserted_Node->Parent       = BeInserted_Node;
+        return OK;
+    }
 }
 
-Status LTT_BiTree_DeleteNode(BinaryTreeNode** Deleted_Node)
+Status LTT_BiTree_DeleteNode(BinaryTree* const BiTree, BinaryTreeNode* const BeDeleted_Node)
 {
     // LTT_BiTreeNode_DeleteNode(Deleted_Node);
     // return OK;

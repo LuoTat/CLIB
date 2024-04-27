@@ -1,5 +1,8 @@
 #pragma once
-#include "../BinaryTreeNode/BinaryTreeNode.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include "../BinaryTree/BinaryTree.h"
+
 
 #define LH                                    0X2
 #define EH                                    0X0
@@ -7,11 +10,11 @@
 #define BALANCE_MARK                          0X3
 
 #define Get_Data(Node)                        (Get_UMarkNode((Node))->Data)
-#define Get_Balance_Factor(Node)              ((size_t)(Node) & BALANCE_MARK)
+#define Get_Balance_Factor(Node)              ((uintptr_t)(Node) & BALANCE_MARK)
 #define Get_LeftChild(Node)                   (Get_UMarkNode((Node))->LeftChild)
 #define Get_RightChild(Node)                  (Get_UMarkNode((Node))->RightChild)
-#define Get_UMarkNode(Node)                   ((AVLTreeNode*)((size_t)(Node) & (~BALANCE_MARK)))
-#define Set_Balance_Factor(Node, BalanceMark) ((Node) = (AVLTreeNode*)((size_t)(Node) | (BalanceMark)))
+#define Get_UMarkNode(Node)                   ((AVLTreeNode*)((uintptr_t)(Node) & (~BALANCE_MARK)))
+#define Set_Balance_Factor(Node, BalanceMark) ((Node) = (AVLTreeNode*)((uintptr_t)(Node) | (BalanceMark)))
 
 
 #ifdef __cplusplus
@@ -23,6 +26,17 @@ extern "C"
     AVLTreeNode* LTT_AVLTreeNode_MakeNode(void* const Data);
     // 删除二叉树节点
     void LTT_AVLTreeNode_DeleteNode(AVLTreeNode** Root);
+    // 左旋
+    void LTT_AVLTreeNode_LeftRotate(AVLTreeNode** Root);
+    // 右旋
+    void LTT_AVLTreeNode_RightRotate(AVLTreeNode** Root);
+    // 插入节点
+    void LTT_AVLTreeNode_LeftBalance_Insert(AVLTreeNode** Root);
+    void LTT_AVLTreeNode_RightBalance_Insert(AVLTreeNode** Root);
+    // 删除节点
+    void LTT_AVLTreeNode_LeftBalance_Delete(AVLTreeNode** Root, bool* Lower);
+    void LTT_AVLTreeNode_RightBalance_Delete(AVLTreeNode** Root, bool* Lower);
+
 #ifdef __cplusplus
 }
 #endif

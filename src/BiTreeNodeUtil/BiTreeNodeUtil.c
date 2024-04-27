@@ -1,9 +1,8 @@
-#include "BinaryTreeNode.h"
-#include "../Predefined/Predefined.h"
+#include "BiTreeNodeUtil.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include "LTT_ArrayQueue.h"
 #include "LTT_ArrayStack.h"
-
-BinaryTreeNode Node_NULL = {NULL, 0, NULL};
 
 BinaryTreeNode* LTT_BiTreeNode_MakeNode(void* const Data)
 {
@@ -18,25 +17,6 @@ BinaryTreeNode* LTT_BiTreeNode_MakeNode(void* const Data)
     RootNode->RightChild = NODE_NULL;
     RootNode->Parent     = NODE_NULL;
     return RootNode;
-}
-
-Status LTT_BiTreeNode_InsertNode(BinaryTreeNode* const BeInserted_Node, BinaryTreeNode* const Inserted_Node, const bool LeftChild)
-{
-    // 把Inserted_Node插入到BeInserted_Node的左子树或者右子树
-    if (LeftChild)
-    {
-        if (BeInserted_Node->LeftChild != NODE_NULL) return ERROR;    //如果左子树不为空，返回ERROR
-        BeInserted_Node->LeftChild = Inserted_Node;
-        Inserted_Node->Parent      = BeInserted_Node;
-        return OK;
-    }
-    else
-    {
-        if (BeInserted_Node->RightChild != NODE_NULL) return ERROR;    //如果右子树不为空，返回ERROR
-        BeInserted_Node->RightChild = Inserted_Node;
-        Inserted_Node->Parent       = BeInserted_Node;
-        return OK;
-    }
 }
 
 BinaryTreeNode* LTT_BiTreeNode_SearchNode(BinaryTreeNode* Root, const void* const Data, const CompareFunction Comparator)

@@ -1,7 +1,10 @@
 #include <limits.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "../../include/LTT_SortingAlgorithm.h"
 #include "../Predefined/Predefined.h"
+
 
 
 //用来作为许多排序算法的临时存储空间

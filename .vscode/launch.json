@@ -20,6 +20,8 @@
         "ArrayQueueTest",
         "ArrayStackTest",
         "BinaryTreeTest",
+        "BinaryTreeTest",
+        "AVLTreeTest",
         "BSTreeTest",
         "HashMapTest",
         "LinkedListTest",

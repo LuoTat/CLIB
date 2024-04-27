@@ -1,5 +1,7 @@
 #include "BSTree.h"
 #include <float.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "../../include/LTT_ArrayStack.h"
 #include "../../include/LTT_BinaryTree.h"
 
@@ -19,12 +21,12 @@ BSTree* LTT_BSTree_New(const size_t DataSize, const CompareFunction Comparator)
     return BS_Tree;
 }
 
-static Status LTT_BSTree_InsertNode(BinaryTreeNode* Root, BinaryTreeNode* const Inserted_Node, const CompareFunction Comparator)
+static Status LTT_BSTree_InsertNode(BSTree* BS_Tree, BinaryTreeNode* const Inserted_Node, const CompareFunction Comparator)
 {
     // 双指针法，y指向x的父节点
     // x指向当前节点
     BinaryTreeNode* y     = NODE_NULL;
-    BinaryTreeNode* x     = Root;
+    BinaryTreeNode* x     = BS_Tree->BiTree.Root;
     int             Delta = 0;
     while (x != NODE_NULL)
     {
@@ -35,7 +37,7 @@ static Status LTT_BSTree_InsertNode(BinaryTreeNode* Root, BinaryTreeNode* const 
         else return ERROR;
     }
     Inserted_Node->Parent = y;
-    if (y == NODE_NULL) Root = Inserted_Node;    //树为空
+    if (y == NODE_NULL) BS_Tree->BiTree.Root = Inserted_Node;    //树为空
     else if (Comparator(Inserted_Node->Data, y->Data) < 0) y->LeftChild = Inserted_Node;
     else y->RightChild = Inserted_Node;
     return OK;
@@ -45,7 +47,7 @@ Status LTT_BSTree_InsertData(BSTree* BS_Tree, void* const Data)
 {
     BinaryTreeNode* BeInsertedNode = LTT_BiTreeNode_MakeNode(Data);
     if (BeInsertedNode == NULL) return ERROR;
-    if (LTT_BSTree_InsertNode(BS_Tree->BiTree.Root, BeInsertedNode, BS_Tree->Comparator) == ERROR)
+    if (LTT_BSTree_InsertNode(BS_Tree, BeInsertedNode, BS_Tree->Comparator) == ERROR)
     {
         LTT_BiTreeNode_DestroyNode(&BeInsertedNode);
         return ERROR;

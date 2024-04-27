@@ -1,5 +1,6 @@
 #pragma once
 #include "../BinaryTree/BinaryTree.h"
+#include "../Predefined/Predefined.h"
 
 #ifdef __cplusplus
 extern "C"

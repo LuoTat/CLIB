@@ -1,26 +1,14 @@
 #pragma once
+#include "../BinaryTree/BinaryTree.h"
 #include "../Predefined/Predefined.h"
 
-#define NODE_NULL (&Node_NULL)
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-    typedef struct BinaryTreeNode
-    {
-        void*                  Data;
-        struct BinaryTreeNode* LeftChild;
-        struct BinaryTreeNode* RightChild;
-        struct BinaryTreeNode* Parent;
-    } BinaryTreeNode;
-
-    extern BinaryTreeNode Node_NULL;
-
-    // 制作二叉树节点
+    // 创建节点
     BinaryTreeNode* LTT_BiTreeNode_MakeNode(void* const Data);
-    // 插入节点
-    Status LTT_BiTreeNode_InsertNode(BinaryTreeNode* const BeInserted_Node, BinaryTreeNode* const Inserted_Node, const bool LeftChild);
     // 查询节点
     BinaryTreeNode* LTT_BiTreeNode_SearchNode(BinaryTreeNode* Root, const void* const Data, const CompareFunction Comparator);
     // 获得子树最大节点
@@ -31,8 +19,6 @@ extern "C"
     BinaryTreeNode* LTT_BiTreeNode_GetPredecessorNode(BinaryTreeNode* Root, const CompareFunction Comparator);
     // 获得节点的后继节点
     BinaryTreeNode* LTT_BiTreeNode_GetSuccessorNode(BinaryTreeNode* Root, const CompareFunction Comparator);
-    // 删除二叉树节点
-    void LTT_BiTreeNode_DeleteNode(BinaryTreeNode** Root);
     // 删除子二叉树
     void LTT_BiTreeNode_DeleteSubTree(BinaryTreeNode** Root);
     // 销毁二叉树节点

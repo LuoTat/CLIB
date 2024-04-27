@@ -1,7 +1,10 @@
 #include "ArrayStack.h"
 #include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "../Iterator/Iterator.h"
 #include "../Predefined/Predefined.h"
+
 
 #define DEFAULT_ARRAYSTACK_CAPACITY (16)
 #define MAX_ARRAYSTACK_CAPACITY     (INT_MAX - 8)
