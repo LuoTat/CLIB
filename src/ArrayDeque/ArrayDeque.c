@@ -2,13 +2,11 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../Iterator/Iterator.h"
-#include "../Predefined/Predefined.h"
 
 #define DEFAULT_ARRAYDEQUE_CAPACITY (16 + 1)
 #define MAX_ARRAYDEQUE_CAPACITY     (INT_MAX - 8)
-#define INC(Head, Capacity)         ((Head + 1LL) % Capacity)                 // 同余类+1
-#define DEC(Head, Capacity)         ((Head + (Capacity - 1LL)) % Capacity)    // 同余类-1
+#define INC(Head, Capacity)         (((Head) + 1LL) % (Capacity))                 // 同余类+1
+#define DEC(Head, Capacity)         (((Head) + ((Capacity) - 1LL)) % (Capacity))    // 同余类-1
 
 typedef struct _ArrayDeque
 {

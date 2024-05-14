@@ -224,15 +224,15 @@ void BubbleSort(void* Base, size_t NumOfElements, size_t SizeOfElements, Compare
 
 void BubbleSort_Fast(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Comparator)
 {
-    bool Ordered;                                  //记录当前数组是否已经有序
-    int  HighPos = NumOfElements - 1;              //用来记录大数最后一次交换的位置
-    int  LowPos  = 0;                              //用来记录小数最后一次交换的位置
+    bool   Ordered;                                //记录当前数组是否已经有序
+    size_t HighPos = NumOfElements - 1;            //用来记录大数最后一次交换的位置
+    size_t LowPos  = 0;                            //用来记录小数最后一次交换的位置
     for (int i = 0; i < NumOfElements - 1; ++i)    //确定排序趟数
     {
-        Ordered         = true;
+        Ordered            = true;
         //正向寻找最大值
-        int TempHighPos = HighPos;
-        for (int j = LowPos; j < HighPos; ++j)
+        size_t TempHighPos = HighPos;
+        for (size_t j = LowPos; j < HighPos; ++j)
         {
             if (Comparator(Base + j * SizeOfElements, Base + (j + 1) * SizeOfElements) > 0)
             {
@@ -242,10 +242,10 @@ void BubbleSort_Fast(void* Base, size_t NumOfElements, size_t SizeOfElements, Co
             }
         }
         if (Ordered) break;
-        HighPos        = TempHighPos;
+        HighPos           = TempHighPos;
         //反向寻找最小值
-        int TempLowPos = LowPos;
-        for (int j = HighPos; j > LowPos; --j)
+        size_t TempLowPos = LowPos;
+        for (size_t j = HighPos; j > LowPos; --j)
         {
             if (Comparator(Base + j * SizeOfElements, Base + (j - 1) * SizeOfElements) < 0)
             {

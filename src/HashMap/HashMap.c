@@ -2,9 +2,6 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../Iterator/Iterator.h"
-#include "../Predefined/Predefined.h"
-
 
 #define DEFAULT_INITIAL_CAPACITY (1 << 4)
 #define MAXIMUM_CAPACITY         (1 << 30)
@@ -216,7 +213,7 @@ static HashNode** LTT_HashMap_Resize(HashMap* const HashMap)
                 }
                 else                                            //处理链表，使用的是尾插法
                 {
-                    HashNode* UnchangeHead = NULL;              //表示索引不变的链表的头节点
+                    HashNode* UnChangeHead = NULL;              //表示索引不变的链表的头节点
                     HashNode* UnChangeTail = NULL;              //表示索引不变的链表的尾节点
                     HashNode* ChangeHead   = NULL;              //表示索引改变的链表的头节点
                     HashNode* ChangeTail   = NULL;              //表示索引改变的链表的尾节点
@@ -226,7 +223,7 @@ static HashNode** LTT_HashMap_Resize(HashMap* const HashMap)
                         if ((Temp->hash & OldCapacity) == 0)    //多出来的一位为0，表示数组索引不变
                         {
                             //如果还没有尾节点，将当前节点作为头节点
-                            if (UnchangeHead == NULL) UnchangeHead = Temp;
+                            if (UnChangeHead == NULL) UnChangeHead = Temp;
                             //如果已经有尾节点了，将当前节点链接到尾节点的后面
                             else UnChangeTail->Next = Temp;    //链接链表
                             UnChangeTail = Temp;               //更新尾节点
@@ -242,7 +239,7 @@ static HashNode** LTT_HashMap_Resize(HashMap* const HashMap)
                     if (UnChangeTail != NULL)
                     {
                         UnChangeTail->Next = NULL;
-                        NewTab[i]          = UnchangeHead;
+                        NewTab[i]          = UnChangeHead;
                     }
                     if (ChangeTail != NULL)
                     {
@@ -263,7 +260,7 @@ static void* LTT_HashMap_PutVal(HashMap* const HashMap, void* const Key, void* c
     HashNode*  LocatedNode;    //用来表示定位到的节点
     int        index;          //用来表示定位到的节点的索引
     int        Capacity;       //用来表示当前哈希表的长度
-    int        KeySize = HashMap->KeySize;
+    size_t        KeySize = HashMap->KeySize;
     //采用懒加载的方式，如果当前的哈希表为空或者长度为0，则进行扩容
     if ((Table = HashMap->Table) == NULL || (Capacity = HashMap->Capacity) == 0)
     {
@@ -328,11 +325,11 @@ HashNode* LTT_HashMap_GetNode(const HashMap* const HashMap, const void* const Ke
     HashNode**  Tab;
     HashNode*   First;
     HashNode*   Temp_HNP;
-    int         KeySize = HashMap->KeySize;
+    size_t         KeySize = HashMap->KeySize;
     int         Capacity;
     int         hash;
     const void* Temp_Key;
-    if ((Tab = HashMap->Table) != NULL && (Capacity = HashMap->Capacity) > 0 && (First = HashMap->Table[(hash = LTT_HashMap_hash(HashMap, Key)) & (Capacity - 1)]) != NULL)
+    if ((Tab = HashMap->Table) != NULL && (Capacity = HashMap->Capacity) > 0 && (First = Tab[(hash = LTT_HashMap_hash(HashMap, Key)) & (Capacity - 1)]) != NULL)
     {
         if (First->hash == hash && ((Temp_Key = First->Key) == Key || (Key != NULL && HashMap->Equals_Key(Key, Temp_Key, KeySize)))) return First;
         if ((Temp_HNP = First->Next) != NULL)
@@ -392,8 +389,8 @@ HashNode* LTT_HashMap_DeleteNode(HashMap* const HashMap, const void* const Key, 
     HashNode*  P;
     int        Capacity;
     int        index;
-    int        KeySize   = HashMap->KeySize;
-    int        ValueSize = HashMap->ValueSize;
+    size_t        KeySize   = HashMap->KeySize;
+    size_t        ValueSize = HashMap->ValueSize;
     //P是定位到的头节点
     if ((Tab = HashMap->Table) != NULL && (Capacity = HashMap->Capacity) > 0 && (P = Tab[index = hash & (Capacity - 1)]) != NULL)
     {

@@ -1,69 +1,7 @@
-#include "BiTreeNodeUtil.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include "LTT_ArrayQueue.h"
-#include "LTT_ArrayStack.h"
-
-BinaryTreeNode* LTT_BiTreeNode_MakeNode(void* const Data)
-{
-    BinaryTreeNode* RootNode = (BinaryTreeNode*)malloc(sizeof(BinaryTreeNode));
-    if (RootNode == NULL)
-    {
-        printf("根节点制作失败!\n");
-        return NULL;
-    }
-    RootNode->Data       = Data;
-    RootNode->LeftChild  = NODE_NULL;
-    RootNode->RightChild = NODE_NULL;
-    RootNode->Parent     = NODE_NULL;
-    return RootNode;
-}
-
-BinaryTreeNode* LTT_BiTreeNode_SearchNode(BinaryTreeNode* Root, const void* const Data, const CompareFunction Comparator)
-{
-    while (Root != NODE_NULL && Comparator(Data, Root->Data) != 0)
-    {
-        if (Comparator(Data, Root->Data) < 0) Root = Root->LeftChild;
-        else Root = Root->RightChild;
-    }
-    return Root;
-}
-
-BinaryTreeNode* LTT_BiTreeNode_GetMaxNode(BinaryTreeNode* Root, const CompareFunction Comparator)
-{
-    while (Root->RightChild != NODE_NULL) Root = Root->RightChild;
-    return Root;
-}
-
-BinaryTreeNode* LTT_BiTreeNode_GetMinNode(BinaryTreeNode* Root, const CompareFunction Comparator)
-{
-    while (Root->LeftChild != NODE_NULL) Root = Root->LeftChild;
-    return Root;
-}
-
-BinaryTreeNode* LTT_BiTreeNode_GetPredecessorNode(BinaryTreeNode* Root, const CompareFunction Comparator)
-{
-    if (Root->LeftChild != NODE_NULL) return LTT_BiTreeNode_GetMaxNode(Root->LeftChild, Comparator);
-    BinaryTreeNode* Temp = Root->Parent;
-    while (Temp != NODE_NULL && Root == Temp->LeftChild)
-    {
-        Root = Temp;
-        Temp = Temp->Parent;
-    }
-    return Temp;
-}
-
-BinaryTreeNode* LTT_BiTreeNode_GetSuccessorNode(BinaryTreeNode* Root, const CompareFunction Comparator)
-{
-    if (Root->RightChild != NODE_NULL) return LTT_BiTreeNode_GetMinNode(Root->RightChild, Comparator);
-    BinaryTreeNode* Temp = Root->Parent;
-    while (Temp != NODE_NULL && Root == Temp->RightChild)
-    {
-        Root = Temp;
-        Temp = Temp->Parent;
-    }
-    return Temp;
-}
+#include "BinaryTreeUtils.h"
+#include "../ArrayQueue/ArrayQueue.h"
+#include "../ArrayStack/ArrayStack.h"
+#include "../BinaryTree/BinaryTree.h"
 
 void LTT_BiTreeNode_DeleteSubTree(BinaryTreeNode** Root)
 {
@@ -85,17 +23,10 @@ void LTT_BiTreeNode_DeleteSubTree(BinaryTreeNode** Root)
     while (!LTT_ArrayStack_IsEmpty(OutputStack))
     {
         Temp = LTT_ArrayStack_Pop(OutputStack);
-        free(*Temp);
-        *Temp = NODE_NULL;
+        LTT_BiTree_DestroyNode(Temp);
     }
     LTT_ArrayStack_Destroy(&Stack);
     LTT_ArrayStack_Destroy(&OutputStack);
-}
-
-void LTT_BiTreeNode_DestroyNode(BinaryTreeNode** Root)
-{
-    free(*Root);
-    *Root = NODE_NULL;
 }
 
 int LTT_BiTreeNode_GetNodeNumber(BinaryTreeNode* const Root)
@@ -186,7 +117,7 @@ Status LTT_BiTreeNode_InOrder_Traverse_Stack(BinaryTreeNode* const Root, const V
     while (!LTT_ArrayStack_IsEmpty(Stack))
     {
         while ((Temp = LTT_ArrayStack_Peek(Stack)) != NODE_NULL) LTT_ArrayStack_Push(Stack, Temp->LeftChild);
-        Temp = LTT_ArrayStack_Pop(Stack);    // 弹出上面压入栈的一个NODE_NULL
+        LTT_ArrayStack_Pop(Stack);    // 弹出上面压入栈的一个NODE_NULL
         if (!LTT_ArrayStack_IsEmpty(Stack))
         {
             Temp = LTT_ArrayStack_Pop(Stack);

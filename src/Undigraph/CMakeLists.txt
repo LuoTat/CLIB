@@ -1,14 +1,25 @@
-# 输出Undigraph的.a文件
-
 # 添加源文件
 list( APPEND UNDIGRAPH_SRC Undigraph.c )
-list( APPEND UNDIGRAPH_SRC ../Iterator/Iterator.c )
-list( APPEND UNDIGRAPH_SRC ../HashMap/HashMap.c )
-list( APPEND UNDIGRAPH_SRC ../ArrayStack/ArrayStack.c )
-list( APPEND UNDIGRAPH_SRC ../ArrayQueue/ArrayQueue.c )
-list( APPEND UNDIGRAPH_SRC ../UnionFindSet/UnionFindSet.c )
+
+# 生成OBJ文件
+add_library( UndigraphObj OBJECT ${UNDIGRAPH_SRC} )
+
+# 添加依赖OBJ文件
+add_dependencies( UndigraphObj
+    ArrayStackObj
+    ArrayQueueObj
+    HashMapObj
+    UnionFindSetObj
+)
+
+list( APPEND UNDIGRAPH_OBJ
+    $<TARGET_OBJECTS:UndigraphObj>
+    ${ARRAYSTACK_OBJ}
+    ${ARRAYQUEUE_OBJ}
+    ${HASHMAP_OBJ}
+)
+
+set( UNDIGRAPH_OBJ ${UNDIGRAPH_OBJ} PARENT_SCOPE )
 
 # 生成静态库
-add_library( UndigraphLib STATIC ${UNDIGRAPH_SRC} ) # 生成lib文件
-
-set_target_properties( UndigraphLib PROPERTIES OUTPUT_NAME "Undigraph" ) # 修改lib文件的输出名字
+add_library( UndigraphLib STATIC ${UNDIGRAPH_OBJ} )

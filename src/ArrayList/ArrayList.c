@@ -2,8 +2,6 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../Iterator/Iterator.h"
-#include "../Predefined/Predefined.h"
 
 #define DEFAULT_ARRAYLIST_CAPACITY 16
 #define MAX_ARRAYLIST_CAPACITY     (INT_MAX - 8)

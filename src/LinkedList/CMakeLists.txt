@@ -1,8 +1,18 @@
-# 输出LinkedList的.a文件
+# 添加源文件
+list( APPEND LINKEDLIST_SRC LinkedList.c )
 
-list( APPEND LINKEDLIST_SRC LinkedList.c ) # 添加源文件
-list( APPEND LINKEDLIST_SRC ../Iterator/Iterator.c ) # 添加头文件
+# 生成OBJ文件
+add_library( LinkedListObj OBJECT ${LINKEDLIST_SRC} )
 
-add_library( LinkedListLib STATIC ${LINKEDLIST_SRC} ) # 生成lib文件
+# 添加依赖OBJ文件
+add_dependencies( LinkedListObj IteratorObj )
 
-set_target_properties( LinkedListLib PROPERTIES OUTPUT_NAME "LinkedList" ) # 修改lib文件的输出名字
+list( APPEND LINKEDLIST_OBJ
+    $<TARGET_OBJECTS:LinkedListObj>
+    ${ITERATOR_OBJ}
+)
+
+set( LINKEDLIST_OBJ ${LINKEDLIST_OBJ} PARENT_SCOPE )
+
+# 生成静态库
+add_library( LinkedListLib STATIC ${LINKEDLIST_OBJ} )

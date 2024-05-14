@@ -26,15 +26,17 @@ int main()
     int int7           = 7;
 
     BinaryTree* BiTree = LTT_BiTree_New(sizeof(int));
-    LTT_BiTree_InsertData(BiTree, NULL, &int1, 0);
-    LTT_BiTree_InsertData(BiTree, BiTree->Root, &int2, 1);
-    LTT_BiTree_InsertData(BiTree, BiTree->Root, &int3, 0);
-    LTT_BiTree_InsertData(BiTree, BiTree->Root->LeftChild, &int4, 1);
-    LTT_BiTree_InsertData(BiTree, BiTree->Root->LeftChild, &int5, 0);
-    LTT_BiTree_InsertData(BiTree, BiTree->Root->RightChild, &int6, 1);
-    LTT_BiTree_InsertData(BiTree, BiTree->Root->RightChild, &int7, 0);
 
-    LTT_BiTreeNode_DeleteSubTree(&BiTree->Root->LeftChild);
+    LTT_BiTree_Insert(BiTree, NULL, &int1, 0);
+    LTT_BiTree_Insert(BiTree, BiTree->Root, &int2, 1);
+    LTT_BiTree_Insert(BiTree, BiTree->Root, &int3, 0);
+    LTT_BiTree_Insert(BiTree, BiTree->Root->LeftChild, &int4, 1);
+    LTT_BiTree_Insert(BiTree, BiTree->Root->LeftChild, &int5, 0);
+    LTT_BiTree_Insert(BiTree, BiTree->Root->RightChild, &int6, 1);
+    LTT_BiTree_Insert(BiTree, BiTree->Root->RightChild, &int7, 0);
+
+    LTT_BiTreeNode_DeleteSubTree(&BiTree->Root);
+    //(BiTree, BiTree->Root->RightChild->LeftChild);
 
     printf("PreOrder: \n");
     LTT_BiTreeNode_PreOrder_Traverse_Recursive(BiTree->Root, PRINT);

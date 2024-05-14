@@ -3,7 +3,8 @@
 # 添加源文件
 list( APPEND BSTREE_SRC BSTree.c )
 list( APPEND BSTREE_SRC ../BinaryTree/BinaryTree.c )
-list( APPEND BSTREE_SRC ../BiTreeNodeUtil/BiTreeNodeUtil.c )
+list( APPEND BSTREE_SRC ../BinaryTreeUtils/BinaryTreeUtils.c)
+list( APPEND BSTREE_SRC ../BSTreeUtils/BSTreeUtils.c)
 list( APPEND BSTREE_SRC ../ArrayStack/ArrayStack.c )
 list( APPEND BSTREE_SRC ../ArrayQueue/ArrayQueue.c )
 list( APPEND BSTREE_SRC ../Iterator/Iterator.c )

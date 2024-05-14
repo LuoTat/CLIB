@@ -1,10 +1,18 @@
-# 输出ArrayList的.a文件
-
 # 添加源文件
 list( APPEND ARRAYLIST_SRC ArrayList.c )
-list( APPEND ARRAYLIST_SRC ../Iterator/Iterator.c )
+
+# 生成OBJ文件
+add_library( ArrayListObj OBJECT ${ARRAYLIST_SRC} )
+
+# 添加依赖OBJ文件
+add_dependencies( ArrayListObj IteratorObj )
+
+list( APPEND ARRAYLIST_OBJ
+    $<TARGET_OBJECTS:ArrayListObj>
+    ${ITERATOR_OBJ}
+)
+
+set( ARRAYLIST_OBJ ${ARRAYLIST_OBJ} PARENT_SCOPE )
 
 # 生成静态库
-add_library( ArrayListLib STATIC ${ARRAYLIST_SRC} )
-
-set_target_properties( ArrayListLib PROPERTIES OUTPUT_NAME "ArrayList" ) # 修改lib文件的输出名字
+add_library( ArrayListLib STATIC ${ARRAYLIST_OBJ} )

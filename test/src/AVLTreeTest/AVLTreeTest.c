@@ -4,8 +4,8 @@
 #include "LTT_AVLTree.h"
 #include "LTT_BinaryTree.h"
 
-#define Mode       2
-#define NodeNum    10
+#define Mode       1
+#define NodeNum    100000000
 #define RandomSend (unsigned)time(NULL)
 
 void SWAP(int* a, int* b)
@@ -35,9 +35,11 @@ int main()
     srand(RandomSend);
     int* Temp = (int*)malloc(NodeNum * sizeof(int));
 
-#if Mode == 1      // 普通随机数组
+#if Mode == 1      // 有序数组
+    for (int i = 0; i < NodeNum; ++i) Temp[i] = i;
+#elif Mode == 2    // 普通随机数组
     for (int i = 0; i < NodeNum; ++i) Temp[i] = rand() % NodeNum;
-#elif Mode == 2    // 无相同元素的乱序数组
+#elif Mode == 3    // 无相同元素的乱序数组
     GetTheRanddomNonRepeatingArray(Temp, NodeNum);
 #endif
 
@@ -66,8 +68,11 @@ int main()
     int Depth = LTT_BiTreeNode_GetDepth(AVL_Tree->BiTree.Root);
     printf("Depth: %d\n", Depth);
 
-    BinaryTreeNode* findnode = LTT_BiTreeNode_SearchNode(AVL_Tree->BiTree.Root, intArray[rand() % NodeNum], AVL_Tree->Comparator);
-    printf("find %d\n", *(int*)findnode->Data);
+    Start                    = clock();
+    BinaryTreeNode* findnode = LTT_BSTree_Search(AVL_Tree, intArray[rand() % NodeNum]);
+    End                      = clock();
+    printf("find Node: %d\n", *(int*)findnode->Data);
+    printf("find Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
 
     LTT_AVLTree_DeleteData(AVL_Tree, intArray[rand() % NodeNum]);
     NodeNumber = LTT_BiTreeNode_GetNodeNumber(AVL_Tree->BiTree.Root);

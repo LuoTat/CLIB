@@ -1,9 +1,13 @@
 #include "BSTree.h"
 #include <float.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../../include/LTT_ArrayStack.h"
-#include "../../include/LTT_BinaryTree.h"
+#include <time.h>
+#include "../ArrayStack/ArrayStack.h"
+#include "../BSTreeUtils/BSTreeUtils.h"
+#include "../BinaryTree/BinaryTree.h"
+#include "../BinaryTree/_BinaryTree.h"
 
 BSTree* LTT_BSTree_New(const size_t DataSize, const CompareFunction Comparator)
 {
@@ -34,7 +38,7 @@ static Status LTT_BSTree_InsertNode(BSTree* BS_Tree, BinaryTreeNode* const Inser
         Delta = Comparator(Inserted_Node->Data, x->Data);
         if (Delta < 0) x = x->LeftChild;
         else if (Delta > 0) x = x->RightChild;
-        else return ERROR;
+        else return ERROR;                                       // 如果相等，返回ERROR
     }
     Inserted_Node->Parent = y;
     if (y == NODE_NULL) BS_Tree->BiTree.Root = Inserted_Node;    //树为空
@@ -43,16 +47,16 @@ static Status LTT_BSTree_InsertNode(BSTree* BS_Tree, BinaryTreeNode* const Inser
     return OK;
 }
 
-Status LTT_BSTree_InsertData(BSTree* BS_Tree, void* const Data)
+Status LTT_BSTree_Insert(BSTree* BS_Tree, void* const Data)
 {
-    BinaryTreeNode* BeInsertedNode = LTT_BiTreeNode_MakeNode(Data);
+    BinaryTreeNode* BeInsertedNode = LTT_BiTree_MakeNode(Data);
     if (BeInsertedNode == NULL) return ERROR;
     if (LTT_BSTree_InsertNode(BS_Tree, BeInsertedNode, BS_Tree->Comparator) == ERROR)
     {
-        LTT_BiTreeNode_DestroyNode(&BeInsertedNode);
+        free(BeInsertedNode);
         return ERROR;
     }
-    else return OK;
+    return OK;
 }
 
 // 此函数用于将以V为根的子树替换为以U为根的子树
@@ -64,15 +68,15 @@ static void LTT_BSTree_Transplant(BSTree* const BS_Tree, BinaryTreeNode* const U
     if (V != NODE_NULL) V->Parent = U->Parent;
 }
 
-Status LTT_BSTree_DeleteData(BSTree* BS_Tree, void* const Data)
+Status LTT_BSTree_Delete(BSTree* BS_Tree, void* const Data)
 {
-    BinaryTreeNode* FindNode = LTT_BiTreeNode_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator);
+    BinaryTreeNode* FindNode = LTT_BSTreeNode_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator);
     if (FindNode == NULL) return ERROR;
     if (FindNode->LeftChild == NODE_NULL) LTT_BSTree_Transplant(BS_Tree, FindNode, FindNode->RightChild);
     else if (FindNode->RightChild == NODE_NULL) LTT_BSTree_Transplant(BS_Tree, FindNode, FindNode->LeftChild);
     else
     {
-        BinaryTreeNode* Temp = LTT_BiTreeNode_GetMinNode(FindNode->RightChild, BS_Tree->Comparator);
+        BinaryTreeNode* Temp = LTT_BSTreeNode_GetMinNode(FindNode->RightChild);
         if (Temp->Parent != FindNode)
         {
             LTT_BSTree_Transplant(BS_Tree, Temp, Temp->RightChild);
@@ -86,7 +90,7 @@ Status LTT_BSTree_DeleteData(BSTree* BS_Tree, void* const Data)
     return OK;
 }
 
-BinaryTreeNode* LTT_BSTree_SearchData(const BSTree* const BS_Tree, const void* const Data) { return LTT_BiTreeNode_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator); }
+BinaryTreeNode* LTT_BSTree_Search(const BSTree* const BS_Tree, const void* const Data) { return LTT_BSTreeNode_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator); }
 
 void LTT_BSTree_Clear(BSTree* const BS_Tree) { LTT_BiTree_Clear(&BS_Tree->BiTree); }
 
@@ -102,7 +106,7 @@ void LTT_BSTree_Destroy(BSTree** BS_Tree)
     Q是查找失败概率
     N是节点个数
 */
-void LTT_BSTree_Calculate_Optimal_BST(double** e, int** root, double* P, double* Q, int N)
+void LTT_BSTree_Calculate_Optimal_BST_KNUTH(double** e, int** root, double* P, double* Q, int N)
 {
     //使用动态规划算法构造最优二叉查找树
     //Data[1..N]是关键字，P[1..N]是查找概率，Q[0..N]是失败概率
@@ -143,17 +147,27 @@ void LTT_BSTree_Calculate_Optimal_BST(double** e, int** root, double* P, double*
         */
         for (int j = 1; j <= N - i; ++j)
         {
-            int Temp   = i + j;                                          //子树的终止位置
-            e[j][Temp] = DBL_MAX;                                        //初始化e[j][Temp]为无穷大
-            w[j][Temp] = w[j][Temp - 1] + P[Temp] + Q[Temp];             //初始化w[j][Temp]
-            for (int k = j; k <= Temp; ++k)
+            int Temp   = i + j;                                 //子树的终止位置
+            e[j][Temp] = DBL_MAX;                               //初始化e[j][Temp]为无穷大
+            w[j][Temp] = w[j][Temp - 1] + P[Temp] + Q[Temp];    //初始化w[j][Temp]
+
+            // 使用性质root[i,j-1] <= root[i,j] <= root[i+1,j](1<=i<j<=N)来缩小搜索范围
+            if (j < Temp)
             {
-                double t = e[j][k - 1] + e[k + 1][Temp] + w[j][Temp];    //计算e[j][Temp]
-                if (t < e[j][Temp])                                      //如果t小于e[j][Temp]，更新e[j][Temp]和root[j][Temp]
+                for (int k = root[j][Temp - 1]; k <= root[j + 1][Temp]; ++k)
                 {
-                    e[j][Temp]    = t;
-                    root[j][Temp] = k;
+                    double t = e[j][k - 1] + e[k + 1][Temp] + w[j][Temp];    //计算e[j][Temp]
+                    if (t < e[j][Temp])                                      //如果t小于e[j][Temp]，更新e[j][Temp]和root[j][Temp]
+                    {
+                        e[j][Temp]    = t;
+                        root[j][Temp] = k;
+                    }
                 }
+            }
+            else
+            {
+                e[j][Temp]    = e[j][Temp - 1] + e[j + 1][Temp] + w[j][Temp];    //计算e[j][Temp]
+                root[j][Temp] = j;
             }
         }
     }
@@ -196,7 +210,7 @@ static BSTree* LTT_BSTree_Build_Optimal_BST_Kernel(void** Data, size_t DataSize,
 
     RootIndex         = Root[1][Length];
     BSTree* BS_Tree   = LTT_BSTree_New(DataSize, Comparator);
-    LTT_BSTree_InsertData(BS_Tree, Data[RootIndex]);
+    LTT_BSTree_Insert(BS_Tree, Data[RootIndex]);
     RootNode          = BS_Tree->BiTree.Root;
 
     LeftInfo          = &NodeInfoArray[count++];
@@ -219,7 +233,7 @@ static BSTree* LTT_BSTree_Build_Optimal_BST_Kernel(void** Data, size_t DataSize,
         Temp      = LTT_ArrayStack_Pop(Stack);
         RootIndex = Root[Temp->Left][Temp->Right];
 
-        RootNode  = LTT_BiTreeNode_MakeNode(Data[RootIndex]);
+        RootNode  = LTT_BiTree_MakeNode(Data[RootIndex]);
         if (Temp->IsLeft == true) { Temp->Node->LeftChild = RootNode; }
         else { Temp->Node->RightChild = RootNode; }
 
@@ -245,11 +259,22 @@ static BSTree* LTT_BSTree_Build_Optimal_BST_Kernel(void** Data, size_t DataSize,
 
 BSTree* LTT_BSTree_Build_Optimal_BST(void** Data, size_t DataSize, double* P, double* Q, int Length, CompareFunction Comparator)
 {
-    int** Root = (int**)malloc((Length + 1) * sizeof(int*));
+    clock_t Start, End;
+    int**   Root = (int**)malloc((Length + 1) * sizeof(int*));
     for (int i = 0; i < Length + 1; ++i) Root[i] = (int*)calloc((Length + 1), sizeof(int));
-    LTT_BSTree_Calculate_Optimal_BST(NULL, Root, P, Q, Length);
+
+    Start = clock();
+    LTT_BSTree_Calculate_Optimal_BST_KNUTH(NULL, Root, P, Q, Length);
+    End = clock();
+    printf("Calculate Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
+
+    Start           = clock();
     BSTree* BS_Tree = LTT_BSTree_Build_Optimal_BST_Kernel(Data, DataSize, Root, Length, Comparator);
+    End             = clock();
+    printf("Build Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
+
     for (int i = 0; i < Length + 1; ++i) free(Root[i]);
     free(Root);
+
     return BS_Tree;
 }
