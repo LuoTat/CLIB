@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <list>
-#include "LTT_LinkedList.h"
+#include "LinkedList.h"
 
 using namespace std;
 
