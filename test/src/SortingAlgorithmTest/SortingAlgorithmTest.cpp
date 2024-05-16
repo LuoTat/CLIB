@@ -3,7 +3,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <algorithm>
-#include "LTT_SortingAlgorithm.h"
+#include "SortingAlgorithm.h"
 
 
 using namespace std;
@@ -19,11 +19,11 @@ using namespace std;
     Mode == 5 //有很多相同元素的数组
     Mode == 6 //16个元素的小数组
 */
-#define NodeNum                                  1000000
+#define NodeNum                                  50000000
 #define Mode                                     3
 #define PRINT                                    0
 #define SortCounter                              10
-#define RandomSend                               666//(unsigned)time(NULL)
+#define RandomSend                               (unsigned)time(NULL)
 
 #define InsertionSort_Test                       0
 #define BinaryInsertionSort_Test                 0
@@ -31,9 +31,9 @@ using namespace std;
 #define ShellInsertionSort_Sedgewick_Test        0
 #define BubbleSort_Test                          0
 #define BubbleSort_Fast_Test                     0
-#define QuickSort_LTT_glibc_Test                 0
-#define QuickSort_LTT_libstdcpp_Test             0
-#define QuickSort_glibc_Test                     0
+#define QuickSort_LTT_glibc_Test                 1
+#define QuickSort_LTT_libstdcpp_Test             1
+#define QuickSort_glibc_Test                     1
 #define SimpleSelectionSort_Test                 0
 #define HeapSort_Test                            0
 #define MergeSort_Recursion_Test                 0
@@ -46,9 +46,9 @@ using namespace std;
 #define CountingSort_Test                        0
 #define PigeonholeSort_Test                      0
 #define BigoSort_Test                            0
-#define IntrospectiveSort_Test                   0
+#define IntrospectiveSort_Test                   1
 #define sort_Test                                1
-#define qsort_Test                               0
+#define qsort_Test                               1
 
 void SWAP(int* a, int* b)
 {

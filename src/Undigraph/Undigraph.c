@@ -2,11 +2,10 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../ArrayQueue/ArrayQueue.h"
-#include "../ArrayStack/ArrayStack.h"
-#include "../HashMap/HashMap.h"
-#include "../UnionFindSet/UnionFindSet.h"
-// #include "LTT_Undigraph.h"
+#include "ArrayQueue.h"
+#include "ArrayStack.h"
+#include "HashMap.h"
+#include "UnionFindSet.h"
 
 #define VID_MAX_LENGTH (1 << 5)    //顶点ID的最大长度
 #define EID_MAX_LENGTH (1 << 6)    //边ID的最大长度

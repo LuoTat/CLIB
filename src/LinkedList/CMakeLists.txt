@@ -1,18 +1,14 @@
+# 生成Lib文件
+add_library( LinkedListLib STATIC )
+
 # 添加源文件
-list( APPEND LINKEDLIST_SRC LinkedList.c )
+target_sources( LinkedListLib PRIVATE LinkedList.c )
 
-# 生成OBJ文件
-add_library( LinkedListObj OBJECT ${LINKEDLIST_SRC} )
-
-# 添加依赖OBJ文件
-add_dependencies( LinkedListObj IteratorObj )
-
-list( APPEND LINKEDLIST_OBJ
-    $<TARGET_OBJECTS:LinkedListObj>
-    ${ITERATOR_OBJ}
+# 添加依赖
+target_link_libraries( LinkedListLib PUBLIC
+    PredefinedHead
+    IteratorLib
 )
 
-set( LINKEDLIST_OBJ ${LINKEDLIST_OBJ} PARENT_SCOPE )
-
-# 生成静态库
-add_library( LinkedListLib STATIC ${LINKEDLIST_OBJ} )
+# 添加头文件
+target_include_directories( LinkedListLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )

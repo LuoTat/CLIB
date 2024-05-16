@@ -1,18 +1,14 @@
+# 生成Lib文件
+add_library( ArrayListLib STATIC )
+
 # 添加源文件
-list( APPEND ARRAYLIST_SRC ArrayList.c )
+target_sources( ArrayListLib PRIVATE ArrayList.c )
 
-# 生成OBJ文件
-add_library( ArrayListObj OBJECT ${ARRAYLIST_SRC} )
-
-# 添加依赖OBJ文件
-add_dependencies( ArrayListObj IteratorObj )
-
-list( APPEND ARRAYLIST_OBJ
-    $<TARGET_OBJECTS:ArrayListObj>
-    ${ITERATOR_OBJ}
+# 添加依赖
+target_link_libraries( ArrayListLib PUBLIC
+    PredefinedHead
+    IteratorLib
 )
 
-set( ARRAYLIST_OBJ ${ARRAYLIST_OBJ} PARENT_SCOPE )
-
-# 生成静态库
-add_library( ArrayListLib STATIC ${ARRAYLIST_OBJ} )
+# 添加头文件
+target_include_directories( ArrayListLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <queue>
-#include "LTT_ArrayQueue.h"
+#include "ArrayQueue.h"
 
 using namespace std;
 

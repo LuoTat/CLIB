@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "LTT_Undigraph.h"
+#include "Undigraph.h"
 
 #define MAX_VERTEX_NUM 100
 #define MAX_EDGE_NUM   MAX_VERTEX_NUM*(MAX_VERTEX_NUM - 1) / 2

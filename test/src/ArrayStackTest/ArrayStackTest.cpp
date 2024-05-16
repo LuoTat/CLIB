@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stack>
-#include "LTT_ArrayStack.h"
+#include "ArrayStack.h"
 
 
 using namespace std;

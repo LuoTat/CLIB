@@ -1,25 +1,16 @@
+# 生成Lib文件
+add_library( UndigraphLib STATIC )
+
 # 添加源文件
-list( APPEND UNDIGRAPH_SRC Undigraph.c )
+target_sources( UndigraphLib PRIVATE Undigraph.c )
 
-# 生成OBJ文件
-add_library( UndigraphObj OBJECT ${UNDIGRAPH_SRC} )
-
-# 添加依赖OBJ文件
-add_dependencies( UndigraphObj
-    ArrayStackObj
-    ArrayQueueObj
-    HashMapObj
-    UnionFindSetObj
+# 添加依赖
+target_link_libraries( UndigraphLib PUBLIC
+    ArrayStackLib
+    ArrayQueueLib
+    HashMapLib
+    UnionFindSetLib
 )
 
-list( APPEND UNDIGRAPH_OBJ
-    $<TARGET_OBJECTS:UndigraphObj>
-    ${ARRAYSTACK_OBJ}
-    ${ARRAYQUEUE_OBJ}
-    ${HASHMAP_OBJ}
-)
-
-set( UNDIGRAPH_OBJ ${UNDIGRAPH_OBJ} PARENT_SCOPE )
-
-# 生成静态库
-add_library( UndigraphLib STATIC ${UNDIGRAPH_OBJ} )
+# 添加头文件
+target_include_directories( UndigraphLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )

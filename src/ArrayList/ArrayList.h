@@ -1,6 +1,6 @@
 #pragma once
-#include "../Iterator/Iterator.h"
-#include "../Predefined/Predefined.h"
+#include "Iterator.h"
+#include "Predefined.h"
 
 #ifdef __cplusplus
 extern "C"

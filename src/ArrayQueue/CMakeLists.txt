@@ -1,18 +1,14 @@
+# 生成Lib文件
+add_library( ArrayQueueLib STATIC )
+
 # 添加源文件
-list( APPEND ARRAYQUEUE_SRC ArrayQueue.c )
+target_sources( ArrayQueueLib PRIVATE ArrayQueue.c )
 
-# 生成OBJ文件
-add_library( ArrayQueueObj OBJECT ${ARRAYQUEUE_SRC} )
-
-# 添加依赖OBJ文件
-add_dependencies( ArrayQueueObj IteratorObj )
-
-list( APPEND ARRAYQUEUE_OBJ
-    $<TARGET_OBJECTS:ArrayQueueObj>
-    ${ITERATOR_OBJ}
+# 添加依赖
+target_link_libraries( ArrayQueueLib PUBLIC
+    PredefinedHead
+    IteratorLib
 )
 
-set( ARRAYQUEUE_OBJ ${ARRAYQUEUE_OBJ} PARENT_SCOPE )
-
-# 生成静态库
-add_library( ArrayQueueLib STATIC ${ARRAYQUEUE_OBJ} )
+# 添加头文件
+target_include_directories( ArrayQueueLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )

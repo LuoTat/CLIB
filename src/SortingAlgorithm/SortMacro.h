@@ -1,0 +1,9 @@
+// SwapModeMacro
+#ifndef SWAPMODE
+#define SWAPMODE 2
+#endif
+
+// MAX_SIZEOFELEMENTS
+#ifndef MAX_SIZEOFELEMENTS
+#define MAX_SIZEOFELEMENTS 1024
+#endif

@@ -2,8 +2,9 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../../include/LTT_SortingAlgorithm.h"
-#include "../Predefined/Predefined.h"
+#include "Predefined.h"
+#include "SortMacro.h"
+
 
 
 

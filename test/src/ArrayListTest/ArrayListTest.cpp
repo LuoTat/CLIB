@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
-#include "LTT_ArrayList.h"
+#include "ArrayList.h"
 
 using namespace std;
 

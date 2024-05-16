@@ -2,8 +2,5 @@
 
 add_executable( SortingAlgorithmTest SortingAlgorithmTest.cpp ) # 生成可执行文件
 
-if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
-    target_link_libraries( SortingAlgorithmTest SortingAlgorithm_d ) # 添加库文件路径
-elseif( CMAKE_BUILD_TYPE STREQUAL "Release" )
-    target_link_libraries( SortingAlgorithmTest SortingAlgorithm ) # 添加库文件路径
-endif()
+# 链接SortingAlgorithmLib库
+target_link_libraries( SortingAlgorithmTest SortingAlgorithmLib ) # 链接库

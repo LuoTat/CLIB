@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <deque>
-#include "LTT_ArrayDeque.h"
+#include "ArrayDeque.h"
 
 using namespace std;
 

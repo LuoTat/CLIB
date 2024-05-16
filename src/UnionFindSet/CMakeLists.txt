@@ -1,23 +1,13 @@
+# 生成Lib文件
+add_library( UnionFindSetLib STATIC )
+
 # 添加源文件
-list( APPEND UNIONFINDSET_SRC UnionFindSet.c )
+target_sources( UnionFindSetLib PRIVATE UnionFindSet.c )
 
-# 生成OBJ文件
-add_library( UnionFindSetObj OBJECT ${UNIONFINDSET_SRC} )
-
-# 添加依赖OBJ文件
-# add_dependencies( UnionFindSetObj HashMapObj )
-
-# 生成静态库
-list( APPEND UNIONFINDSET_OBJ
-    $<TARGET_OBJECTS:UnionFindSetObj>
+# 添加依赖
+target_link_libraries( UnionFindSetLib PUBLIC
+    HashMapLib
 )
-list( APPEND UNIONFINDSET_OBJ
-    ${HASHMAP_OBJ}
-)
-set( UNIONFINDSET_OBJ ${UNIONFINDSET_OBJ} PARENT_SCOPE )
 
-message( STATUS "Value of UNIONFINDSET_OBJ: ${UNIONFINDSET_OBJ}" )
-
-add_library( UnionFindSetLib STATIC ${UNIONFINDSET_OBJ} )
-
-add_dependencies( UnionFindSetLib UnionFindSetObj )
+# 添加头文件
+target_include_directories( UnionFindSetLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )

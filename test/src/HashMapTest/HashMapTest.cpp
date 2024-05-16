@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unordered_map>
-#include "LTT_HashMap.h"
+#include "HashMap.h"
 
 using namespace std;
 
