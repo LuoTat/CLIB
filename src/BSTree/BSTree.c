@@ -3,11 +3,10 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include "../ArrayStack/ArrayStack.h"
-#include "../BSTreeUtils/BSTreeUtils.h"
-#include "../BinaryTree/BinaryTree.h"
-#include "../BinaryTree/_BinaryTree.h"
+#include "ArrayStack.h"
+#include "BSTreeUtils.h"
+#include "BinaryTree.h"
+#include "_BinaryTree.h"
 
 BSTree* LTT_BSTree_New(const size_t DataSize, const CompareFunction Comparator)
 {
@@ -70,13 +69,13 @@ static void LTT_BSTree_Transplant(BSTree* const BS_Tree, BinaryTreeNode* const U
 
 Status LTT_BSTree_Delete(BSTree* BS_Tree, void* const Data)
 {
-    BinaryTreeNode* FindNode = LTT_BSTreeNode_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator);
+    BinaryTreeNode* FindNode = LTT_BSTreeUtils_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator);
     if (FindNode == NULL) return ERROR;
     if (FindNode->LeftChild == NODE_NULL) LTT_BSTree_Transplant(BS_Tree, FindNode, FindNode->RightChild);
     else if (FindNode->RightChild == NODE_NULL) LTT_BSTree_Transplant(BS_Tree, FindNode, FindNode->LeftChild);
     else
     {
-        BinaryTreeNode* Temp = LTT_BSTreeNode_GetMinNode(FindNode->RightChild);
+        BinaryTreeNode* Temp = LTT_BSTreeUtils_GetMinNode(FindNode->RightChild);
         if (Temp->Parent != FindNode)
         {
             LTT_BSTree_Transplant(BS_Tree, Temp, Temp->RightChild);
@@ -90,7 +89,7 @@ Status LTT_BSTree_Delete(BSTree* BS_Tree, void* const Data)
     return OK;
 }
 
-BinaryTreeNode* LTT_BSTree_Search(const BSTree* const BS_Tree, const void* const Data) { return LTT_BSTreeNode_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator); }
+BinaryTreeNode* LTT_BSTree_Search(const BSTree* const BS_Tree, const void* const Data) { return LTT_BSTreeUtils_SearchNode(BS_Tree->BiTree.Root, Data, BS_Tree->Comparator); }
 
 void LTT_BSTree_Clear(BSTree* const BS_Tree) { LTT_BiTree_Clear(&BS_Tree->BiTree); }
 
@@ -259,22 +258,11 @@ static BSTree* LTT_BSTree_Build_Optimal_BST_Kernel(void** Data, size_t DataSize,
 
 BSTree* LTT_BSTree_Build_Optimal_BST(void** Data, size_t DataSize, double* P, double* Q, int Length, CompareFunction Comparator)
 {
-    clock_t Start, End;
-    int**   Root = (int**)malloc((Length + 1) * sizeof(int*));
+    int** Root = (int**)malloc((Length + 1) * sizeof(int*));
     for (int i = 0; i < Length + 1; ++i) Root[i] = (int*)calloc((Length + 1), sizeof(int));
-
-    Start = clock();
     LTT_BSTree_Calculate_Optimal_BST_KNUTH(NULL, Root, P, Q, Length);
-    End = clock();
-    printf("Calculate Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
-
-    Start           = clock();
     BSTree* BS_Tree = LTT_BSTree_Build_Optimal_BST_Kernel(Data, DataSize, Root, Length, Comparator);
-    End             = clock();
-    printf("Build Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
-
     for (int i = 0; i < Length + 1; ++i) free(Root[i]);
     free(Root);
-
     return BS_Tree;
 }

@@ -1,7 +1,7 @@
 #include "BinaryTree.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "../BinaryTreeUtils/BinaryTreeUtils.h"
+#include "BinaryTreeUtils.h"
 
 BinaryTreeNode Node_NULL = {NULL, 0, NULL};
 
@@ -165,7 +165,7 @@ Status LTT_BiTree_Delete(BinaryTree* const BiTree, BinaryTreeNode* BeDeleted_Nod
     return OK;
 }
 
-void LTT_BiTree_Clear(BinaryTree* const BiTree) { LTT_BiTreeNode_DeleteSubTree(&(BiTree->Root)); }
+void LTT_BiTree_Clear(BinaryTree* const BiTree) { LTT_BiTreeUtils_DeleteSubTree(&(BiTree->Root)); }
 
 void LTT_BiTree_DestroyNode(BinaryTreeNode** Node)
 {

@@ -1,15 +1,15 @@
-# 输出BSTree的.a文件
+# 生成Lib文件
+add_library( BSTreeLib STATIC )
 
 # 添加源文件
-list( APPEND BSTREE_SRC BSTree.c )
-list( APPEND BSTREE_SRC ../BinaryTree/BinaryTree.c )
-list( APPEND BSTREE_SRC ../BinaryTreeUtils/BinaryTreeUtils.c)
-list( APPEND BSTREE_SRC ../BSTreeUtils/BSTreeUtils.c)
-list( APPEND BSTREE_SRC ../ArrayStack/ArrayStack.c )
-list( APPEND BSTREE_SRC ../ArrayQueue/ArrayQueue.c )
-list( APPEND BSTREE_SRC ../Iterator/Iterator.c )
+target_sources( BSTreeLib PRIVATE BSTree.c )
 
-# 生成静态库
-add_library( BSTreeLib STATIC ${BSTREE_SRC} )
+# 添加依赖
+target_link_libraries( BSTreeLib PUBLIC
+    ArrayStackLib
+    BinaryTreeLib
+    BSTreeUtilsLib
+)
 
-set_target_properties( BSTreeLib PROPERTIES OUTPUT_NAME "BSTree" ) # 修改lib文件的输出名字
+# 添加头文件
+target_include_directories( BSTreeLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )

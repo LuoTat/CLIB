@@ -1,5 +1,5 @@
 #pragma once
-#include "../BSTree/BSTree.h"
+#include "BSTree.h"
 
 #ifdef __cplusplus
 extern "C"

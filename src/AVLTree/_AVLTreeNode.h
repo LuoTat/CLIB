@@ -1,7 +1,7 @@
 #pragma once
 #include <stdbool.h>
 #include <stdint.h>
-#include "../BinaryTree/_PreBinaryTree.h"
+#include "_PreBinaryTree.h"
 
 #define LH                                    0X2
 #define EH                                    0X0

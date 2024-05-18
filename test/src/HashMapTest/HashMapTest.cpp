@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#define NUMBER 1000000
+#define NUMBER 100000000
 
 void PRINT(HashMap* HashMap)
 {

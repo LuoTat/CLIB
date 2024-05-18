@@ -1,6 +1,8 @@
 #pragma once
-#include "../BinaryTree/_PreBinaryTree.h"
-#include "../Predefined/Predefined.h"
+#include "BSTreeUtils.h"    // IWYU pragma: export
+#include "Predefined.h"
+#include "_PreBinaryTree.h"
+
 
 #ifdef __cplusplus
 extern "C"

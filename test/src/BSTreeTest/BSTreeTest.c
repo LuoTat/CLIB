@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "LTT_BSTree.h"
-#include "LTT_BinaryTree.h"
+#include "BSTree.h"
 
 #define Mode       1
-#define NodeNum    100000
+#define NodeNum    1000000
 #define RandomSend (unsigned)time(NULL)
 
 void SWAP(int* a, int* b)
@@ -28,7 +27,7 @@ Status PRINT(void* Data)
     return OK;
 }
 
-int cmp(const void* const Data1, const void* const Data2) { return *(int*)Data1 - *(int*)Data2; }
+inline static int cmp(const void* const Data1, const void* const Data2) { return *(int*)Data1 - *(int*)Data2; }
 
 int main()
 {
@@ -59,13 +58,13 @@ int main()
     End = clock();
     printf("Insert Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
 
-    int NodeNumber = LTT_BiTreeNode_GetNodeNumber(BS_Tree->BiTree.Root);
+    int NodeNumber = LTT_BiTreeUtils_GetNodeNumber(BS_Tree->BiTree.Root);
     printf("NodeNumber: %d\n", NodeNumber);
 
-    int LeafNum = LTT_BiTreeNode_GetLeafNumber(BS_Tree->BiTree.Root);
+    int LeafNum = LTT_BiTreeUtils_GetLeafNumber(BS_Tree->BiTree.Root);
     printf("LeafNumber: %d\n", LeafNum);
 
-    int Depth = LTT_BiTreeNode_GetDepth(BS_Tree->BiTree.Root);
+    int Depth = LTT_BiTreeUtils_GetDepth(BS_Tree->BiTree.Root);
     printf("Depth: %d\n", Depth);
 
     Start                    = clock();
@@ -75,7 +74,7 @@ int main()
     printf("find Time: %f ms\n", (double)(End - Start) / CLOCKS_PER_SEC * 1000);
 
     LTT_BSTree_Delete(BS_Tree, intArray[rand() % NodeNum]);
-    NodeNumber = LTT_BiTreeNode_GetNodeNumber(BS_Tree->BiTree.Root);
+    NodeNumber = LTT_BiTreeUtils_GetNodeNumber(BS_Tree->BiTree.Root);
     printf("NodeNumber: %d\n", NodeNumber);
 
     LTT_BSTree_Destroy(&BS_Tree);

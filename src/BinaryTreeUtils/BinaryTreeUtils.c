@@ -1,9 +1,10 @@
 #include "BinaryTreeUtils.h"
-#include "../ArrayQueue/ArrayQueue.h"
-#include "../ArrayStack/ArrayStack.h"
-#include "../BinaryTree/BinaryTree.h"
+#include <stdlib.h>
+#include "ArrayQueue.h"
+#include "ArrayStack.h"
+#include "BinaryTree.h"
 
-void LTT_BiTreeNode_DeleteSubTree(BinaryTreeNode** Root)
+void LTT_BiTreeUtils_DeleteSubTree(BinaryTreeNode** Root)
 {
     // 后序遍历,释放每个节点
     ArrayStack*      Stack       = LTT_ArrayStack_New(sizeof(BinaryTreeNode*), NULL);
@@ -29,7 +30,7 @@ void LTT_BiTreeNode_DeleteSubTree(BinaryTreeNode** Root)
     LTT_ArrayStack_Destroy(&OutputStack);
 }
 
-int LTT_BiTreeNode_GetNodeNumber(BinaryTreeNode* const Root)
+int LTT_BiTreeUtils_GetNodeNumber(BinaryTreeNode* const Root)
 {
     int             Num   = 0;
     ArrayQueue*     Queue = LTT_ArrayQueue_New(sizeof(BinaryTreeNode), NULL);
@@ -45,41 +46,41 @@ int LTT_BiTreeNode_GetNodeNumber(BinaryTreeNode* const Root)
     return Num;
 }
 
-int LTT_BiTreeNode_GetLeafNumber(BinaryTreeNode* const Root)
+int LTT_BiTreeUtils_GetLeafNumber(BinaryTreeNode* const Root)
 {
     int Num = 0;
     if (Root == NODE_NULL) return 0;
     if ((Root->LeftChild == NODE_NULL) && (Root->RightChild == NODE_NULL)) ++Num;
-    Num += LTT_BiTreeNode_GetLeafNumber(Root->LeftChild);
-    Num += LTT_BiTreeNode_GetLeafNumber(Root->RightChild);
+    Num += LTT_BiTreeUtils_GetLeafNumber(Root->LeftChild);
+    Num += LTT_BiTreeUtils_GetLeafNumber(Root->RightChild);
     return Num;
 }
 
-int LTT_BiTreeNode_GetDepth(BinaryTreeNode* const Root)
+int LTT_BiTreeUtils_GetDepth(BinaryTreeNode* const Root)
 {
     int Depth = 0;
     if (Root == NODE_NULL) return 0;
     else
     {
-        int DepthLeft  = LTT_BiTreeNode_GetDepth(Root->LeftChild);
-        int DepthRight = LTT_BiTreeNode_GetDepth(Root->RightChild);
+        int DepthLeft  = LTT_BiTreeUtils_GetDepth(Root->LeftChild);
+        int DepthRight = LTT_BiTreeUtils_GetDepth(Root->RightChild);
         Depth          = 1 + (DepthLeft > DepthRight ? DepthLeft : DepthRight);
     }
     return Depth;
 }
 
-Status LTT_BiTreeNode_PreOrder_Traverse_Recursive(BinaryTreeNode* const Root, const VisitFunction Visit)
+Status LTT_BiTreeUtils_PreOrder_Traverse_Recursive(BinaryTreeNode* const Root, const VisitFunction Visit)
 {
     if (Root != NODE_NULL)
     {
         if (Visit(Root) == ERROR) return ERROR;
-        LTT_BiTreeNode_PreOrder_Traverse_Recursive(Root->LeftChild, Visit);
-        LTT_BiTreeNode_PreOrder_Traverse_Recursive(Root->RightChild, Visit);
+        LTT_BiTreeUtils_PreOrder_Traverse_Recursive(Root->LeftChild, Visit);
+        LTT_BiTreeUtils_PreOrder_Traverse_Recursive(Root->RightChild, Visit);
     }
     return OK;
 }
 
-Status LTT_BiTreeNode_PreOrder_Traverse_Stack(BinaryTreeNode* const Root, const VisitFunction Visit)
+Status LTT_BiTreeUtils_PreOrder_Traverse_Stack(BinaryTreeNode* const Root, const VisitFunction Visit)
 {
     ArrayStack*     Stack = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
     BinaryTreeNode* Temp;
@@ -98,18 +99,18 @@ Status LTT_BiTreeNode_PreOrder_Traverse_Stack(BinaryTreeNode* const Root, const 
     return OK;
 }
 
-Status LTT_BiTreeNode_InOrder_Traverse_Recursive(BinaryTreeNode* const Root, const VisitFunction Visit)
+Status LTT_BiTreeUtils_InOrder_Traverse_Recursive(BinaryTreeNode* const Root, const VisitFunction Visit)
 {
     if (Root != NODE_NULL)
     {
-        LTT_BiTreeNode_InOrder_Traverse_Recursive(Root->LeftChild, Visit);
+        LTT_BiTreeUtils_InOrder_Traverse_Recursive(Root->LeftChild, Visit);
         if (Visit(Root) == ERROR) return ERROR;
-        LTT_BiTreeNode_InOrder_Traverse_Recursive(Root->RightChild, Visit);
+        LTT_BiTreeUtils_InOrder_Traverse_Recursive(Root->RightChild, Visit);
     }
     return OK;
 }
 
-Status LTT_BiTreeNode_InOrder_Traverse_Stack(BinaryTreeNode* const Root, const VisitFunction Visit)
+Status LTT_BiTreeUtils_InOrder_Traverse_Stack(BinaryTreeNode* const Root, const VisitFunction Visit)
 {
     ArrayStack*     Stack = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
     BinaryTreeNode* Temp;
@@ -129,18 +130,18 @@ Status LTT_BiTreeNode_InOrder_Traverse_Stack(BinaryTreeNode* const Root, const V
     return OK;
 }
 
-Status LTT_BiTreeNode_PostOrder_Traverse_Recursive(BinaryTreeNode* const Root, const VisitFunction Visit)
+Status LTT_BiTreeUtils_PostOrder_Traverse_Recursive(BinaryTreeNode* const Root, const VisitFunction Visit)
 {
     if (Root != NODE_NULL)
     {
-        LTT_BiTreeNode_PostOrder_Traverse_Recursive(Root->LeftChild, Visit);
-        LTT_BiTreeNode_PostOrder_Traverse_Recursive(Root->RightChild, Visit);
+        LTT_BiTreeUtils_PostOrder_Traverse_Recursive(Root->LeftChild, Visit);
+        LTT_BiTreeUtils_PostOrder_Traverse_Recursive(Root->RightChild, Visit);
         if (Visit(Root) == ERROR) return ERROR;
     }
     return OK;
 }
 
-Status LTT_BiTreeNode_PostOrder_Traverse_Stack(BinaryTreeNode* const Root, const VisitFunction Visit)
+Status LTT_BiTreeUtils_PostOrder_Traverse_Stack(BinaryTreeNode* const Root, const VisitFunction Visit)
 {
     ArrayStack*     Stack       = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
     ArrayStack*     OutputStack = LTT_ArrayStack_New(sizeof(BinaryTreeNode), NULL);
@@ -166,7 +167,7 @@ Status LTT_BiTreeNode_PostOrder_Traverse_Stack(BinaryTreeNode* const Root, const
     return OK;
 }
 
-Status LTT_BiTreeNode_LevelOrder_Traverse_Queue(BinaryTreeNode* const Root, const VisitFunction Visit)
+Status LTT_BiTreeUtils_LevelOrder_Traverse_Queue(BinaryTreeNode* const Root, const VisitFunction Visit)
 {
     ArrayQueue*     Queue = LTT_ArrayQueue_New(sizeof(BinaryTreeNode), NULL);
     BinaryTreeNode* Temp;

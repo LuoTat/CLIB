@@ -19,7 +19,7 @@ using namespace std;
     Mode == 5 //有很多相同元素的数组
     Mode == 6 //16个元素的小数组
 */
-#define NodeNum                                  50000000
+#define NodeNum                                  1000000
 #define Mode                                     3
 #define PRINT                                    0
 #define SortCounter                              10
@@ -35,9 +35,9 @@ using namespace std;
 #define QuickSort_LTT_libstdcpp_Test             1
 #define QuickSort_glibc_Test                     1
 #define SimpleSelectionSort_Test                 0
-#define HeapSort_Test                            0
+#define HeapSort_Test                            1
 #define MergeSort_Recursion_Test                 0
-#define MergeSort_Iterative_Test                 0
+#define MergeSort_Iterative_Test                 1
 #define MergeSort_Inplace_Iterative_Test         0
 #define MergeSort_Inplace_Iterative_For_Int_Test 0
 #define RadixSort_LSD_Test                       0
@@ -77,15 +77,15 @@ void IsOrdered(int* a, int* b, int NumOfElements)
 
 long long int CMPNUM = 0;
 
-inline int getValue(const void* a) { return *(int*)a; }
+inline static int getValue(const void* a) { return *(int*)a; }
 
-inline int cmp(const void* a, const void* b)
+inline static int cmp(const void* a, const void* b)
 {
     ++CMPNUM;
     return *(int*)a - *(int*)b;
 }
 
-inline bool cmp2(int a, int b)
+inline static bool cmp2(int a, int b)
 {
     ++CMPNUM;
     return a < b;

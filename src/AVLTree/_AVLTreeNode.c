@@ -1,7 +1,6 @@
 #include "_AVLTreeNode.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "../BinaryTree/_BinaryTree.h"
 
 AVLTreeNode* LTT_AVLTreeNode_MakeNode(void* const Data)
 {

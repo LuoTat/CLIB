@@ -8,7 +8,7 @@ extern "C"
 #endif
     typedef struct _ArrayStack ArrayStack;
 
-    
+
     // 初始化队列
     ArrayStack* LTT_ArrayStack_New(const size_t DataSize, Equals_Function Equals);
     // 插入元素

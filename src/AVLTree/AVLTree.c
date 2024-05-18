@@ -1,6 +1,6 @@
 #include "AVLTree.h"
 #include <stdlib.h>
-#include "../BSTreeUtils/BSTreeUtils.h"
+#include "BSTreeUtils.h"
 #include "_AVLTreeNode.h"
 
 AVLTree* LTT_AVLTree_New(const size_t DataSize, const CompareFunction Comparator) { return (AVLTree*)LTT_BSTree_New(DataSize, Comparator); }
@@ -168,7 +168,7 @@ static Status LTT_AVLTreeNode_DeleteData_Loop(AVLTreeNode** Root, void* Data, si
         else
         {
             void* PrecursorData = (void*)malloc(DataSize);
-            memcpy(PrecursorData, LTT_BSTreeNode_GetPredecessorNode((BinaryTreeNode*)*Root)->Data, DataSize);
+            memcpy(PrecursorData, LTT_BSTreeUtils_GetPredecessorNode((BinaryTreeNode*)*Root)->Data, DataSize);
             LTT_AVLTreeNode_DeleteData_Loop((AVLTreeNode**)&Get_LeftChild(*Root), PrecursorData, DataSize, Lower, Comparator);
             memcpy(Get_Data(*Root), PrecursorData, DataSize);
             free(PrecursorData);
@@ -198,6 +198,6 @@ Status LTT_AVLTree_DeleteData(AVLTree* AVL_Tree, void* const Data)
     return LTT_AVLTreeNode_DeleteData_Loop((AVLTreeNode**)&AVL_Tree->BiTree.Root, Data, AVL_Tree->BiTree.DataSize, &Lower, AVL_Tree->Comparator);
 }
 
-void LTT_AVLTree_Clear(AVLTree* const AVL_Tree);
+void LTT_AVLTree_Clear(AVLTree* const AVL_Tree) { LTT_BSTree_Clear(AVL_Tree); }
 
-void LTT_AVLTree_Destroy(AVLTree** AVL_Tree);
+void LTT_AVLTree_Destroy(AVLTree** AVL_Tree) { LTT_BSTree_Destroy(AVL_Tree); }

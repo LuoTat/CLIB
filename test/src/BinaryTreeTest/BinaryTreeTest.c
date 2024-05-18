@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "LTT_BinaryTree.h"
+#include "BinaryTree.h"
 
 Status PRINT(void* Data)
 {
@@ -35,38 +35,38 @@ int main()
     LTT_BiTree_Insert(BiTree, BiTree->Root->RightChild, &int6, 1);
     LTT_BiTree_Insert(BiTree, BiTree->Root->RightChild, &int7, 0);
 
-    LTT_BiTreeNode_DeleteSubTree(&BiTree->Root);
+    //LTT_BiTreeNode_DeleteSubTree(&BiTree->Root);
     //(BiTree, BiTree->Root->RightChild->LeftChild);
 
     printf("PreOrder: \n");
-    LTT_BiTreeNode_PreOrder_Traverse_Recursive(BiTree->Root, PRINT);
+    LTT_BiTreeUtils_PreOrder_Traverse_Recursive(BiTree->Root, PRINT);
     printf("\n");
-    LTT_BiTreeNode_PreOrder_Traverse_Stack(BiTree->Root, PRINT);
+    LTT_BiTreeUtils_PreOrder_Traverse_Stack(BiTree->Root, PRINT);
     printf("\n");
 
     printf("InOrder: \n");
-    LTT_BiTreeNode_InOrder_Traverse_Recursive(BiTree->Root, PRINT);
+    LTT_BiTreeUtils_InOrder_Traverse_Recursive(BiTree->Root, PRINT);
     printf("\n");
-    LTT_BiTreeNode_InOrder_Traverse_Stack(BiTree->Root, PRINT);
+    LTT_BiTreeUtils_InOrder_Traverse_Stack(BiTree->Root, PRINT);
     printf("\n");
 
     printf("PostOrder: \n");
-    LTT_BiTreeNode_PostOrder_Traverse_Recursive(BiTree->Root, PRINT);
+    LTT_BiTreeUtils_PostOrder_Traverse_Recursive(BiTree->Root, PRINT);
     printf("\n");
-    LTT_BiTreeNode_PostOrder_Traverse_Stack(BiTree->Root, PRINT);
+    LTT_BiTreeUtils_PostOrder_Traverse_Stack(BiTree->Root, PRINT);
     printf("\n");
 
     printf("LevelOrder: \n");
-    LTT_BiTreeNode_LevelOrder_Traverse_Queue(BiTree->Root, PRINT);
+    LTT_BiTreeUtils_LevelOrder_Traverse_Queue(BiTree->Root, PRINT);
     printf("\n");
 
-    int NodeNumber = LTT_BiTreeNode_GetNodeNumber(BiTree->Root);
+    int NodeNumber = LTT_BiTreeUtils_GetNodeNumber(BiTree->Root);
     printf("NodeNumber: %d\n", NodeNumber);
 
-    int LeafNum = LTT_BiTreeNode_GetLeafNumber(BiTree->Root);
+    int LeafNum = LTT_BiTreeUtils_GetLeafNumber(BiTree->Root);
     printf("LeafNumber: %d\n", LeafNum);
 
-    int Depth = LTT_BiTreeNode_GetDepth(BiTree->Root);
+    int Depth = LTT_BiTreeUtils_GetDepth(BiTree->Root);
     printf("Depth: %d\n", Depth);
 
     LTT_BiTree_Destroy(&BiTree);

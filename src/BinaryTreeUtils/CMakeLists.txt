@@ -1,7 +1,15 @@
+# 生成Lib文件
+add_library( BinaryTreeUtilsLib STATIC )
+
 # 添加源文件
-list( APPEND BINARYTREEUTILS_SRC BinaryTreeUtils.c )
+target_sources( BinaryTreeUtilsLib PRIVATE BinaryTreeUtils.c )
 
-# 生成OBJ文件
-add_library( BinaryTreeUtilsObj OBJECT ${BINARYTREEUTILS_SRC} )
+# 添加依赖
+target_link_libraries( BinaryTreeUtilsLib PUBLIC
+    ArrayStackLib
+    ArrayQueueLib
+    BinaryTreeLib
+)
 
-set( BINARYTREEUTILS_OBJ $<TARGET_OBJECTS:BinaryTreeUtilsObj> PARENT_SCOPE )
+# 添加头文件
+target_include_directories( BinaryTreeUtilsLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
