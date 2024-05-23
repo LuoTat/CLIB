@@ -21,7 +21,9 @@ extern "C"
     // 快速排序
     void QuickSort_LTT_glibc(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Comparator);
     void QuickSort_LTT_libstdcpp(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Comparator);
+    void QuickSort_LTT_libstdcpp_int(int* Base, size_t NumOfElements);
     void QuickSort_glibc(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Comparator);
+    void QuickSort_glibc_int(int* Base, size_t NumOfElements);
     //###########基于选择##########
     // 简单选择排序
     void SimpleSelectionSort(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Comparator);

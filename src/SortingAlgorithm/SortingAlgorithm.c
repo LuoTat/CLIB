@@ -1,14 +1,16 @@
 #include <limits.h>
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include "Predefined.h"
 #include "SortMacro.h"
 
 
 
 
-//用来作为许多排序算法的临时存储空间
+// 用来作为许多排序算法的临时存储空间
 static char  Temp[MAX_SIZEOFELEMENTS];
 static char* Temp_Merge;
 
@@ -70,7 +72,7 @@ static char* Temp_Merge;
 #endif
 
 
-#define MAX_THRESH  4
+#define MAX_THRESH  16
 #define S_Threshold 16
 #define Bucket_NUM  8
 
@@ -79,6 +81,12 @@ typedef struct
     char* Low;
     char* High;
 } stack_node;
+
+typedef struct
+{
+    int* Low;
+    int* High;
+} stack_node_int;
 
 #define STACK_SIZE          (CHAR_BIT * sizeof(size_t))
 #define PUSH(LeftP, RightP) ((void)((Top->Low = (LeftP)), (Top->High = (RightP)), ++Top))
@@ -96,6 +104,27 @@ static void MoveMidToFirst(char* Result, char* a, char* b, char* c, size_t SizeO
     else if (Comparator(a, c) < 0) SWAP(Result, a, SizeOfElements);
     else if (Comparator(b, c) < 0) SWAP(Result, c, SizeOfElements);
     else SWAP(Result, b, SizeOfElements);
+}
+
+#define SWAP_INT(a, b)              \
+    do {                            \
+        register int __tmp = *(a);  \
+        *(a)               = *(b);  \
+        *(b)               = __tmp; \
+    }                               \
+    while (0)
+
+static void MoveMidToFirst_int(int* Result, int* a, int* b, int* c)
+{
+    if (*a < *b)
+    {
+        if (*b < *c) SWAP_INT(Result, b);
+        else if (*a < *c) SWAP_INT(Result, c);
+        else SWAP_INT(Result, a);
+    }
+    else if (*a < *c) SWAP_INT(Result, a);
+    else if (*b < *c) SWAP_INT(Result, c);
+    else SWAP_INT(Result, b);
 }
 
 inline static unsigned char lg2(size_t n)
@@ -360,6 +389,20 @@ static void _Unguarded_LinearInsert(char* Last, size_t SizeOfElements, CompareFu
     memcpy(Last, Temp, SizeOfElements);
 }
 
+static void _Unguarded_LinearInsert_int(int* Last)
+{
+    int  Temp = *Last;
+    int* Next = Last;
+    --Next;
+    while (Temp < *Next)
+    {
+        *Last = *Next;
+        --Last;
+        --Next;
+    }
+    *Last = Temp;
+}
+
 /*
 	此插入排序是专门用于一些递归排序算法中用于给元素个数小于S_Threshold的小数组排序用的
     此插入排序是一个通过每次都将比第一个元素小的元素移动到第一个的位置
@@ -380,6 +423,21 @@ void _InsertionSort_Small(char* Low, char* High, size_t SizeOfElements, CompareF
     }
 }
 
+void _InsertionSort_Small_int(int* Low, int* High)
+{
+    if (Low == High) return;
+    for (int* i = Low + 1; i != High; ++i)
+    {
+        if (*i < *Low)
+        {
+            int Temp = *i;
+            memmove(Low + 1, Low, (i - Low) * sizeof(int));
+            *Low = Temp;
+        }
+        else { _Unguarded_LinearInsert_int(i); }
+    }
+}
+
 void InsertionSort(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Comparator) { _InsertionSort_Small(Base, Base + NumOfElements * SizeOfElements, SizeOfElements, Comparator); }
 
 /*
@@ -388,6 +446,11 @@ void InsertionSort(void* Base, size_t NumOfElements, size_t SizeOfElements, Comp
 inline static void _Unguarded_InsertionSort(char* Low, char* High, size_t SizeOfElements, CompareFunction Comparator)
 {
     for (char* i = Low; i != High; i += SizeOfElements) _Unguarded_LinearInsert(i, SizeOfElements, Comparator);
+}
+
+inline static void _Unguarded_InsertionSort_int(int* Low, int* High)
+{
+    for (int* i = Low; i != High; ++i) _Unguarded_LinearInsert_int(i);
 }
 
 /*
@@ -403,6 +466,16 @@ static void _Final_InsertionSort(char* Low, char* High, size_t SizeOfElements, C
         _Unguarded_InsertionSort(Low + S_Threshold * SizeOfElements, High, SizeOfElements, Comparator);
     }
     else _InsertionSort_Small(Low, High, SizeOfElements, Comparator);
+}
+
+static void _Final_InsertionSort_int(int* Low, int* High)
+{
+    if (High - Low > S_Threshold)
+    {
+        _InsertionSort_Small_int(Low, Low + S_Threshold);
+        _Unguarded_InsertionSort_int(Low + S_Threshold, High);
+    }
+    else _InsertionSort_Small_int(Low, High);
 }
 
 static char* Unguarded_Partition(char* LeftP, char* RightP, char* Pivot, size_t SizeOfElements, CompareFunction Comparator)
@@ -524,11 +597,33 @@ static char* GetPartition_libstdcpp(char* LeftP, char* RightP, char* Pivot, size
     }
 }
 
+static int* GetPartition_libstdcpp_int(int* LeftP, int* RightP, int* Pivot)
+{
+    //此处是libstdc++库中的STL里面的sort的快速排序部分的实现划分的代码
+    //使用的是Hoare partition scheme
+    while (true)
+    {
+        while (*LeftP < *Pivot) ++LeftP;
+        while (*RightP > *Pivot) --RightP;
+        if (LeftP >= RightP) return LeftP;
+        SWAP_INT(LeftP, RightP);
+        ++LeftP;
+        --RightP;
+    }
+}
+
 static char* GetPartitionPivot_libstdcpp(char* Low, char* High, size_t SizeOfElements, CompareFunction Comparator)
 {
     char* Mid = Low + SizeOfElements * (((High - Low) / SizeOfElements + 1) >> 1);
     MoveMidToFirst(Low, Low + SizeOfElements, Mid, High, SizeOfElements, Comparator);
     return GetPartition_libstdcpp(Low + SizeOfElements, High, Low, SizeOfElements, Comparator);
+}
+
+static int* GetPartitionPivot_libstdcpp_int(int* Low, int* High)
+{
+    int* Mid = Low + ((High - Low + 1) >> 1);
+    MoveMidToFirst_int(Low, Low + 1, Mid, High);
+    return GetPartition_libstdcpp_int(Low + 1, High, Low);
 }
 
 static void QuickSort_LTT_libstdcpp_Loop(char* Low, char* High, size_t SizeOfElements, CompareFunction Comparator)
@@ -542,6 +637,17 @@ static void QuickSort_LTT_libstdcpp_Loop(char* Low, char* High, size_t SizeOfEle
     }
 }
 
+static void QuickSort_LTT_libstdcpp_Loop_int(int* Low, int* High)
+{
+    //这样写可以减少一些函数的递归调用
+    while (High - Low + 1 >= S_Threshold)
+    {
+        int* Cut = GetPartitionPivot_libstdcpp_int(Low, High);
+        QuickSort_LTT_libstdcpp_Loop_int(Cut, High);
+        High = Cut - 1;
+    }
+}
+
 /*
 	此快速排序是使用了libstdc++库中的STL里面的sort函数的快速排序的部分
 	其中的QuickSort_LTT_glibc_Loop函数的循环则是借鉴了libstdc++的STL里面的sort的具体实现
@@ -551,6 +657,13 @@ void QuickSort_LTT_libstdcpp(void* Base, size_t NumOfElements, size_t SizeOfElem
     if (NumOfElements <= 1) return;
     QuickSort_LTT_libstdcpp_Loop(Base, Base + (NumOfElements - 1) * SizeOfElements, SizeOfElements, Comparator);
     _Final_InsertionSort(Base, Base + SizeOfElements * NumOfElements, SizeOfElements, Comparator);
+}
+
+void QuickSort_LTT_libstdcpp_int(int* Base, size_t NumOfElements)
+{
+    if (NumOfElements <= 1) return;
+    QuickSort_LTT_libstdcpp_Loop_int(Base, Base + NumOfElements - 1);
+    _Final_InsertionSort_int(Base, Base + NumOfElements);
 }
 
 /*
@@ -657,6 +770,113 @@ void QuickSort_glibc(void* Base, size_t NumOfElements, size_t SizeOfElements, Co
                 char  c = *Trav;
                 char *High, *Low;
                 for (High = Low = Trav; (Low -= SizeOfElements) >= Tmp_ptr; High = Low) *High = *Low;
+                *High = c;
+            }
+        }
+    }
+}
+
+void QuickSort_glibc_int(int* Base, size_t NumOfElements)
+{
+    int*         Base_ptr   = Base;
+    const size_t Max_Thresh = MAX_THRESH * sizeof(int);    //每一个子数组的最大长度(4个元素大小)
+
+    if (NumOfElements == 0) return;                        //空数组直接返回
+
+    if (NumOfElements > MAX_THRESH)
+    {
+        int*            Low  = Base_ptr;
+        int*            High = Low + NumOfElements - 1;
+        stack_node_int  Stack[STACK_SIZE];
+        stack_node_int* Top = Stack;
+
+        PUSH(NULL, NULL);
+
+        while (STACK_NOT_EMPTY)
+        {
+            int* Left_ptr;
+            int* Right_ptr;
+            int* Mid = Low + ((High - Low) >> 1);
+            //将Low,High,Mid排序
+            if (*Mid < *Low) SWAP_INT(Mid, Low);
+            if (*High < *Mid) SWAP_INT(Mid, High);
+            else goto A;
+            if (*Mid < *Low) SWAP_INT(Mid, Low);
+        A:
+            Left_ptr  = Low + 1;     //Left_ptr跳过第一个元素开始
+            Right_ptr = High - 1;    //Right_ptr跳过最后一个元素开始
+
+            do {
+                while (*Left_ptr < *Mid) ++Left_ptr;
+                while (*Mid < *Right_ptr) --Right_ptr;
+                if (Left_ptr < Right_ptr)
+                {
+                    SWAP_INT(Left_ptr, Right_ptr);
+                    if (Mid == Left_ptr) Mid = Right_ptr;
+                    else if (Mid == Right_ptr) Mid = Left_ptr;
+                    ++Left_ptr;
+                    --Right_ptr;
+                }
+                else if (Left_ptr == Right_ptr)
+                {
+                    ++Left_ptr;
+                    --Right_ptr;
+                    break;
+                }
+            }
+            while (Left_ptr <= Right_ptr);
+
+            //将未排序的部分放入栈中
+            if ((size_t)(Right_ptr - Low) <= Max_Thresh)                        //左边小
+            {
+                if ((size_t)(High - Left_ptr) <= Max_Thresh) POP(Low, High);    //左边小,右边小，直接弹出
+                else Low = Left_ptr;                                            //左边小,右边大，从右边开始
+            }    //左边大
+            else if ((size_t)(High - Left_ptr) <= Max_Thresh) High = Right_ptr;    //左边大,右边小，从左边开始
+            else if ((Right_ptr - Low) > (High - Left_ptr))                        //两边均大,左边大于右边
+            {
+                PUSH(Low, Right_ptr);                                              //将左边入栈，先排右边
+                Low = Left_ptr;
+            }
+            else
+            {
+                PUSH(Left_ptr, High);                                              //将右边入栈，先排左边
+                High = Right_ptr;
+            }
+        }
+    }
+
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+
+    //将数组划分为4个元素一组的有序集合
+    //用插入排序来进行最好的排序
+    int* const End_ptr = Base_ptr + NumOfElements - 1;           //指向数组最后一个元素的指针
+    int*       Tmp_ptr = Base_ptr;                               //指向数组第一个元素
+    int*       Thresh  = MIN(End_ptr, Base_ptr + Max_Thresh);    //第一组子数组的尾指针
+    int*       Run_ptr;
+    for (Run_ptr = Tmp_ptr + 1; Run_ptr <= Thresh; ++Run_ptr)    //从第二个元素开始找最小的元素
+    {
+        if (*Run_ptr < *Tmp_ptr) Tmp_ptr = Run_ptr;              //找到比Tmp_ptr更小的元素,更新之
+    }
+    if (Tmp_ptr != Base_ptr) SWAP_INT(Tmp_ptr, Base_ptr);        //把子数组里面最小的元素放到第一个位置
+    Run_ptr = Base_ptr + 1;
+    /*
+        下面的作用是找到大于Run_ptr的元素组，将其向后移动
+    */
+    while (++Run_ptr <= End_ptr)
+    {
+        Tmp_ptr = Run_ptr - 1;
+        while (*Run_ptr < *Tmp_ptr) --Tmp_ptr;
+        ++Tmp_ptr;
+        if (Tmp_ptr != Run_ptr)
+        {
+            int* Trav;
+            Trav = Run_ptr + 1;
+            while (--Trav >= Run_ptr)
+            {
+                int  c = *Trav;
+                int *High, *Low;
+                for (High = Low = Trav; (Low -= 1) >= Tmp_ptr; High = Low) *High = *Low;
                 *High = c;
             }
         }

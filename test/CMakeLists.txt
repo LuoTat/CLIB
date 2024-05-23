@@ -1,6 +1,9 @@
 # 设置可执行文件的输出路径
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin )
 
+# 设置头文件路径
+include_directories( ../Generic )
+
 # 增加子目录
 add_subdirectory( src/ArrayDequeTest )
 add_subdirectory( src/ArrayListTest )

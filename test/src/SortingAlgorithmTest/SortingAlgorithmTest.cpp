@@ -5,7 +5,6 @@
 #include <algorithm>
 #include "SortingAlgorithm.h"
 
-
 using namespace std;
 #define MAX_STRINGSLENGTH                        (50)
 #define MAX_DOUBLELENGTH                         (12)
@@ -31,11 +30,13 @@ using namespace std;
 #define ShellInsertionSort_Sedgewick_Test        0
 #define BubbleSort_Test                          0
 #define BubbleSort_Fast_Test                     0
-#define QuickSort_LTT_glibc_Test                 1
-#define QuickSort_LTT_libstdcpp_Test             1
-#define QuickSort_glibc_Test                     1
+#define QuickSort_LTT_glibc_Test                 0
+#define QuickSort_LTT_libstdcpp_Test             0
+#define QuickSort_LTT_libstdcpp_int_Test         1
+#define QuickSort_glibc_Test                     0
+#define QuickSort_glibc_int_Test                 1
 #define SimpleSelectionSort_Test                 0
-#define HeapSort_Test                            1
+#define HeapSort_Test                            0
 #define MergeSort_Recursion_Test                 0
 #define MergeSort_Iterative_Test                 1
 #define MergeSort_Inplace_Iterative_Test         0
@@ -46,9 +47,9 @@ using namespace std;
 #define CountingSort_Test                        0
 #define PigeonholeSort_Test                      0
 #define BigoSort_Test                            0
-#define IntrospectiveSort_Test                   1
+#define IntrospectiveSort_Test                   0
 #define sort_Test                                1
-#define qsort_Test                               1
+#define qsort_Test                               0
 
 void SWAP(int* a, int* b)
 {
@@ -121,8 +122,14 @@ int main()
 #if QuickSort_LTT_libstdcpp_Test == 1
     double QuickSort_LTT_libstdcpp_SortSUM = 0;
 #endif
+#if QuickSort_LTT_libstdcpp_int_Test == 1
+    double QuickSort_LTT_libstdcpp_int_SortSUM = 0;
+#endif
 #if QuickSort_glibc_Test == 1
     double QuickSort_glibc_SortSUM = 0;
+#endif
+#if QuickSort_glibc_int_Test == 1
+    double QuickSort_glibc_int_SortSUM = 0;
 #endif
 #if SimpleSelectionSort_Test == 1
     double SimpleSelectionSort_SortSUM = 0;
@@ -286,12 +293,36 @@ int main()
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
+
+#if QuickSort_LTT_libstdcpp_int_Test == 1
+        memcpy(Array, Temp, NodeNum * sizeof(int));
+        Start = clock();
+        QuickSort_LTT_libstdcpp_int(Array, NodeNum);
+        End                                  = clock();
+        QuickSort_LTT_libstdcpp_int_SortSUM += (double)(End - Start) / CLOCKS_PER_SEC * 1000;
+    #if PRINT == 1
+        printf("%-*s %*.4lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp_int:", MAX_DOUBLELENGTH, (double)(End - Start) / CLOCKS_PER_SEC * 1000);
+    #endif
+        IsOrdered(Array, OrderedArray, NodeNum);
+#endif
+
 #if QuickSort_glibc_Test == 1
         memcpy(Array, Temp, NodeNum * sizeof(int));
         Start = clock();
         QuickSort_glibc(Array, NodeNum, sizeof(int), cmp);
         End                      = clock();
         QuickSort_glibc_SortSUM += (double)(End - Start) / CLOCKS_PER_SEC * 1000;
+    #if PRINT == 1
+        printf("%-*s %*.4lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc:", MAX_DOUBLELENGTH, (double)(End - Start) / CLOCKS_PER_SEC * 1000);
+    #endif
+        IsOrdered(Array, OrderedArray, NodeNum);
+#endif
+#if QuickSort_glibc_int_Test == 1
+        memcpy(Array, Temp, NodeNum * sizeof(int));
+        Start = clock();
+        QuickSort_glibc_int(Array, NodeNum);
+        End                          = clock();
+        QuickSort_glibc_int_SortSUM += (double)(End - Start) / CLOCKS_PER_SEC * 1000;
     #if PRINT == 1
         printf("%-*s %*.4lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc:", MAX_DOUBLELENGTH, (double)(End - Start) / CLOCKS_PER_SEC * 1000);
     #endif
@@ -331,7 +362,6 @@ int main()
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
 #if MergeSort_Iterative_Test == 1
-
         memcpy(Array, Temp, NodeNum * sizeof(int));
         Start = clock();
         MergeSort_Iterative(Array, NodeNum, sizeof(int), cmp);
@@ -490,8 +520,14 @@ int main()
 #if QuickSort_LTT_libstdcpp_Test == 1
     printf("%-*s %*.4lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp平均用时:", MAX_DOUBLELENGTH, QuickSort_LTT_libstdcpp_SortSUM / SortCounter);
 #endif
+#if QuickSort_LTT_libstdcpp_int_Test == 1
+    printf("%-*s %*.4lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp_int平均用时:", MAX_DOUBLELENGTH, QuickSort_LTT_libstdcpp_int_SortSUM / SortCounter);
+#endif
 #if QuickSort_glibc_Test == 1
     printf("%-*s %*.4lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc平均用时:", MAX_DOUBLELENGTH, QuickSort_glibc_SortSUM / SortCounter);
+#endif
+#if QuickSort_glibc_int_Test == 1
+    printf("%-*s %*.4lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc_int平均用时:", MAX_DOUBLELENGTH, QuickSort_glibc_int_SortSUM / SortCounter);
 #endif
 #if SimpleSelectionSort_Test == 1
     printf("%-*s %*.4lf ms\n", MAX_STRINGSLENGTH, "SimpleSelectionSort平均用时:", MAX_DOUBLELENGTH, SimpleSelectionSort_SortSUM / SortCounter);

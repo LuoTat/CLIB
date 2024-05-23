@@ -4,7 +4,7 @@
 #include "AVLTree.h"
 
 #define Mode       1
-#define NodeNum    1000000
+#define NodeNum    100000000
 #define RandomSend (unsigned)time(NULL)
 
 void SWAP(int* a, int* b)
