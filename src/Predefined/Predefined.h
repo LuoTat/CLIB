@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include <string.h>
 
+#define likely(x)                   __builtin_expect(!!(x), 1)
+#define unlikely(x)                 __builtin_expect(!!(x), 0)
+
 /*
 	EQUALS_AND_GETHASHCODE_MODE为1时，使用指针地址作为哈希值，使用指针地址作为比较值
 	EQUALS_AND_GETHASHCODE_MODE为2时，使用memcmp作为比较值，使用哈希算法作为哈希值
