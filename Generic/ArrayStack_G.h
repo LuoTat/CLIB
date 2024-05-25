@@ -13,7 +13,6 @@
 #define SOFT_MAX_ARRAYSTACK_CAPACITY (INT_MAX - 8)
 
 
-
 #define _ARRRAYSTACK_TYPE(NAME, TYPE) \
     typedef struct ArrayStack_##NAME  \
     {                                 \
@@ -111,10 +110,9 @@
     }                                                                                                                               \
     SCOPE bool ArrayStack_##NAME##_Contains(const ArrayStack_##NAME* const ArrayStack, const TYPE Data)                             \
     {                                                                                                                               \
-        TYPE* EA = ArrayStack->Array;                                                                                               \
         for (int i = 0; i < ArrayStack->Size; ++i)                                                                                  \
         {                                                                                                                           \
-            if (Equals_Function(Data, EA[i])) return true;                                                                          \
+            if (Equals_Function(Data, ArrayStack->Array[i])) return true;                                                           \
         }                                                                                                                           \
         return false;                                                                                                               \
     }                                                                                                                               \
