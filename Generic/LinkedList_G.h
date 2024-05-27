@@ -36,7 +36,7 @@
     extern bool LinkedList_##NAME##_Contains(const LinkedList_##NAME* const LinkedList, const TYPE Data);                     \
     extern bool LinkedList_##NAME##_IsEmpty(const LinkedList_##NAME* const LinkedList);                                       \
     extern int  LinkedList_##NAME##_GetSize(const LinkedList_##NAME* const LinkedList);                                       \
-    extern void LinkedList_##NAME##_Clear(LinkedList_##NAME* const LinkedList);
+    extern void LinkedList_##NAME##_Destroy(LinkedList_##NAME* const LinkedList);
 
 
 #define _LINKEDLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                           \
@@ -281,7 +281,7 @@
 #define LinkedList_Contains(NAME, LinkedList, Data)             (LinkedList_##NAME##_GetIndex((LinkedList), (Data)) >= 0)
 #define LinkedList_IsEmpty(LinkedList)                          ((LinkedList)->Size == 0)
 #define LinkedList_GetSize(LinkedList)                          ((LinkedList)->Size)
-#define LinkedList_Clear(NAME, LinkedList)                      LinkedList_##NAME##_Clear((LinkedList))
+#define LinkedList_Destroy(NAME, LinkedList)                    LinkedList_##NAME##_Destroy((LinkedList))
 
 
 
