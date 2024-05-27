@@ -5,8 +5,8 @@
 #include "ArrayStack.h"
 #include "ArrayStack_G.h"
 
-#define INTCmp(a, b) ((a) == (b))
-LTT_ARRAYSTACK_INIT(INT, int, INTCmp)
+#define INTCMP(a, b) ((a) == (b))
+LTT_ARRAYSTACK_INIT(INT, int, INTCMP)
 
 using namespace std;
 
@@ -18,7 +18,6 @@ int main()
     ArrayStack* ArrayStack = LTT_ArrayStack_New(sizeof(int), NULL);
     ArrayStack(INT) ArrayStack_G;
     ArrayStack_Init(INT, &ArrayStack_G);
-
     stack<int> stack;
     int*       array = (int*)malloc(NUMBER * sizeof(int));
     for (int i = 0; i < NUMBER; i++) { array[i] = i; }
