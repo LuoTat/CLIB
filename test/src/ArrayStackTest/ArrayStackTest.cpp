@@ -26,19 +26,19 @@ int main()
     clock_gettime(CLOCK_REALTIME, &start);
     for (int i = 0; i < NUMBER; i++) { LTT_ArrayStack_Push(ArrayStack, &array[i]); }
     clock_gettime(CLOCK_REALTIME, &end);
-    printf("ArrayStack      插入%d个元素耗时: %lf ms\n", NUMBER, (end.tv_sec - start.tv_sec) * 1000 + (end.tv_nsec - start.tv_nsec) / 1000000.0);
+    printf("ArrayStack    插入%d个元素耗时: %lf ms\n", NUMBER, (end.tv_sec - start.tv_sec) * 1000 + (end.tv_nsec - start.tv_nsec) / 1000000.0);
     LTT_ArrayStack_Destroy(&ArrayStack);
 
     clock_gettime(CLOCK_REALTIME, &start);
     for (int i = 0; i < NUMBER; i++) { ArrayStack_Push(INT, &ArrayStack_G, array[i]); }
     clock_gettime(CLOCK_REALTIME, &end);
-    printf("ArrayStack_G    插入%d个元素耗时: %lf ms\n", NUMBER, (end.tv_sec - start.tv_sec) * 1000 + (end.tv_nsec - start.tv_nsec) / 1000000.0);
+    printf("ArrayStack_G  插入%d个元素耗时: %lf ms\n", NUMBER, (end.tv_sec - start.tv_sec) * 1000 + (end.tv_nsec - start.tv_nsec) / 1000000.0);
     ArrayStack_Destroy(INT, &ArrayStack_G);
 
     clock_gettime(CLOCK_REALTIME, &start);
     for (int i = 0; i < NUMBER; i++) { stack.push(array[i]); }
     clock_gettime(CLOCK_REALTIME, &end);
-    printf("stack           插入%d个元素耗时: %lf ms\n", NUMBER, (end.tv_sec - start.tv_sec) * 1000 + (end.tv_nsec - start.tv_nsec) / 1000000.0);
+    printf("stack         插入%d个元素耗时: %lf ms\n", NUMBER, (end.tv_sec - start.tv_sec) * 1000 + (end.tv_nsec - start.tv_nsec) / 1000000.0);
 
     printf("Test Over!\n");
     return 0;

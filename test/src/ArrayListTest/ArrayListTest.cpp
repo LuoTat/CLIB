@@ -22,7 +22,7 @@ void PRINT(ArrayList* ArrayList)
 
 int main()
 {
-    clock_t    start, end;
+    timespec   start, end;
     ArrayList* ArrayList = LTT_ArrayList_New(sizeof(int), NULL);
     ArrayList(INT) ArrayList_G;
     ArrayList_Init(INT, &ArrayList_G);
@@ -30,20 +30,20 @@ int main()
     int*        array = (int*)malloc(NUMBER * sizeof(int));
     for (int i = 0; i < NUMBER; i++) { array[i] = i; }
 
-    start = clock();
+    clock_gettime(CLOCK_REALTIME, &start);
     for (int i = 0; i < NUMBER; i++) { LTT_ArrayList_AddLast(ArrayList, &array[i]); }
-    end = clock();
-    printf("LTT_ArrayList 尾部插入%d个元素耗时: %.4lf ms\n", NUMBER, (double)(end - start) / CLOCKS_PER_SEC * 1000);
+    clock_gettime(CLOCK_REALTIME, &end);
+    printf("LTT_ArrayList  尾部插入%d个元素耗时: %lf ms\n", NUMBER, (end.tv_sec - start.tv_sec) * 1000 + (end.tv_nsec - start.tv_nsec) / 1000000.0);
 
-    start = clock();
+    clock_gettime(CLOCK_REALTIME, &start);
     for (int i = 0; i < NUMBER; i++) { ArrayList_AddLast(INT, &ArrayList_G, array[i]); }
-    end = clock();
-    printf("ArrayList_G   尾部插入%d个元素耗时: %.4lf ms\n", NUMBER, (double)(end - start) / CLOCKS_PER_SEC * 1000);
+    clock_gettime(CLOCK_REALTIME, &end);
+    printf("ArrayList_G    尾部插入%d个元素耗时: %lf ms\n", NUMBER, (end.tv_sec - start.tv_sec) * 1000 + (end.tv_nsec - start.tv_nsec) / 1000000.0);
 
-    start = clock();
+    clock_gettime(CLOCK_REALTIME, &start);
     for (int i = 0; i < NUMBER; i++) { vector.push_back(array[i]); }
-    end = clock();
-    printf("vector        尾部插入%d个元素耗时: %.4lf ms\n", NUMBER, (double)(end - start) / CLOCKS_PER_SEC * 1000);
+    clock_gettime(CLOCK_REALTIME, &end);
+    printf("vector         尾部插入%d个元素耗时: %lf ms\n", NUMBER, (end.tv_sec - start.tv_sec) * 1000 + (end.tv_nsec - start.tv_nsec) / 1000000.0);
 
     printf("Test Over!\n");
     return 0;

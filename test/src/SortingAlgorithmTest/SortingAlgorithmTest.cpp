@@ -6,7 +6,7 @@
 #include "SortingAlgorithm.h"
 
 using namespace std;
-#define MAX_STRINGSLENGTH                        (50)
+#define MAX_STRINGSLENGTH                        (36)
 #define MAX_DOUBLELENGTH                         (12)
 
 
@@ -32,9 +32,9 @@ using namespace std;
 #define BubbleSort_Fast_Test                     0
 #define QuickSort_LTT_glibc_Test                 0
 #define QuickSort_LTT_libstdcpp_Test             0
-#define QuickSort_LTT_libstdcpp_int_Test         1
+#define QuickSort_LTT_libstdcpp_int_Test         0
 #define QuickSort_glibc_Test                     0
-#define QuickSort_glibc_int_Test                 1
+#define QuickSort_glibc_int_Test                 0
 #define SimpleSelectionSort_Test                 0
 #define HeapSort_Test                            0
 #define MergeSort_Recursion_Test                 0
@@ -47,9 +47,9 @@ using namespace std;
 #define CountingSort_Test                        0
 #define PigeonholeSort_Test                      0
 #define BigoSort_Test                            0
-#define IntrospectiveSort_Test                   0
+#define IntrospectiveSort_Test                   1
 #define sort_Test                                1
-#define qsort_Test                               0
+#define qsort_Test                               1
 
 void SWAP(int* a, int* b)
 {
@@ -211,7 +211,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         InsertionSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "InsertionSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "InsertionSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -222,7 +222,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         BinaryInsertionSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BinaryInsertionSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BinaryInsertionSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -233,7 +233,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         ShellInsertionSort_Hibbard_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "ShellInsertionSort_Hibbard:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "ShellInsertionSort_Hibbard:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -244,7 +244,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         ShellInsertionSort_Sedgewick_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "ShellInsertionSort_Sedgewick:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "ShellInsertionSort_Sedgewick:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -255,7 +255,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         BubbleSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BubbleSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BubbleSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -266,7 +266,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         BubbleSort_Fast_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BubbleSort_Fast:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BubbleSort_Fast:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -277,7 +277,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         QuickSort_LTT_glibc_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_glibc:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_glibc:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -288,7 +288,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         QuickSort_LTT_libstdcpp_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -300,7 +300,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         QuickSort_LTT_libstdcpp_int_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp_int:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp_int:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -312,7 +312,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         QuickSort_glibc_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -323,7 +323,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         QuickSort_glibc_int_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -334,7 +334,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         SimpleSelectionSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "SimpleSelectionSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "SimpleSelectionSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -345,7 +345,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         HeapSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "HeapSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "HeapSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -356,7 +356,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         MergeSort_Recursion_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Recursion:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Recursion:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -367,7 +367,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         MergeSort_Iterative_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Iterative:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Iterative:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -378,7 +378,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         MergeSort_Inplace_Iterative_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Inplace_Iterative:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Inplace_Iterative:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -389,7 +389,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         MergeSort_Inplace_Iterative_For_Int_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Inplace_Iterative_For_Int:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Inplace_Iterative_For_Int:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -400,7 +400,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         RadixSort_LSD_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "RadixSort_LSD:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "RadixSort_LSD:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -411,7 +411,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         RadixSort_MSD_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "RadixSort_MSD:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "RadixSort_MSD:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -422,7 +422,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         BucketSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BucketSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BucketSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -433,7 +433,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         CountingSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "CountingSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "CountingSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -444,7 +444,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         PigeonholeSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "PigeonholeSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "PigeonholeSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -455,7 +455,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         BigoSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BigoSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BigoSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -466,7 +466,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         IntrospectiveSort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "IntrospectiveSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "IntrospectiveSort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -477,7 +477,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         sort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "sort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "sort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -488,7 +488,7 @@ int main()
         clock_gettime(CLOCK_REALTIME, &End);
         qsort_SortSUM += (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0;
     #if PRINT == 1
-        printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "qsort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
+        printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "qsort:", MAX_DOUBLELENGTH, (End.tv_sec - Start.tv_sec) * 1000 + (End.tv_nsec - Start.tv_nsec) / 1000000.0);
     #endif
         IsOrdered(Array, OrderedArray, NodeNum);
 #endif
@@ -496,82 +496,82 @@ int main()
 
 
 #if InsertionSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "InsertionSort平均用时:", MAX_DOUBLELENGTH, InsertionSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "InsertionSort", MAX_DOUBLELENGTH, InsertionSort_SortSUM / SortCounter);
 #endif
 #if BinaryInsertionSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BinaryInsertionSort平均用时:", MAX_DOUBLELENGTH, BinaryInsertionSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BinaryInsertionSort", MAX_DOUBLELENGTH, BinaryInsertionSort_SortSUM / SortCounter);
 #endif
 #if ShellInsertionSort_Hibbard_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "ShellInsertionSort_Hibbard平均用时:", MAX_DOUBLELENGTH, ShellInsertionSort_Hibbard_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "ShellInsertionSort_Hibbard", MAX_DOUBLELENGTH, ShellInsertionSort_Hibbard_SortSUM / SortCounter);
 #endif
 #if ShellInsertionSort_Sedgewick_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "ShellInsertionSort_Sedgewick平均用时:", MAX_DOUBLELENGTH, ShellInsertionSort_Sedgewick_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "ShellInsertionSort_Sedgewick", MAX_DOUBLELENGTH, ShellInsertionSort_Sedgewick_SortSUM / SortCounter);
 #endif
 #if BubbleSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BubbleSort平均用时:", MAX_DOUBLELENGTH, BubbleSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BubbleSort", MAX_DOUBLELENGTH, BubbleSort_SortSUM / SortCounter);
 #endif
 #if BubbleSort_Fast_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BubbleSort_Fast平均用时:", MAX_DOUBLELENGTH, BubbleSort_Fast_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BubbleSort_Fast", MAX_DOUBLELENGTH, BubbleSort_Fast_SortSUM / SortCounter);
 #endif
 #if QuickSort_LTT_glibc_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_glibc平均用时:", MAX_DOUBLELENGTH, QuickSort_LTT_glibc_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_glibc", MAX_DOUBLELENGTH, QuickSort_LTT_glibc_SortSUM / SortCounter);
 #endif
 #if QuickSort_LTT_libstdcpp_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp平均用时:", MAX_DOUBLELENGTH, QuickSort_LTT_libstdcpp_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp", MAX_DOUBLELENGTH, QuickSort_LTT_libstdcpp_SortSUM / SortCounter);
 #endif
 #if QuickSort_LTT_libstdcpp_int_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp_int平均用时:", MAX_DOUBLELENGTH, QuickSort_LTT_libstdcpp_int_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_LTT_libstdcpp_int", MAX_DOUBLELENGTH, QuickSort_LTT_libstdcpp_int_SortSUM / SortCounter);
 #endif
 #if QuickSort_glibc_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc平均用时:", MAX_DOUBLELENGTH, QuickSort_glibc_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc", MAX_DOUBLELENGTH, QuickSort_glibc_SortSUM / SortCounter);
 #endif
 #if QuickSort_glibc_int_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc_int平均用时:", MAX_DOUBLELENGTH, QuickSort_glibc_int_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "QuickSort_glibc_int", MAX_DOUBLELENGTH, QuickSort_glibc_int_SortSUM / SortCounter);
 #endif
 #if SimpleSelectionSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "SimpleSelectionSort平均用时:", MAX_DOUBLELENGTH, SimpleSelectionSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "SimpleSelectionSort", MAX_DOUBLELENGTH, SimpleSelectionSort_SortSUM / SortCounter);
 #endif
 #if HeapSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "HeapSort平均用时:", MAX_DOUBLELENGTH, HeapSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "HeapSort", MAX_DOUBLELENGTH, HeapSort_SortSUM / SortCounter);
 #endif
 #if MergeSort_Recursion_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Recursion平均用时:", MAX_DOUBLELENGTH, MergeSort_Recursion_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Recursion", MAX_DOUBLELENGTH, MergeSort_Recursion_SortSUM / SortCounter);
 #endif
 #if MergeSort_Iterative_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Iterative平均用时:", MAX_DOUBLELENGTH, MergeSort_Iterative_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Iterative", MAX_DOUBLELENGTH, MergeSort_Iterative_SortSUM / SortCounter);
 #endif
 #if MergeSort_Inplace_Iterative_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Inplace_Iterative平均用时:", MAX_DOUBLELENGTH, MergeSort_Inplace_Iterative_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Inplace_Iterative", MAX_DOUBLELENGTH, MergeSort_Inplace_Iterative_SortSUM / SortCounter);
 #endif
 #if MergeSort_Inplace_Iterative_For_Int_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Inplace_Iterative_For_Int平均用时:", MAX_DOUBLELENGTH, MergeSort_Inplace_Iterative_For_Int_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "MergeSort_Inplace_Iterative_For_Int", MAX_DOUBLELENGTH, MergeSort_Inplace_Iterative_For_Int_SortSUM / SortCounter);
 #endif
 #if RadixSort_LSD_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "RadixSort_LSD平均用时:", MAX_DOUBLELENGTH, RadixSort_LSD_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "RadixSort_LSD", MAX_DOUBLELENGTH, RadixSort_LSD_SortSUM / SortCounter);
 #endif
 #if RadixSort_MSD_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "RadixSort_MSD平均用时:", MAX_DOUBLELENGTH, RadixSort_MSD_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "RadixSort_MSD", MAX_DOUBLELENGTH, RadixSort_MSD_SortSUM / SortCounter);
 #endif
 #if BucketSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BucketSort平均用时:", MAX_DOUBLELENGTH, BucketSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BucketSort", MAX_DOUBLELENGTH, BucketSort_SortSUM / SortCounter);
 #endif
 #if CountingSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "CountingSort平均用时:", MAX_DOUBLELENGTH, CountingSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "CountingSort", MAX_DOUBLELENGTH, CountingSort_SortSUM / SortCounter);
 #endif
 #if PigeonholeSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "PigeonholeSort平均用时:", MAX_DOUBLELENGTH, PigeonholeSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "PigeonholeSort", MAX_DOUBLELENGTH, PigeonholeSort_SortSUM / SortCounter);
 #endif
 #if BigoSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "BigoSort平均用时:", MAX_DOUBLELENGTH, BigoSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "BigoSort", MAX_DOUBLELENGTH, BigoSort_SortSUM / SortCounter);
 #endif
 #if IntrospectiveSort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "IntrospectiveSort平均用时:", MAX_DOUBLELENGTH, IntrospectiveSort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "IntrospectiveSort", MAX_DOUBLELENGTH, IntrospectiveSort_SortSUM / SortCounter);
 #endif
 #if sort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "sort平均用时:", MAX_DOUBLELENGTH, sort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "sort", MAX_DOUBLELENGTH, sort_SortSUM / SortCounter);
 #endif
 #if qsort_Test == 1
-    printf("%-*s %*.8lf ms\n", MAX_STRINGSLENGTH, "qsort平均用时:", MAX_DOUBLELENGTH, qsort_SortSUM / SortCounter);
+    printf("%-*s平均用时: %*lf ms\n", MAX_STRINGSLENGTH, "qsort", MAX_DOUBLELENGTH, qsort_SortSUM / SortCounter);
 #endif
     printf("cmp_NUM =    %lf\n", (double)CMPNUM / SortCounter / NodeNum);
 }
