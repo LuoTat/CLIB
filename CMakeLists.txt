@@ -6,9 +6,9 @@ project( LTTLIB VERSION 1.0.0 LANGUAGES C CXX )
 
 # 设置编译器的参数
 SET( CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ggdb -Wall" )
-SET( CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall -ftree-loop-optimize -fgraphite-identity -floop-nest-optimize -floop-parallelize-all" )
+SET( CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall" )
 SET( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb -Wall" )
-SET( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -ftree-loop-optimize -fgraphite-identity -floop-nest-optimize -floop-parallelize-all" )
+SET( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall" )
 
 # 设置编译器显示详细信息
 set( CMAKE_VERBOSE_MAKEFILE True )
