@@ -13,19 +13,21 @@
 #define SOFT_MAX_ARRAYSTACK_CAPACITY (INT_MAX - 8)
 
 
-#define _ARRRAYSTACK_TYPE(NAME, TYPE) \
-    typedef struct ArrayStack_##NAME  \
-    {                                 \
-        TYPE* Array;                  \
-        int   Size;                   \
-        int   Capacity;               \
+#define _ARRAYSTACK_TYPE(NAME, TYPE) \
+    typedef struct ArrayStack_##NAME \
+    {                                \
+        TYPE* Array;                 \
+        int   Capacity;              \
+        int   Size;                  \
     } ArrayStack_##NAME;
 
-#define _ARRRAYSTACK_PROTOTYPES(NAME, TYPE)                                                               \
+#define _ARRAYSTACK_PROTOTYPES(NAME, TYPE)                                                                \
     extern void ArrayStack_##NAME##_Init(ArrayStack_##NAME* const ArrayStack);                            \
     extern CODE ArrayStack_##NAME##_Push(ArrayStack_##NAME* const ArrayStack, const TYPE Data);           \
     extern CODE ArrayStack_##NAME##_Pop(ArrayStack_##NAME* const ArrayStack, TYPE* const Result);         \
     extern CODE ArrayStack_##NAME##_Peek(ArrayStack_##NAME* const ArrayStack, TYPE* const Result);        \
+    extern int  ArrayStack_##NAME##_GetSize(const ArrayStack_##NAME* const ArrayStack);                   \
+    extern bool ArrayStack_##NAME##_IsEmpty(const ArrayStack_##NAME* const ArrayStack);                   \
     extern bool ArrayStack_##NAME##_Contains(const ArrayStack_##NAME* const ArrayStack, const TYPE Data); \
     extern void ArrayStack_##NAME##_Clear(ArrayStack_##NAME* const ArrayStack);                           \
     extern void ArrayStack_##NAME##_Destroy(ArrayStack_##NAME* const ArrayStack);
@@ -108,6 +110,8 @@
         *Result = ArrayStack->Array[ArrayStack->Size - 1];                                                                          \
         return Success;                                                                                                             \
     }                                                                                                                               \
+    SCOPE int  ArrayStack_##NAME##_GetSize(const ArrayStack_##NAME* const ArrayStack) { return ArrayStack->Size; }                  \
+    SCOPE bool ArrayStack_##NAME##_IsEmpty(const ArrayStack_##NAME* const ArrayStack) { return ArrayStack->Size == 0; }             \
     SCOPE bool ArrayStack_##NAME##_Contains(const ArrayStack_##NAME* const ArrayStack, const TYPE Data)                             \
     {                                                                                                                               \
         for (int i = 0; i < ArrayStack->Size; ++i)                                                                                  \
@@ -126,11 +130,11 @@
     }
 
 #define _ARRAYSTACK_DECLARE(NAME, TYPE) \
-    _ARRRAYSTACK_TYPE(NAME, TYPE)       \
-    _ARRRAYSTACK_PROTOTYPES(NAME, TYPE)
+    _ARRAYSTACK_TYPE(NAME, TYPE)        \
+    _ARRAYSTACK_PROTOTYPES(NAME, TYPE)
 
 #define _ARRAYSTACK_INIT(NAME, TYPE, SCOPE, Equals_Function) \
-    _ARRRAYSTACK_TYPE(NAME, TYPE)                            \
+    _ARRAYSTACK_TYPE(NAME, TYPE)                             \
     _ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)
 
 
@@ -140,8 +144,8 @@
 #define ArrayStack_Pop(ArrayStack, Result)               ArrayStack_##NAME##_Pop((ArrayStack), (Result))
 #define ArrayStack_Peek(ArrayStack, Result)              ArrayStack_##NAME##_Peek((ArrayStack), (Result))
 #define ArrayStack_Contains(NAME, ArrayStack, Data)      ArrayStack_##NAME##_Contains((ArrayStack), Data)
-#define ArrayStack_IsEmpty(ArrayStack)                   ((ArrayStack)->Size == 0)
 #define ArrayStack_GetSize(ArrayStack)                   ((ArrayStack)->Size)
+#define ArrayStack_IsEmpty(ArrayStack)                   ((ArrayStack)->Size == 0)
 #define ArrayStack_Clear(ArrayStack)                     ((ArrayStack)->Size = 0)
 #define ArrayStack_Destroy(NAME, ArrayStack)             ArrayStack_##NAME##_Destroy((ArrayStack))
 
