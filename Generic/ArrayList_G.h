@@ -1,8 +1,10 @@
 #pragma once
 #include <limits.h>
 #include <stdlib.h>
+#include <string.h>
 #include "Generic_tool.h"
 
+// TODO 优化ArrayList的AddFirst和DeleteFirst函数
 
 #define DEFAULT_ARRAYLIST_CAPACITY  (16)
 
