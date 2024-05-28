@@ -141,8 +141,8 @@
 #define ArrayStack(NAME)                                 ArrayStack_##NAME
 #define ArrayStack_Init(NAME, ArrayStack)                ArrayStack_##NAME##_Init((ArrayStack))
 #define ArrayStack_Push(NAME, ArrayStack, Data)          ArrayStack_##NAME##_Push((ArrayStack), Data)
-#define ArrayStack_Pop(ArrayStack, Result)               ArrayStack_##NAME##_Pop((ArrayStack), (Result))
-#define ArrayStack_Peek(ArrayStack, Result)              ArrayStack_##NAME##_Peek((ArrayStack), (Result))
+#define ArrayStack_Pop(NAME, ArrayStack, Result)         ArrayStack_##NAME##_Pop((ArrayStack), (Result))
+#define ArrayStack_Peek(NAME, ArrayStack, Result)        ArrayStack_##NAME##_Peek((ArrayStack), (Result))
 #define ArrayStack_Contains(NAME, ArrayStack, Data)      ArrayStack_##NAME##_Contains((ArrayStack), Data)
 #define ArrayStack_GetSize(ArrayStack)                   ((ArrayStack)->Size)
 #define ArrayStack_IsEmpty(ArrayStack)                   ((ArrayStack)->Size == 0)
