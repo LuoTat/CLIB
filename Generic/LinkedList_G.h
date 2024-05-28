@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "Generic_tool.h"
 
+// TODO:优化AddFirst和AddLast函数
 
 #define _LINKEDLIST_TYPE(NAME, TYPE)        \
     typedef struct LinkedListNode_##NAME    \
