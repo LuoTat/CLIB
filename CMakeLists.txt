@@ -41,3 +41,6 @@ add_subdirectory( src )
 
 # 添加测试目录
 add_subdirectory( test )
+
+# 添加性能测试目录
+add_subdirectory( benchmark )
