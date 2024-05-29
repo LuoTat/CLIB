@@ -4,10 +4,8 @@
 #include <string.h>
 #include "Generic_tool.h"
 
-// TODO 优化ArrayList的AddFirst和DeleteFirst函数
 
 #define DEFAULT_ARRAYLIST_CAPACITY  (16)
-
 #define SOFT_MAX_ARRAYLIST_CAPACITY (INT_MAX - 8)
 
 
@@ -18,6 +16,7 @@
         int   Capacity;             \
         int   Size;                 \
     } ArrayList_##NAME;
+
 
 #define _ARRAYLIST_PROTOTYPES(NAME, TYPE)                                                                                       \
     extern void ArrayList_##NAME##_Init(ArrayList_##NAME* const ArrayList);                                                     \
@@ -208,9 +207,11 @@
         ArrayList->Capacity = 0;                                                                                                                                  \
     }
 
+
 #define _ARRAYLIST_DECLARE(NAME, TYPE) \
     _ARRAYLIST_TYPE(NAME, TYPE)        \
     _ARRAYLIST_PROTOTYPES(NAME, TYPE)
+
 
 #define _ARRAYLIST_INIT(NAME, TYPE, SCOPE, Equals_Function) \
     _ARRAYLIST_TYPE(NAME, TYPE)                             \

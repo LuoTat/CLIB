@@ -1,7 +1,6 @@
 /*
     这个ArrayStack采用懒加载的方式，只有在需要的时候才会分配内存，这样可以节省内存空间
 */
-
 #pragma once
 #include <limits.h>
 #include <stdlib.h>
@@ -9,7 +8,6 @@
 
 
 #define DEFAULT_ARRAYSTACK_CAPACITY  (16)
-
 #define SOFT_MAX_ARRAYSTACK_CAPACITY (INT_MAX - 8)
 
 
@@ -21,6 +19,7 @@
         int   Size;                  \
     } ArrayStack_##NAME;
 
+
 #define _ARRAYSTACK_PROTOTYPES(NAME, TYPE)                                                                \
     extern void ArrayStack_##NAME##_Init(ArrayStack_##NAME* const ArrayStack);                            \
     extern CODE ArrayStack_##NAME##_Push(ArrayStack_##NAME* const ArrayStack, const TYPE Data);           \
@@ -31,6 +30,7 @@
     extern bool ArrayStack_##NAME##_Contains(const ArrayStack_##NAME* const ArrayStack, const TYPE Data); \
     extern void ArrayStack_##NAME##_Clear(ArrayStack_##NAME* const ArrayStack);                           \
     extern void ArrayStack_##NAME##_Destroy(ArrayStack_##NAME* const ArrayStack);
+
 
 #define _ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                        \
     SCOPE void ArrayStack_##NAME##_Init(ArrayStack_##NAME* const ArrayStack)                                                        \
@@ -129,9 +129,11 @@
         ArrayStack->Capacity = 0;                                                                                                   \
     }
 
+
 #define _ARRAYSTACK_DECLARE(NAME, TYPE) \
     _ARRAYSTACK_TYPE(NAME, TYPE)        \
     _ARRAYSTACK_PROTOTYPES(NAME, TYPE)
+
 
 #define _ARRAYSTACK_INIT(NAME, TYPE, SCOPE, Equals_Function) \
     _ARRAYSTACK_TYPE(NAME, TYPE)                             \

@@ -1,14 +1,16 @@
 #pragma once
 #include <limits.h>
 #include <stdlib.h>
+#include <string.h>
 #include "Generic_tool.h"
-#include "Predefined.h"
+
 
 #define DEFAULT_ARRAYDEQUE_CAPACITY  (16)
 #define SOFT_MAX_ARRAYDEQUE_CAPACITY (INT_MAX - 8)
 // #define INC(Head, Capacity)          (((Head) + 1) % (Capacity))                      // 同余类+1
 // #define DEC(Head, Capacity)          (((Head) + ((Capacity) - 1)) % (Capacity))       // 同余类-1
 // #define SUB(Head, Tail, Capacity)    (((Tail) - (Head) + (Capacity)) % (Capacity))    // 同余类减法
+
 
 #define _ARRAYDEQUE_TYPE(NAME, TYPE) \
     typedef struct ArrayDeque_##NAME \
@@ -18,6 +20,7 @@
         int   Head;                  \
         int   Tail;                  \
     } ArrayDeque_##NAME;
+
 
 #define _ARRAYDEQUE_PROTOTYPES(NAME, TYPE)                                                                                   \
     extern CODE ArrayDeque_##NAME##_Init(ArrayDeque_##NAME* ArrayDeque);                                                     \
@@ -34,7 +37,6 @@
     extern bool ArrayDeque_##NAME##_Contains(const ArrayDeque_##NAME* const ArrayDeque, const TYPE Data);                    \
     extern void ArrayDeque_##NAME##_Clear(ArrayDeque_##NAME* const ArrayDeque);                                              \
     extern void ArrayDeque_##NAME##_Destroy(ArrayDeque_##NAME* ArrayDeque);
-
 
 
 #define _ARRAYDEQUE_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                    \
@@ -101,7 +103,8 @@
     SCOPE CODE ArrayDeque_##NAME##_AddLast(ArrayDeque_##NAME* const ArrayDeque, const TYPE Data)                                                                \
     {                                                                                                                                                           \
         ArrayDeque->Array[ArrayDeque->Tail] = Data;                                                                                                             \
-        if (ArrayDeque->Head == (ArrayDeque->Tail = INC(ArrayDeque->Tail, ArrayDeque->Capacity)))                                                               \
+        ArrayDeque->Tail                    = INC(ArrayDeque->Tail, ArrayDeque->Capacity);                                                                      \
+        if (ArrayDeque->Head == ArrayDeque->Tail)                                                                                                               \
         {                                                                                                                                                       \
             if (Success != ArrayDeque_##NAME##_Resize(ArrayDeque, 1)) return MemoryOverflow;                                                                    \
         }                                                                                                                                                       \
@@ -110,14 +113,14 @@
     SCOPE bool ArrayDeque_##NAME##_isEmpty(const ArrayDeque_##NAME* const ArrayDeque) { return ArrayDeque->Head == ArrayDeque->Tail; }                          \
     SCOPE CODE ArrayDeque_##NAME##_DeleteFirst(ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                         \
     {                                                                                                                                                           \
-        if (ArrayDeque_##NAME##_isEmpty(ArrayDeque)) return NullPointerAccess;                                                                                  \
+        if (ArrayDeque->Head == ArrayDeque->Tail) return NullPointerAccess;                                                                                     \
         *Result          = ArrayDeque->Array[ArrayDeque->Head];                                                                                                 \
         ArrayDeque->Head = INC(ArrayDeque->Head, ArrayDeque->Capacity);                                                                                         \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
     SCOPE CODE ArrayDeque_##NAME##_DeleteLast(ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                          \
     {                                                                                                                                                           \
-        if (ArrayDeque_##NAME##_isEmpty(ArrayDeque)) return NullPointerAccess;                                                                                  \
+        if (ArrayDeque->Head == ArrayDeque->Tail) return NullPointerAccess;                                                                                     \
         *Result = ArrayDeque->Array[ArrayDeque->Tail = DEC(ArrayDeque->Tail, ArrayDeque->Capacity)];                                                            \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
@@ -157,11 +160,10 @@
     }
 
 
-
-
 #define _ARRAYDEQUE_DECLARE(NAME, TYPE) \
     _ARRAYDEQUE_TYPE(NAME, TYPE)        \
     _ARRAYDEQUE_PROTOTYPES(NAME, TYPE)
+
 
 #define _ARRAYDEQUE_INIT(NAME, TYPE, SCOPE, Equals_Function) \
     _ARRAYDEQUE_TYPE(NAME, TYPE)                             \
@@ -169,13 +171,13 @@
 
 // 内联函数
 // 同余类+1
-static LTT_inline int INC(int Head, int Capacity) { return (++Head >= Capacity) ? 0 : Head; }
+static LTT_inline LTT_unused int INC(int Head, int Capacity) { return (++Head >= Capacity) ? 0 : Head; }
 
 // 同余类-1
-static LTT_inline int DEC(int Head, int Capacity) { return (--Head < 0) ? Capacity - 1 : Head; }
+static LTT_inline LTT_unused int DEC(int Head, int Capacity) { return (--Head < 0) ? Capacity - 1 : Head; }
 
 // 同余类减法
-static LTT_inline int SUB(int Head, int Tail, int Capacity) { return ((Head -= Tail) < 0) ? Head + Capacity : Head; }
+static LTT_inline LTT_unused int SUB(int Head, int Tail, int Capacity) { return ((Tail -= Head) < 0) ? Tail + Capacity : Tail; }
 
 #define ArrayDeque(NAME)                                 ArrayDeque_##NAME
 #define ArrayDeque_Init(NAME, ArrayDeque)                ArrayDeque_##NAME##_Init((ArrayDeque))
@@ -190,7 +192,6 @@ static LTT_inline int SUB(int Head, int Tail, int Capacity) { return ((Head -= T
 #define ArrayDeque_Contains(NAME, ArrayDeque, Data)      ArrayDeque_##NAME##_Contains((ArrayDeque), (Data))
 #define ArrayDeque_Clear(ArrayDeque)                     ((ArrayDeque)->Head = (ArrayDeque)->Tail = 0)
 #define ArrayDeque_Destroy(NAME, ArrayDeque)             ArrayDeque_##NAME##_Destroy((ArrayDeque))
-
 
 // 函数实现
 #define LTT_ARRAYDEQUE_INIT(NAME, TYPE, Equals_Function) _ARRAYDEQUE_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
