@@ -1,0 +1,4 @@
+# 输出ArrayListBenchMark的可执行文件
+add_executable( ArrayListBenchMark ArrayListBenchMark.cpp )
+
+target_link_libraries( ArrayListBenchMark ArrayListLib benchmark::benchmark )
