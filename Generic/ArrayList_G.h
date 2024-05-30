@@ -28,7 +28,7 @@
     extern CODE ArrayList_##NAME##_DeleteIndex(ArrayList_##NAME* const ArrayList, const int Index, TYPE* const Result);         \
     extern CODE ArrayList_##NAME##_SetIndex(ArrayList_##NAME* const ArrayList, TYPE Data, const int Index, TYPE* const Result); \
     extern CODE ArrayList_##NAME##_GetFirst(ArrayList_##NAME* const ArrayList, TYPE* const Result);                             \
-    extern void ArrayList_##NAME##_GetLast(ArrayList_##NAME* const ArrayList, TYPE* const Result);                              \
+    extern CODE ArrayList_##NAME##_GetLast(ArrayList_##NAME* const ArrayList, TYPE* const Result);                              \
     extern CODE ArrayList_##NAME##_GetIndex(ArrayList_##NAME* const ArrayList, const int Index, TYPE* const Result);            \
     extern int  ArrayList_##NAME##_IndexOf(const ArrayList_##NAME* const ArrayList, TYPE Data);                                 \
     extern int  ArrayList_##NAME##_LastIndexOf(const ArrayList_##NAME* const ArrayList, TYPE Data);                             \
