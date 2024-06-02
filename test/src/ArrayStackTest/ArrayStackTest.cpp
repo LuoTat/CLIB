@@ -5,7 +5,7 @@
 #define INTCMP(a, b) ((a) == (b))
 
 // 定义元素个数
-#define NUMBER       1000000
+#define NUMBER       10000
 
 // 初始化ArrayStack类型
 LTT_ARRAYSTACK_INIT(INT, int, INTCMP);

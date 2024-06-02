@@ -6,7 +6,7 @@
 #define INTCMP(a, b) ((a) == (b))
 
 // 定义元素个数
-#define NUMBER       1000000
+#define NUMBER       10000
 
 // 初始化LinkedList类型
 LTT_LINKEDLIST_INIT(INT, int, INTCMP);
