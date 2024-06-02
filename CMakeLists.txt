@@ -1,5 +1,5 @@
 # 设置cmake的最低版本
-cmake_minimum_required( VERSION 3.29 )
+cmake_minimum_required( VERSION 3.28 )
 
 # 设置工程名称和版本
 project( LTTLIB VERSION 1.0.0 LANGUAGES C CXX )
@@ -11,7 +11,7 @@ SET( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb -Wall" )
 SET( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall" )
 
 # 设置编译器显示详细信息
-set( CMAKE_VERBOSE_MAKEFILE True )
+set( CMAKE_VERBOSE_MAKEFILE False )
 
 # 设置默认编译类型
 if( NOT CMAKE_BUILD_TYPE )
