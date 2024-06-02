@@ -33,7 +33,7 @@
     extern int  ArrayList_##NAME##_IndexOf(const ArrayList_##NAME* const ArrayList, TYPE Data);                                 \
     extern int  ArrayList_##NAME##_LastIndexOf(const ArrayList_##NAME* const ArrayList, TYPE Data);                             \
     extern int  ArrayList_##NAME##_GetSize(const ArrayList_##NAME* const ArrayList);                                            \
-    extern bool ArrayList_##NAME##_isEmpty(const ArrayList_##NAME* const ArrayList);                                            \
+    extern bool ArrayList_##NAME##_IsEmpty(const ArrayList_##NAME* const ArrayList);                                            \
     extern bool ArrayList_##NAME##_Contains(const ArrayList_##NAME* const ArrayList, const TYPE Data);                          \
     extern void ArrayList_##NAME##_Clear(ArrayList_##NAME* const ArrayList);                                                    \
     extern void ArrayList_##NAME##_Destroy(ArrayList_##NAME* const ArrayList);
@@ -196,7 +196,7 @@
         return -1;                                                                                                                                                \
     }                                                                                                                                                             \
     SCOPE int  ArrayList_##NAME##_GetSize(const ArrayList_##NAME* const ArrayList) { return ArrayList->Size; }                                                    \
-    SCOPE bool ArrayList_##NAME##_isEmpty(const ArrayList_##NAME* const ArrayList) { return ArrayList->Size == 0; }                                               \
+    SCOPE bool ArrayList_##NAME##_IsEmpty(const ArrayList_##NAME* const ArrayList) { return ArrayList->Size == 0; }                                               \
     SCOPE bool ArrayList_##NAME##_Contains(const ArrayList_##NAME* const ArrayList, const TYPE Data) { return ArrayList_##NAME##_IndexOf(ArrayList, Data) >= 0; } \
     SCOPE void ArrayList_##NAME##_Clear(ArrayList_##NAME* const ArrayList) { ArrayList->Size = 0; }                                                               \
     SCOPE void ArrayList_##NAME##_Destroy(ArrayList_##NAME* const ArrayList)                                                                                      \
@@ -233,7 +233,7 @@
 #define ArrayList_IndexOf(NAME, ArrayList, Data)                 ArrayList_##NAME##_IndexOf((ArrayList), (Data))
 #define ArrayList_LastIndexOf(NAME, ArrayList, Data)             ArrayList_##NAME##_LastIndexOf((ArrayList), (Data))
 #define ArrayList_GetSize(ArrayList)                             ((ArrayList)->Size)
-#define ArrayList_isEmpty(ArrayList)                             ((ArrayList)->Size == 0)
+#define ArrayList_IsEmpty(ArrayList)                             ((ArrayList)->Size == 0)
 #define ArrayList_Contains(NAME, ArrayList, Data)                (ArrayList_##NAME##_IndexOf((ArrayList), (Data)) >= 0)
 #define ArrayList_Clear(ArrayList)                               ((ArrayList)->Size = 0)
 #define ArrayList_Destroy(NAME, ArrayList)                       ArrayList_##NAME##_Destroy((ArrayList))
