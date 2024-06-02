@@ -3,7 +3,7 @@
 #include "Generic_tool.h"
 
 
-#define _LINKEDLIST_TYPE(NAME, TYPE)        \
+#define LINKEDLIST_TYPE(NAME, TYPE)        \
     typedef struct LinkedListNode_##NAME    \
     {                                       \
         struct LinkedListNode_##NAME* Prev; \
@@ -17,7 +17,7 @@
     } LinkedList_##NAME;
 
 
-#define _LINKEDLIST_PROTOTYPES(NAME, TYPE)                                                                                                     \
+#define LINKEDLIST_PROTOTYPES(NAME, TYPE)                                                                                                     \
     extern void LinkedList_##NAME##_Init(LinkedList_##NAME* const LinkedList);                                                                 \
     extern CODE LinkedList_##NAME##_AddFirst(LinkedList_##NAME* const LinkedList, const TYPE Data);                                            \
     extern CODE LinkedList_##NAME##_AddLast(LinkedList_##NAME* const LinkedList, const TYPE Data);                                             \
@@ -39,7 +39,7 @@
     extern void LinkedList_##NAME##_Destroy(LinkedList_##NAME* const LinkedList);
 
 
-#define _LINKEDLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                                                                     \
+#define LINKEDLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                                                                     \
     SCOPE void LinkedList_##NAME##_Init(LinkedList_##NAME* const LinkedList)                                                                                                                                     \
     {                                                                                                                                                                                                            \
         LinkedList->EndNode       = (LinkedListNode_##NAME*)malloc(sizeof(LinkedListNode_##NAME));                                                                                                               \
@@ -235,14 +235,14 @@
     }
 
 
-#define _LINKEDLIST_DECLARE(NAME, TYPE) \
-    _LINKEDLIST_TYPE(NAME, TYPE)        \
-    _LINKEDLIST_PROTOTYPES(NAME, TYPE)
+#define LINKEDLIST_DECLARE(NAME, TYPE) \
+    LINKEDLIST_TYPE(NAME, TYPE)        \
+    LINKEDLIST_PROTOTYPES(NAME, TYPE)
 
 
-#define _LINKEDLIST_INIT(NAME, TYPE, SCOPE, Equals_Function) \
-    _LINKEDLIST_TYPE(NAME, TYPE)                             \
-    _LINKEDLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)
+#define LINKEDLIST_INIT(NAME, TYPE, SCOPE, Equals_Function) \
+    LINKEDLIST_TYPE(NAME, TYPE)                             \
+    LINKEDLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)
 
 
 #define LinkedList(NAME)                                           LinkedList_##NAME
@@ -267,7 +267,7 @@
 #define LinkedList_Destroy(NAME, LinkedList)                       LinkedList_##NAME##_Destroy((LinkedList))
 
 // 函数实现
-#define LTT_LINKEDLIST_INIT(NAME, TYPE, Equals_Function)           _LINKEDLIST_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_LINKEDLIST_INIT(NAME, TYPE, Equals_Function)           LINKEDLIST_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
 
 // 函数声明
-#define LTT_LINKEDLIST_DECLARE(NAME, TYPE)                         _LINKEDLIST_DECLARE(NAME, TYPE)
+#define LTT_LINKEDLIST_DECLARE(NAME, TYPE)                         LINKEDLIST_DECLARE(NAME, TYPE)

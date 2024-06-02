@@ -11,7 +11,7 @@
 #define SOFT_MAX_ARRAYSTACK_CAPACITY (INT_MAX - 8)
 
 
-#define _ARRAYSTACK_TYPE(NAME, TYPE) \
+#define ARRAYSTACK_TYPE(NAME, TYPE) \
     typedef struct ArrayStack_##NAME \
     {                                \
         TYPE* Array;                 \
@@ -20,7 +20,7 @@
     } ArrayStack_##NAME;
 
 
-#define _ARRAYSTACK_PROTOTYPES(NAME, TYPE)                                                                \
+#define ARRAYSTACK_PROTOTYPES(NAME, TYPE)                                                                \
     extern void ArrayStack_##NAME##_Init(ArrayStack_##NAME* const ArrayStack);                            \
     extern CODE ArrayStack_##NAME##_Push(ArrayStack_##NAME* const ArrayStack, const TYPE Data);           \
     extern CODE ArrayStack_##NAME##_Pop(ArrayStack_##NAME* const ArrayStack, TYPE* const Result);         \
@@ -32,7 +32,7 @@
     extern void ArrayStack_##NAME##_Destroy(ArrayStack_##NAME* const ArrayStack);
 
 
-#define _ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                        \
+#define ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                        \
     SCOPE void ArrayStack_##NAME##_Init(ArrayStack_##NAME* const ArrayStack)                                                        \
     {                                                                                                                               \
         ArrayStack->Array    = NULL;                                                                                                \
@@ -130,14 +130,14 @@
     }
 
 
-#define _ARRAYSTACK_DECLARE(NAME, TYPE) \
-    _ARRAYSTACK_TYPE(NAME, TYPE)        \
-    _ARRAYSTACK_PROTOTYPES(NAME, TYPE)
+#define ARRAYSTACK_DECLARE(NAME, TYPE) \
+    ARRAYSTACK_TYPE(NAME, TYPE)        \
+    ARRAYSTACK_PROTOTYPES(NAME, TYPE)
 
 
-#define _ARRAYSTACK_INIT(NAME, TYPE, SCOPE, Equals_Function) \
-    _ARRAYSTACK_TYPE(NAME, TYPE)                             \
-    _ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)
+#define ARRAYSTACK_INIT(NAME, TYPE, SCOPE, Equals_Function) \
+    ARRAYSTACK_TYPE(NAME, TYPE)                             \
+    ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)
 
 
 #define ArrayStack(NAME)                                 ArrayStack_##NAME
@@ -152,7 +152,7 @@
 #define ArrayStack_Destroy(NAME, ArrayStack)             ArrayStack_##NAME##_Destroy((ArrayStack))
 
 // 函数实现
-#define LTT_ARRAYSTACK_INIT(NAME, TYPE, Equals_Function) _ARRAYSTACK_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_ARRAYSTACK_INIT(NAME, TYPE, Equals_Function) ARRAYSTACK_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
 
 // 函数声明
-#define LTT_ARRAYSTACK_DECLARE(NAME, TYPE)               _ARRAYSTACK_DECLARE(NAME, TYPE)
+#define LTT_ARRAYSTACK_DECLARE(NAME, TYPE)               ARRAYSTACK_DECLARE(NAME, TYPE)

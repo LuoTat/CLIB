@@ -9,7 +9,7 @@
 #define SOFT_MAX_ARRAYLIST_CAPACITY (INT_MAX - 8)
 
 
-#define _ARRAYLIST_TYPE(NAME, TYPE) \
+#define ARRAYLIST_TYPE(NAME, TYPE) \
     typedef struct ArrayList_##NAME \
     {                               \
         TYPE* Array;                \
@@ -18,7 +18,7 @@
     } ArrayList_##NAME;
 
 
-#define _ARRAYLIST_PROTOTYPES(NAME, TYPE)                                                                                       \
+#define ARRAYLIST_PROTOTYPES(NAME, TYPE)                                                                                       \
     extern void ArrayList_##NAME##_Init(ArrayList_##NAME* const ArrayList);                                                     \
     extern CODE ArrayList_##NAME##_AddFirst(ArrayList_##NAME* const ArrayList, const TYPE Data);                                \
     extern CODE ArrayList_##NAME##_AddLast(ArrayList_##NAME* const ArrayList, const TYPE Data);                                 \
@@ -39,7 +39,7 @@
     extern void ArrayList_##NAME##_Destroy(ArrayList_##NAME* const ArrayList);
 
 
-#define _ARRAYLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                       \
+#define ARRAYLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                       \
     SCOPE bool ArrayList_##NAME##_CheckIndex(const ArrayList_##NAME* const ArrayList, const int Index)                                                            \
     {                                                                                                                                                             \
         if (Index < 0 || Index > ArrayList->Size) return false;                                                                                                   \
@@ -208,14 +208,14 @@
     }
 
 
-#define _ARRAYLIST_DECLARE(NAME, TYPE) \
-    _ARRAYLIST_TYPE(NAME, TYPE)        \
-    _ARRAYLIST_PROTOTYPES(NAME, TYPE)
+#define ARRAYLIST_DECLARE(NAME, TYPE) \
+    ARRAYLIST_TYPE(NAME, TYPE)        \
+    ARRAYLIST_PROTOTYPES(NAME, TYPE)
 
 
-#define _ARRAYLIST_INIT(NAME, TYPE, SCOPE, Equals_Function) \
-    _ARRAYLIST_TYPE(NAME, TYPE)                             \
-    _ARRAYLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)
+#define ARRAYLIST_INIT(NAME, TYPE, SCOPE, Equals_Function) \
+    ARRAYLIST_TYPE(NAME, TYPE)                             \
+    ARRAYLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)
 
 
 #define ArrayList(NAME)                                          ArrayList_##NAME
@@ -239,7 +239,7 @@
 #define ArrayList_Destroy(NAME, ArrayList)                       ArrayList_##NAME##_Destroy((ArrayList))
 
 // 函数实现
-#define LTT_ARRAYLIST_INIT(NAME, TYPE, Equals_Function)          _ARRAYLIST_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_ARRAYLIST_INIT(NAME, TYPE, Equals_Function)          ARRAYLIST_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
 
 // 函数声明
-#define LTT_ARRAYLIST_DECLARE(NAME, TYPE)                        _ARRAYLIST_DECLARE(NAME, TYPE)
+#define LTT_ARRAYLIST_DECLARE(NAME, TYPE)                        ARRAYLIST_DECLARE(NAME, TYPE)
