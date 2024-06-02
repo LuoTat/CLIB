@@ -1,4 +1,4 @@
 # 输出ArrayStackBenchMark的可执行文件
-add_executable( ArrayStackBenchMark ArrayStackBenchMark.cpp )
+add_executable(ArrayStackBenchMark ArrayStackBenchMark.cpp)
 
-target_link_libraries( ArrayStackBenchMark ArrayStackLib benchmark::benchmark )
+target_link_libraries(ArrayStackBenchMark benchmark::benchmark)
