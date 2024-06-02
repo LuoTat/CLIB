@@ -33,7 +33,7 @@
     extern CODE ArrayDeque_##NAME##_GetFirst(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result);                 \
     extern CODE ArrayDeque_##NAME##_GetLast(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result);                  \
     extern int  ArrayDeque_##NAME##_GetSize(const ArrayDeque_##NAME* const ArrayDeque);                                      \
-    extern bool ArrayDeque_##NAME##_isEmpty(const ArrayDeque_##NAME* const ArrayDeque);                                      \
+    extern bool ArrayDeque_##NAME##_IsEmpty(const ArrayDeque_##NAME* const ArrayDeque);                                      \
     extern bool ArrayDeque_##NAME##_Contains(const ArrayDeque_##NAME* const ArrayDeque, const TYPE Data);                    \
     extern void ArrayDeque_##NAME##_Clear(ArrayDeque_##NAME* const ArrayDeque);                                              \
     extern void ArrayDeque_##NAME##_Destroy(ArrayDeque_##NAME* ArrayDeque);
@@ -110,7 +110,7 @@
         }                                                                                                                                                       \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
-    SCOPE bool ArrayDeque_##NAME##_isEmpty(const ArrayDeque_##NAME* const ArrayDeque) { return ArrayDeque->Head == ArrayDeque->Tail; }                          \
+    SCOPE bool ArrayDeque_##NAME##_IsEmpty(const ArrayDeque_##NAME* const ArrayDeque) { return ArrayDeque->Head == ArrayDeque->Tail; }                          \
     SCOPE CODE ArrayDeque_##NAME##_DeleteFirst(ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                         \
     {                                                                                                                                                           \
         if (ArrayDeque->Head == ArrayDeque->Tail) return NullPointerAccess;                                                                                     \
@@ -126,13 +126,13 @@
     }                                                                                                                                                           \
     SCOPE CODE ArrayDeque_##NAME##_GetFirst(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                      \
     {                                                                                                                                                           \
-        if (ArrayDeque_##NAME##_isEmpty(ArrayDeque)) return NullPointerAccess;                                                                                  \
+        if (ArrayDeque_##NAME##_IsEmpty(ArrayDeque)) return NullPointerAccess;                                                                                  \
         *Result = ArrayDeque->Array[ArrayDeque->Head];                                                                                                          \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
     SCOPE CODE ArrayDeque_##NAME##_GetLast(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                       \
     {                                                                                                                                                           \
-        if (ArrayDeque_##NAME##_isEmpty(ArrayDeque)) return NullPointerAccess;                                                                                  \
+        if (ArrayDeque_##NAME##_IsEmpty(ArrayDeque)) return NullPointerAccess;                                                                                  \
         *Result = ArrayDeque->Array[ArrayDeque->Tail];                                                                                                          \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
@@ -188,7 +188,7 @@ static LTT_inline LTT_unused int SUB(int Head, int Tail, int Capacity) { return 
 #define ArrayDeque_GetFirst(NAME, ArrayDeque, Result)    ArrayDeque_##NAME##_GetFirst((ArrayDeque), (Result))
 #define ArrayDeque_GetLast(NAME, ArrayDeque, Result)     ArrayDeque_##NAME##_GetLast((ArrayDeque), (Result))
 #define ArrayDeque_GetSize(ArrayDeque)                   (SUB((ArrayDeque)->Head, (ArrayDeque)->Tail, (ArrayDeque)->Capacity))
-#define ArrayDeque_isEmpty(ArrayDeque)                   ((ArrayDeque)->Head == (ArrayDeque)->Tail)
+#define ArrayDeque_IsEmpty(ArrayDeque)                   ((ArrayDeque)->Head == (ArrayDeque)->Tail)
 #define ArrayDeque_Contains(NAME, ArrayDeque, Data)      ArrayDeque_##NAME##_Contains((ArrayDeque), (Data))
 #define ArrayDeque_Clear(ArrayDeque)                     ((ArrayDeque)->Head = (ArrayDeque)->Tail = 0)
 #define ArrayDeque_Destroy(NAME, ArrayDeque)             ArrayDeque_##NAME##_Destroy((ArrayDeque))
