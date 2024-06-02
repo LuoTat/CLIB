@@ -12,7 +12,7 @@
 // #define SUB(Head, Tail, Capacity)    (((Tail) - (Head) + (Capacity)) % (Capacity))    // 同余类减法
 
 
-#define _ARRAYDEQUE_TYPE(NAME, TYPE) \
+#define ARRAYDEQUE_TYPE(NAME, TYPE)  \
     typedef struct ArrayDeque_##NAME \
     {                                \
         TYPE* Array;                 \
@@ -22,7 +22,7 @@
     } ArrayDeque_##NAME;
 
 
-#define _ARRAYDEQUE_PROTOTYPES(NAME, TYPE)                                                                                   \
+#define ARRAYDEQUE_PROTOTYPES(NAME, TYPE)                                                                                    \
     extern CODE ArrayDeque_##NAME##_Init(ArrayDeque_##NAME* ArrayDeque);                                                     \
     extern CODE ArrayDeque_##NAME##_newCapacity(const int OldCapacity, const int Needed, const int Jump, int* const Result); \
     extern CODE ArrayDeque_##NAME##_Resize(ArrayDeque_##NAME* const ArrayDeque, const int Needed);                           \
@@ -39,7 +39,7 @@
     extern void ArrayDeque_##NAME##_Destroy(ArrayDeque_##NAME* ArrayDeque);
 
 
-#define _ARRAYDEQUE_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                    \
+#define ARRAYDEQUE_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                     \
     SCOPE CODE ArrayDeque_##NAME##_Init(ArrayDeque_##NAME* ArrayDeque)                                                                                          \
     {                                                                                                                                                           \
         ArrayDeque->Array = (TYPE*)malloc((DEFAULT_ARRAYDEQUE_CAPACITY + 1) * sizeof(TYPE));                                                                    \
@@ -133,7 +133,7 @@
     SCOPE CODE ArrayDeque_##NAME##_GetLast(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                       \
     {                                                                                                                                                           \
         if (ArrayDeque_##NAME##_IsEmpty(ArrayDeque)) return NullPointerAccess;                                                                                  \
-        *Result = ArrayDeque->Array[ArrayDeque->Tail];                                                                                                          \
+        *Result = ArrayDeque->Array[DEC(ArrayDeque->Tail, ArrayDeque->Capacity)];                                                                               \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
     SCOPE int  ArrayDeque_##NAME##_GetSize(const ArrayDeque_##NAME* const ArrayDeque) { return SUB(ArrayDeque->Head, ArrayDeque->Tail, ArrayDeque->Capacity); } \
@@ -160,14 +160,14 @@
     }
 
 
-#define _ARRAYDEQUE_DECLARE(NAME, TYPE) \
-    _ARRAYDEQUE_TYPE(NAME, TYPE)        \
-    _ARRAYDEQUE_PROTOTYPES(NAME, TYPE)
+#define ARRAYDEQUE_DECLARE(NAME, TYPE) \
+    ARRAYDEQUE_TYPE(NAME, TYPE)        \
+    ARRAYDEQUE_PROTOTYPES(NAME, TYPE)
 
 
-#define _ARRAYDEQUE_INIT(NAME, TYPE, SCOPE, Equals_Function) \
-    _ARRAYDEQUE_TYPE(NAME, TYPE)                             \
-    _ARRAYDEQUE_IMPL(NAME, TYPE, SCOPE, Equals_Function)
+#define ARRAYDEQUE_INIT(NAME, TYPE, SCOPE, Equals_Function) \
+    ARRAYDEQUE_TYPE(NAME, TYPE)                             \
+    ARRAYDEQUE_IMPL(NAME, TYPE, SCOPE, Equals_Function)
 
 // 内联函数
 // 同余类+1
@@ -194,7 +194,7 @@ static LTT_inline LTT_unused int SUB(int Head, int Tail, int Capacity) { return 
 #define ArrayDeque_Destroy(NAME, ArrayDeque)             ArrayDeque_##NAME##_Destroy((ArrayDeque))
 
 // 函数实现
-#define LTT_ARRAYDEQUE_INIT(NAME, TYPE, Equals_Function) _ARRAYDEQUE_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_ARRAYDEQUE_INIT(NAME, TYPE, Equals_Function) ARRAYDEQUE_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
 
 // 函数声明
-#define LTT_ARRAYSTACK_DECLARE(NAME, TYPE)               _ARRAYDEQUE_DECLARE(NAME, TYPE)
+#define LTT_ARRAYSTACK_DECLARE(NAME, TYPE)               ARRAYDEQUE_DECLARE(NAME, TYPE)
