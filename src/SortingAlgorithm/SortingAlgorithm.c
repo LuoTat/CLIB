@@ -313,7 +313,6 @@ static void AdjustHeap(char* Base, int RootIndex, int Length, void* TempValue, s
     }
 A:
     memcpy(Base + RootIndex * SizeOfElements, TempValue, SizeOfElements);
-    return;
 }
 
 inline static void PopHeap(char* First, char* Last, char* Result, size_t SizeOfElements, CompareFunction Comparator)
