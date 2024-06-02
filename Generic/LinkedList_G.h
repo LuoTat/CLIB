@@ -17,25 +17,25 @@
     } LinkedList_##NAME;
 
 
-#define _LINKEDLIST_PROTOTYPES(NAME, TYPE)                                                                                    \
-    extern void LinkedList_##NAME##_Init(LinkedList_##NAME* const LinkedList);                                                \
-    extern CODE LinkedList_##NAME##_AddFirst(LinkedList_##NAME* const LinkedList, const TYPE Data);                           \
-    extern CODE LinkedList_##NAME##_AddLast(LinkedList_##NAME* const LinkedList, const TYPE Data);                            \
-    extern CODE LinkedList_##NAME##_AddIndex(LinkedList_##NAME* const LinkedList, const TYPE Data, const int Index);          \
-    extern CODE LinkedList_##NAME##_DeleteFirst(LinkedList_##NAME* const LinkedList, TYPE* const Result);                     \
-    extern CODE LinkedList_##NAME##_DeleteLast(LinkedList_##NAME* const LinkedList, TYPE* const Result);                      \
-    extern CODE LinkedList_##NAME##_DeleteIndex(LinkedList_##NAME* const LinkedList, const int Index, TYPE* const Result);    \
-    extern CODE LinkedList_##NAME##_SetFirst(const LinkedList_##NAME* const LinkedList, const TYPE Data);                     \
-    extern CODE LinkedList_##NAME##_SetLast(const LinkedList_##NAME* const LinkedList, const TYPE Data);                      \
-    extern CODE LinkedList_##NAME##_SetIndex(const LinkedList_##NAME* const LinkedList, const TYPE Data, const int Index);    \
-    extern CODE LinkedList_##NAME##_GetFirst(const LinkedList_##NAME* const LinkedList, TYPE* const Result);                  \
-    extern CODE LinkedList_##NAME##_GetLast(const LinkedList_##NAME* const LinkedList, TYPE* const Result);                   \
-    extern CODE LinkedList_##NAME##_GetIndex(const LinkedList_##NAME* const LinkedList, const int Index, TYPE* const Result); \
-    extern int  LinkedList_##NAME##_IndexOf(const LinkedList_##NAME* const LinkedList, const TYPE Data);                      \
-    extern int  LinkedList_##NAME##_LastIndexOf(const LinkedList_##NAME* const LinkedList, const TYPE Data);                  \
-    extern bool LinkedList_##NAME##_Contains(const LinkedList_##NAME* const LinkedList, const TYPE Data);                     \
-    extern bool LinkedList_##NAME##_IsEmpty(const LinkedList_##NAME* const LinkedList);                                       \
-    extern int  LinkedList_##NAME##_GetSize(const LinkedList_##NAME* const LinkedList);                                       \
+#define _LINKEDLIST_PROTOTYPES(NAME, TYPE)                                                                                                     \
+    extern void LinkedList_##NAME##_Init(LinkedList_##NAME* const LinkedList);                                                                 \
+    extern CODE LinkedList_##NAME##_AddFirst(LinkedList_##NAME* const LinkedList, const TYPE Data);                                            \
+    extern CODE LinkedList_##NAME##_AddLast(LinkedList_##NAME* const LinkedList, const TYPE Data);                                             \
+    extern CODE LinkedList_##NAME##_AddIndex(LinkedList_##NAME* const LinkedList, const TYPE Data, const int Index);                           \
+    extern CODE LinkedList_##NAME##_DeleteFirst(LinkedList_##NAME* const LinkedList, TYPE* const Result);                                      \
+    extern CODE LinkedList_##NAME##_DeleteLast(LinkedList_##NAME* const LinkedList, TYPE* const Result);                                       \
+    extern CODE LinkedList_##NAME##_DeleteIndex(LinkedList_##NAME* const LinkedList, const int Index, TYPE* const Result);                     \
+    extern CODE LinkedList_##NAME##_SetFirst(const LinkedList_##NAME* const LinkedList, const TYPE Data, TYPE* const Result);                  \
+    extern CODE LinkedList_##NAME##_SetLast(const LinkedList_##NAME* const LinkedList, const TYPE Data, TYPE* const Result);                   \
+    extern CODE LinkedList_##NAME##_SetIndex(const LinkedList_##NAME* const LinkedList, const TYPE Data, const int Index, TYPE* const Result); \
+    extern CODE LinkedList_##NAME##_GetFirst(const LinkedList_##NAME* const LinkedList, TYPE* const Result);                                   \
+    extern CODE LinkedList_##NAME##_GetLast(const LinkedList_##NAME* const LinkedList, TYPE* const Result);                                    \
+    extern CODE LinkedList_##NAME##_GetIndex(const LinkedList_##NAME* const LinkedList, const int Index, TYPE* const Result);                  \
+    extern int  LinkedList_##NAME##_IndexOf(const LinkedList_##NAME* const LinkedList, const TYPE Data);                                       \
+    extern int  LinkedList_##NAME##_LastIndexOf(const LinkedList_##NAME* const LinkedList, const TYPE Data);                                   \
+    extern bool LinkedList_##NAME##_Contains(const LinkedList_##NAME* const LinkedList, const TYPE Data);                                      \
+    extern bool LinkedList_##NAME##_IsEmpty(const LinkedList_##NAME* const LinkedList);                                                        \
+    extern int  LinkedList_##NAME##_GetSize(const LinkedList_##NAME* const LinkedList);                                                        \
     extern void LinkedList_##NAME##_Destroy(LinkedList_##NAME* const LinkedList);
 
 
@@ -146,24 +146,27 @@
         LinkedList_##NAME##_EraseNode(LinkedList, Position);                                                                                                                                                     \
         return Success;                                                                                                                                                                                          \
     }                                                                                                                                                                                                            \
-    SCOPE CODE LinkedList_##NAME##_SetFirst(const LinkedList_##NAME* const LinkedList, const TYPE Data)                                                                                                          \
+    SCOPE CODE LinkedList_##NAME##_SetFirst(const LinkedList_##NAME* const LinkedList, const TYPE Data, TYPE* const Result)                                                                                      \
     {                                                                                                                                                                                                            \
         if (LinkedList_##NAME##_IsEmpty(LinkedList)) return NullPointerAccess;                                                                                                                                   \
         LinkedListNode_##NAME* FirstNode = LinkedList_##NAME##_GetFirstNode(LinkedList);                                                                                                                         \
+        *Result                          = FirstNode->Data;                                                                                                                                                      \
         FirstNode->Data                  = Data;                                                                                                                                                                 \
         return Success;                                                                                                                                                                                          \
     }                                                                                                                                                                                                            \
-    SCOPE CODE LinkedList_##NAME##_SetLast(const LinkedList_##NAME* const LinkedList, const TYPE Data)                                                                                                           \
+    SCOPE CODE LinkedList_##NAME##_SetLast(const LinkedList_##NAME* const LinkedList, const TYPE Data, TYPE* const Result)                                                                                       \
     {                                                                                                                                                                                                            \
         if (LinkedList_##NAME##_IsEmpty(LinkedList)) return NullPointerAccess;                                                                                                                                   \
         LinkedListNode_##NAME* LastNode = LinkedList->EndNode->Prev;                                                                                                                                             \
+        *Result                         = LastNode->Data;                                                                                                                                                        \
         LastNode->Data                  = Data;                                                                                                                                                                  \
         return Success;                                                                                                                                                                                          \
     }                                                                                                                                                                                                            \
-    SCOPE CODE LinkedList_##NAME##_SetIndex(const LinkedList_##NAME* const LinkedList, const TYPE Data, const int Index)                                                                                         \
+    SCOPE CODE LinkedList_##NAME##_SetIndex(const LinkedList_##NAME* const LinkedList, const TYPE Data, const int Index, TYPE* const Result)                                                                     \
     {                                                                                                                                                                                                            \
         if (!LinkedList_##NAME##_CheckIndex(LinkedList, Index)) return ArrayIndexOutOfRange;                                                                                                                     \
         LinkedListNode_##NAME* Position = LinkedList_##NAME##_GetNode(LinkedList, Index);                                                                                                                        \
+        *Result                         = Position->Data;                                                                                                                                                        \
         Position->Data                  = Data;                                                                                                                                                                  \
         return Success;                                                                                                                                                                                          \
     }                                                                                                                                                                                                            \
@@ -218,14 +221,17 @@
     SCOPE int  LinkedList_##NAME##_GetSize(const LinkedList_##NAME* const LinkedList) { return LinkedList->Size; }                                                                                               \
     SCOPE void LinkedList_##NAME##_Destroy(LinkedList_##NAME* const LinkedList)                                                                                                                                  \
     {                                                                                                                                                                                                            \
-        for (LinkedListNode_##NAME* x = LinkedList_##NAME##_GetFirstNode(LinkedList); x != LinkedList_##NAME##_GetEndNode(LinkedList);)                                                                          \
+        LinkedListNode_##NAME* end   = LinkedList_##NAME##_GetEndNode(LinkedList);                                                                                                                               \
+        LinkedListNode_##NAME* begin = end->Next;                                                                                                                                                                \
+        while (begin != end)                                                                                                                                                                                     \
         {                                                                                                                                                                                                        \
-            LinkedListNode_##NAME* Next = x->Next;                                                                                                                                                               \
-            free(x);                                                                                                                                                                                             \
-            x = Next;                                                                                                                                                                                            \
+            LinkedListNode_##NAME* Next = begin->Next;                                                                                                                                                           \
+            free(begin);                                                                                                                                                                                         \
+            begin = Next;                                                                                                                                                                                        \
         }                                                                                                                                                                                                        \
         free(LinkedList->EndNode);                                                                                                                                                                               \
-        LinkedList->Size = 0;                                                                                                                                                                                    \
+        LinkedList->EndNode = NULL;                                                                                                                                                                              \
+        LinkedList->Size    = 0;                                                                                                                                                                                 \
     }
 
 
@@ -239,29 +245,29 @@
     _LINKEDLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)
 
 
-#define LinkedList(NAME)                                        LinkedList_##NAME
-#define LinkedList_Init(NAME, LinkedList)                       LinkedList_##NAME##_Init((LinkedList))
-#define LinkedList_AddFirst(NAME, LinkedList, Data)             LinkedList_##NAME##_AddFirst((LinkedList), (Data))
-#define LinkedList_AddLast(NAME, LinkedList, Data)              LinkedList_##NAME##_AddLast((LinkedList), (Data))
-#define LinkedList_AddIndex(NAME, LinkedList, Data, Index)      LinkedList_##NAME##_AddIndex((LinkedList), (Data), (Index))
-#define LinkedList_DeleteFirst(NAME, LinkedList, Result)        LinkedList_##NAME##_DeleteFirst((LinkedList), (Result))
-#define LinkedList_DeleteLast(NAME, LinkedList, Result)         LinkedList_##NAME##_DeleteLast((LinkedList), (Result))
-#define LinkedList_DeleteIndex(NAME, LinkedList, Index, Result) LinkedList_##NAME##_DeleteIndex((LinkedList), (Index), (Result))
-#define LinkedList_SetFirst(NAME, LinkedList, Data)             LinkedList_##NAME##_SetFirst((LinkedList), (Data))
-#define LinkedList_SetLast(NAME, LinkedList, Data)              LinkedList_##NAME##_SetLast((LinkedList), (Data))
-#define LinkedList_SetIndex(NAME, LinkedList, Data, Index)      LinkedList_##NAME##_SetIndex((LinkedList), (Data), (Index))
-#define LinkedList_GetFirst(NAME, LinkedList, Result)           LinkedList_##NAME##_GetFirst((LinkedList), (Result))
-#define LinkedList_GetLast(NAME, LinkedList, Result)            LinkedList_##NAME##_GetLast((LinkedList), (Result))
-#define LinkedList_GetIndex(NAME, LinkedList, Index, Result)    LinkedList_##NAME##_GetIndex((LinkedList), (Index), (Result))
-#define LinkedList_IndexOf(NAME, LinkedList, Data)              LinkedList_##NAME##_IndexOf((LinkedList), (Data))
-#define LinkedList_LastIndexOf(NAME, LinkedList, Data)          LinkedList_##NAME##_LastIndexOf((LinkedList), (Data))
-#define LinkedList_Contains(NAME, LinkedList, Data)             (LinkedList_##NAME##_GetIndex((LinkedList), (Data)) >= 0)
-#define LinkedList_IsEmpty(LinkedList)                          ((LinkedList)->Size == 0)
-#define LinkedList_GetSize(LinkedList)                          ((LinkedList)->Size)
-#define LinkedList_Destroy(NAME, LinkedList)                    LinkedList_##NAME##_Destroy((LinkedList))
+#define LinkedList(NAME)                                           LinkedList_##NAME
+#define LinkedList_Init(NAME, LinkedList)                          LinkedList_##NAME##_Init((LinkedList))
+#define LinkedList_AddFirst(NAME, LinkedList, Data)                LinkedList_##NAME##_AddFirst((LinkedList), (Data))
+#define LinkedList_AddLast(NAME, LinkedList, Data)                 LinkedList_##NAME##_AddLast((LinkedList), (Data))
+#define LinkedList_AddIndex(NAME, LinkedList, Data, Index)         LinkedList_##NAME##_AddIndex((LinkedList), (Data), (Index))
+#define LinkedList_DeleteFirst(NAME, LinkedList, Result)           LinkedList_##NAME##_DeleteFirst((LinkedList), (Result))
+#define LinkedList_DeleteLast(NAME, LinkedList, Result)            LinkedList_##NAME##_DeleteLast((LinkedList), (Result))
+#define LinkedList_DeleteIndex(NAME, LinkedList, Index, Result)    LinkedList_##NAME##_DeleteIndex((LinkedList), (Index), (Result))
+#define LinkedList_SetFirst(NAME, LinkedList, Data, Result)        LinkedList_##NAME##_SetFirst((LinkedList), (Data), (Result))
+#define LinkedList_SetLast(NAME, LinkedList, Data, Result)         LinkedList_##NAME##_SetLast((LinkedList), (Data), (Result))
+#define LinkedList_SetIndex(NAME, LinkedList, Data, Index, Result) LinkedList_##NAME##_SetIndex((LinkedList), (Data), (Index), (Result))
+#define LinkedList_GetFirst(NAME, LinkedList, Result)              LinkedList_##NAME##_GetFirst((LinkedList), (Result))
+#define LinkedList_GetLast(NAME, LinkedList, Result)               LinkedList_##NAME##_GetLast((LinkedList), (Result))
+#define LinkedList_GetIndex(NAME, LinkedList, Index, Result)       LinkedList_##NAME##_GetIndex((LinkedList), (Index), (Result))
+#define LinkedList_IndexOf(NAME, LinkedList, Data)                 LinkedList_##NAME##_IndexOf((LinkedList), (Data))
+#define LinkedList_LastIndexOf(NAME, LinkedList, Data)             LinkedList_##NAME##_LastIndexOf((LinkedList), (Data))
+#define LinkedList_Contains(NAME, LinkedList, Data)                (LinkedList_##NAME##_IndexOf((LinkedList), (Data)) >= 0)
+#define LinkedList_IsEmpty(LinkedList)                             ((LinkedList)->Size == 0)
+#define LinkedList_GetSize(LinkedList)                             ((LinkedList)->Size)
+#define LinkedList_Destroy(NAME, LinkedList)                       LinkedList_##NAME##_Destroy((LinkedList))
 
 // 函数实现
-#define LTT_LINKEDLIST_INIT(NAME, TYPE, Equals_Function)        _LINKEDLIST_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_LINKEDLIST_INIT(NAME, TYPE, Equals_Function)           _LINKEDLIST_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
 
 // 函数声明
-#define LTT_LINKEDLIST_DECLARE(NAME, TYPE)                      _LINKEDLIST_DECLARE(NAME, TYPE)
+#define LTT_LINKEDLIST_DECLARE(NAME, TYPE)                         _LINKEDLIST_DECLARE(NAME, TYPE)
