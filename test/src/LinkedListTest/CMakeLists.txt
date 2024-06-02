@@ -1,4 +1,4 @@
 # 输出LinkedListTest的可执行文件
-add_executable( LinkedListTest LinkedListTest.cpp )
+add_executable(LinkedListTest LinkedListTest.cpp)
 
-target_link_libraries( LinkedListTest LinkedListLib GTest::gtest )
+target_link_libraries(LinkedListTest GTest::gtest)
