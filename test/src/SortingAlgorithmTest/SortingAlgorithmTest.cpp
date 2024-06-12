@@ -15,7 +15,7 @@
 #define Mode         3
 
 // 定义比较函数
-#define INTCMP(a, b) (((*a) < (*b)) ? -1 : (((*a) == (*b)) ? 0 : +1))
+#define INTCMP(a, b) (((*(a)) < (*(b))) ? -1 : (((*(a)) == (*(b))) ? 0 : +1))
 LTT_SORT_INIT(INT, int, INTCMP);
 
 class SortingAlgorithmTest: public ::testing::Test
@@ -63,6 +63,13 @@ protected:
     }
 };
 
+// 测试InsertionSort
+TEST_F(SortingAlgorithmTest, InsertionSort)
+{
+    InsertionSort(INT, Array, NUMBER);
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
+}
+
 // 测试BinaryInsertionSort
 TEST_F(SortingAlgorithmTest, BinaryInsertionSort)
 {
@@ -105,13 +112,6 @@ TEST_F(SortingAlgorithmTest, QuickSort_glibc)
     for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
 }
 
-// 测试QuickSort_LTT_glibc
-TEST_F(SortingAlgorithmTest, QuickSort_LTT_glibc)
-{
-    QuickSort_LTT_glibc(INT, Array, NUMBER);
-    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
-}
-
 // 测试QuickSort_LTT_libstdcpp
 TEST_F(SortingAlgorithmTest, QuickSort_LTT_libstdcpp)
 {
@@ -119,8 +119,44 @@ TEST_F(SortingAlgorithmTest, QuickSort_LTT_libstdcpp)
     for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
 }
 
-int main(int argc, char** argv)
+// 测试SimpleSelectionSort
+TEST_F(SortingAlgorithmTest, SimpleSelectionSort)
 {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    SimpleSelectionSort(INT, Array, NUMBER);
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
+}
+
+// 测试MergeSort_Recursion
+TEST_F(SortingAlgorithmTest, MergeSort_Recursion)
+{
+    MergeSort_Recursion(INT, Array, NUMBER);
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
+}
+
+// 测试MergeSort_Iterative
+TEST_F(SortingAlgorithmTest, MergeSort_Iterative)
+{
+    MergeSort_Iterative(INT, Array, NUMBER);
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
+}
+
+// 测试MergeSort_Inplace_Iterative
+TEST_F(SortingAlgorithmTest, MergeSort_Inplace_Iterative)
+{
+    MergeSort_Inplace_Iterative(INT, Array, NUMBER);
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
+}
+
+// 测试MergeSort_Inplace_Iterative_For_Int
+TEST_F(SortingAlgorithmTest, MergeSort_Inplace_Iterative_For_Int)
+{
+    MergeSort_Inplace_Iterative_For_Int(Array, NUMBER);
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
+}
+
+// 测试PigeonholeSort
+TEST_F(SortingAlgorithmTest, PigeonholeSort)
+{
+    PigeonholeSort(Array, 0, NUMBER - 1, NUMBER);
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
 }

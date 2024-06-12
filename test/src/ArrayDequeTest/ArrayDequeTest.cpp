@@ -11,7 +11,7 @@
 // 初始化ArrayList类型
 LTT_ARRAYDEQUE_INIT(INT, int, INTCMP);
 
-class ArrayListTest: public ::testing::Test
+class ArrayDequeTest: public ::testing::Test
 {
 protected:
     ArrayDeque(INT) ArrayDeque_G;
@@ -83,7 +83,7 @@ protected:
 };
 
 // 测试AddFirst
-TEST_F(ArrayListTest, AddFirst)
+TEST_F(ArrayDequeTest, AddFirst)
 {
     std::deque<int> Array;
     AddFirstDefault(Array);
@@ -100,7 +100,7 @@ TEST_F(ArrayListTest, AddFirst)
 }
 
 // 测试AddLast
-TEST_F(ArrayListTest, AddLast)
+TEST_F(ArrayDequeTest, AddLast)
 {
     std::deque<int> Array;
     AddLastDefault(Array);
@@ -117,7 +117,7 @@ TEST_F(ArrayListTest, AddLast)
 }
 
 // 测试DeleteFirst
-TEST_F(ArrayListTest, DeleteFirst)
+TEST_F(ArrayDequeTest, DeleteFirst)
 {
     std::deque<int> InArray;
     AddLastDefault(InArray);
@@ -134,7 +134,7 @@ TEST_F(ArrayListTest, DeleteFirst)
 }
 
 // 测试DeleteLast
-TEST_F(ArrayListTest, DeleteLast)
+TEST_F(ArrayDequeTest, DeleteLast)
 {
     std::deque<int> InArray;
     AddLastDefault(InArray);
@@ -151,7 +151,7 @@ TEST_F(ArrayListTest, DeleteLast)
 }
 
 // 测试GetFirst
-TEST_F(ArrayListTest, GetFirst)
+TEST_F(ArrayDequeTest, GetFirst)
 {
     std::deque<int> Array;
     AddLastDefault(Array);
@@ -162,7 +162,7 @@ TEST_F(ArrayListTest, GetFirst)
 }
 
 // 测试GetLast
-TEST_F(ArrayListTest, GetLast)
+TEST_F(ArrayDequeTest, GetLast)
 {
     std::deque<int> Array;
     AddLastDefault(Array);
@@ -173,7 +173,7 @@ TEST_F(ArrayListTest, GetLast)
 }
 
 // 测试GetSize
-TEST_F(ArrayListTest, GetSize)
+TEST_F(ArrayDequeTest, GetSize)
 {
     std::deque<int> Array;
     AddLastDefault(Array);
@@ -182,7 +182,7 @@ TEST_F(ArrayListTest, GetSize)
 }
 
 // 测试IsEmpty
-TEST_F(ArrayListTest, IsEmpty)
+TEST_F(ArrayDequeTest, IsEmpty)
 {
     EXPECT_TRUE(ArrayDeque_IsEmpty(&ArrayDeque_G));
     std::deque<int> Array;
@@ -192,7 +192,7 @@ TEST_F(ArrayListTest, IsEmpty)
 }
 
 // 测试Contains
-TEST_F(ArrayListTest, Contains)
+TEST_F(ArrayDequeTest, Contains)
 {
     std::deque<int> Array;
     AddLastDefault(Array);
@@ -201,7 +201,7 @@ TEST_F(ArrayListTest, Contains)
 }
 
 // 测试Clear
-TEST_F(ArrayListTest, Clear)
+TEST_F(ArrayDequeTest, Clear)
 {
     std::deque<int> Array;
     AddLastDefault(Array);
@@ -209,10 +209,4 @@ TEST_F(ArrayListTest, Clear)
     EXPECT_EQ(ArrayDeque_GetSize(&ArrayDeque_G), 0);
     EXPECT_TRUE(ArrayDeque_IsEmpty(&ArrayDeque_G));
     Array.clear();
-}
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

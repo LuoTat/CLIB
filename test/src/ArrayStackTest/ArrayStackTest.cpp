@@ -131,9 +131,3 @@ TEST_F(ArrayStackTest, Clear)
     EXPECT_TRUE(ArrayStack_IsEmpty(&ArrayStack_G));
     Array.clear();
 }
-
-int main(int argc, char** argv)
-{
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

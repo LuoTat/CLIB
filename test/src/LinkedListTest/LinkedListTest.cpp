@@ -311,9 +311,3 @@ TEST_F(LinkedListTest, Contains)
     EXPECT_TRUE(LinkedList_Contains(INT, &LinkedList_G, NUMBER / 2));
     Array.clear();
 }
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

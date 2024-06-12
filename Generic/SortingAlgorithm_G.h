@@ -106,344 +106,402 @@
     } stack_node_##NAME;
 
 
-#define SORT_IMPL(NAME, TYPE, SCOPE, Compare_Function)                                       \
-    SCOPE void MoveMidToFirst_##NAME(TYPE* Result, TYPE* a, TYPE* b, TYPE* c)                \
-    {                                                                                        \
-        if (Compare_Function(a, b) < 0)                                                      \
-        {                                                                                    \
-            if (Compare_Function(b, c) < 0) SWAP(Result, b, TYPE);                           \
-            else if (Compare_Function(a, c)) SWAP(Result, c, TYPE);                          \
-            else SWAP(Result, a, TYPE);                                                      \
-        }                                                                                    \
-        else if (Compare_Function(a, c) < 0) SWAP(Result, a, TYPE);                          \
-        else if (Compare_Function(b, c) < 0) SWAP(Result, c, TYPE);                          \
-        else SWAP(Result, b, TYPE);                                                          \
-    }                                                                                        \
-    SCOPE void BinaryInsertionSort_##NAME(TYPE* Base, size_t NumOfElements)                  \
-    {                                                                                        \
-        if (NumOfElements <= 0) return;                                                      \
-        TYPE Temp;                                                                           \
-        for (size_t i = 1; i < NumOfElements; ++i)                                           \
-        {                                                                                    \
-            Temp = Base[i];                                                                  \
-            int Position;                                                                    \
-            int Low  = 0;                                                                    \
-            int High = i - 1;                                                                \
-            while (Low <= High)                                                              \
-            {                                                                                \
-                int Mid   = (Low + High) >> 1;                                               \
-                int Delta = Compare_Function(&Temp, &Base[Mid]);                             \
-                if (Delta == 0)                                                              \
-                {                                                                            \
-                    Position = Mid + 1;                                                      \
-                    goto A;                                                                  \
-                }                                                                            \
-                else if (Delta < 0) High = Mid - 1;                                          \
-                else Low = Mid + 1;                                                          \
-            }                                                                                \
-            Position = High + 1;                                                             \
-        A:                                                                                   \
-            for (int j = i - 1; j >= Position; --j) Base[j + 1] = Base[j];                   \
-            Base[Position] = Temp;                                                           \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE void ShellInsertionSort_Hibbard_##NAME(TYPE* Base, size_t NumOfElements)           \
-    {                                                                                        \
-        int* GapArray = GetHibbardStepArray(NumOfElements);                                  \
-        TYPE Temp;                                                                           \
-        for (int i = 0;; ++i)                                                                \
-        {                                                                                    \
-            int Gap = GapArray[i];                                                           \
-            for (size_t j = Gap; j < NumOfElements; ++j)                                     \
-            {                                                                                \
-                Temp         = Base[j];                                                      \
-                int Position = j - Gap;                                                      \
-                while (Position >= 0 && Compare_Function(&Base[Position], &Temp) > 0)        \
-                {                                                                            \
-                    Base[Position + Gap]  = Base[Position];                                  \
-                    Position             -= Gap;                                             \
-                }                                                                            \
-                Base[Position + Gap] = Temp;                                                 \
-            }                                                                                \
-            if (Gap == 1) break;                                                             \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE void ShellInsertionSort_Sedgewick_##NAME(TYPE* Base, size_t NumOfElements)         \
-    {                                                                                        \
-        int* GapArray = GetSedgewickStepArray(NumOfElements);                                \
-        TYPE Temp;                                                                           \
-        for (int i = 0;; ++i)                                                                \
-        {                                                                                    \
-            int Gap = GapArray[i];                                                           \
-            for (size_t j = Gap; j < NumOfElements; ++j)                                     \
-            {                                                                                \
-                Temp         = Base[j];                                                      \
-                int Position = j - Gap;                                                      \
-                while (Position >= 0 && Compare_Function(&Base[Position], &Temp) > 0)        \
-                {                                                                            \
-                    Base[Position + Gap]  = Base[Position];                                  \
-                    Position             -= Gap;                                             \
-                }                                                                            \
-                Base[Position + Gap] = Temp;                                                 \
-            }                                                                                \
-            if (Gap == 1) break;                                                             \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE void BubbleSort_##NAME(TYPE* Base, size_t NumOfElements)                           \
-    {                                                                                        \
-        for (size_t i = 0; i < NumOfElements - 1; ++i)                                       \
-        {                                                                                    \
-            bool Ordered = true;                                                             \
-            for (size_t j = 0; j < NumOfElements - 1 - i; j++)                               \
-            {                                                                                \
-                if (Compare_Function(&Base[j], &Base[j + 1]) > 0)                            \
-                {                                                                            \
-                    SWAP(&Base[j], &Base[j + 1], TYPE);                                      \
-                    Ordered = false;                                                         \
-                }                                                                            \
-            }                                                                                \
-            if (Ordered) break;                                                              \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE void BubbleSort_Fast_##NAME(TYPE* Base, size_t NumOfElements)                      \
-    {                                                                                        \
-        bool   Ordered;                                                                      \
-        size_t HighPos = NumOfElements - 1;                                                  \
-        size_t LowPos  = 0;                                                                  \
-        for (size_t i = 0; i < NumOfElements - 1; ++i)                                       \
-        {                                                                                    \
-            Ordered            = true;                                                       \
-            size_t TempHighPos = HighPos;                                                    \
-            for (size_t j = LowPos; j < HighPos; ++j)                                        \
-            {                                                                                \
-                if (Compare_Function(&Base[j], &Base[j + 1]) > 0)                            \
-                {                                                                            \
-                    SWAP(&Base[j], &Base[j + 1], TYPE);                                      \
-                    Ordered     = false;                                                     \
-                    TempHighPos = j;                                                         \
-                }                                                                            \
-            }                                                                                \
-            if (Ordered) break;                                                              \
-            HighPos           = TempHighPos;                                                 \
-            size_t TempLowPos = LowPos;                                                      \
-            for (size_t j = HighPos; j > LowPos; --j)                                        \
-            {                                                                                \
-                if (Compare_Function(&Base[j], &Base[j - 1]) < 0)                            \
-                {                                                                            \
-                    SWAP(&Base[j], &Base[j - 1], TYPE);                                      \
-                    Ordered    = false;                                                      \
-                    TempLowPos = j;                                                          \
-                }                                                                            \
-            }                                                                                \
-            if (Ordered) break;                                                              \
-            LowPos = TempLowPos;                                                             \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE void QuickSort_glibc_##NAME(TYPE* Base, size_t NumOfElements)                      \
-    {                                                                                        \
-        TYPE*        Base_ptr   = Base;                                                      \
-        const size_t Max_Thresh = MAX_THRESH * sizeof(TYPE);                                 \
-        if (NumOfElements == 0) return;                                                      \
-        if (NumOfElements > MAX_THRESH)                                                      \
-        {                                                                                    \
-            TYPE*              Low  = Base_ptr;                                              \
-            TYPE*              High = Low + NumOfElements - 1;                               \
-            stack_node_##NAME  Stack[STACK_SIZE];                                            \
-            stack_node_##NAME* Top = Stack;                                                  \
-            PUSH(NULL, NULL);                                                                \
-            while (STACK_NOT_EMPTY)                                                          \
-            {                                                                                \
-                TYPE* Left_ptr;                                                              \
-                TYPE* Right_ptr;                                                             \
-                TYPE* Mid = Low + ((High - Low) >> 1);                                       \
-                if (*Mid < *Low) SWAP(Mid, Low, TYPE);                                       \
-                if (*High < *Mid) SWAP(Mid, High, TYPE);                                     \
-                else goto A;                                                                 \
-                if (*Mid < *Low) SWAP(Mid, Low, TYPE);                                       \
-            A:                                                                               \
-                Left_ptr  = Low + 1;                                                         \
-                Right_ptr = High - 1;                                                        \
-                do {                                                                         \
-                    while (*Left_ptr < *Mid) ++Left_ptr;                                     \
-                    while (*Mid < *Right_ptr) --Right_ptr;                                   \
-                    if (Left_ptr < Right_ptr)                                                \
-                    {                                                                        \
-                        SWAP(Left_ptr, Right_ptr, TYPE);                                     \
-                        if (Mid == Left_ptr) Mid = Right_ptr;                                \
-                        else if (Mid == Right_ptr) Mid = Left_ptr;                           \
-                        ++Left_ptr;                                                          \
-                        --Right_ptr;                                                         \
-                    }                                                                        \
-                    else if (Left_ptr == Right_ptr)                                          \
-                    {                                                                        \
-                        ++Left_ptr;                                                          \
-                        --Right_ptr;                                                         \
-                        break;                                                               \
-                    }                                                                        \
-                }                                                                            \
-                while (Left_ptr <= Right_ptr);                                               \
-                if ((size_t)(Right_ptr - Low) <= Max_Thresh)                                 \
-                {                                                                            \
-                    if ((size_t)(High - Left_ptr) <= Max_Thresh) POP(Low, High);             \
-                    else Low = Left_ptr;                                                     \
-                }                                                                            \
-                else if ((size_t)(High - Left_ptr) <= Max_Thresh) High = Right_ptr;          \
-                else if ((Right_ptr - Low) > (High - Left_ptr))                              \
-                {                                                                            \
-                    PUSH(Low, Right_ptr);                                                    \
-                    Low = Left_ptr;                                                          \
-                }                                                                            \
-                else                                                                         \
-                {                                                                            \
-                    PUSH(Left_ptr, High);                                                    \
-                    High = Right_ptr;                                                        \
-                }                                                                            \
-            }                                                                                \
-        }                                                                                    \
-        TYPE* const End_ptr = Base_ptr + NumOfElements - 1;                                  \
-        TYPE*       Tmp_ptr = Base_ptr;                                                      \
-        TYPE*       Thresh  = MIN(End_ptr, Base_ptr + Max_Thresh);                           \
-        TYPE*       Run_ptr;                                                                 \
-        for (Run_ptr = Tmp_ptr + 1; Run_ptr <= Thresh; ++Run_ptr)                            \
-        {                                                                                    \
-            if (*Run_ptr < *Tmp_ptr) Tmp_ptr = Run_ptr;                                      \
-        }                                                                                    \
-        if (Tmp_ptr != Base_ptr) SWAP(Tmp_ptr, Base_ptr, TYPE);                              \
-        Run_ptr = Base_ptr + 1;                                                              \
-        while (++Run_ptr <= End_ptr)                                                         \
-        {                                                                                    \
-            Tmp_ptr = Run_ptr - 1;                                                           \
-            while (*Run_ptr < *Tmp_ptr) --Tmp_ptr;                                           \
-            ++Tmp_ptr;                                                                       \
-            if (Tmp_ptr != Run_ptr)                                                          \
-            {                                                                                \
-                int* Trav;                                                                   \
-                Trav = Run_ptr + 1;                                                          \
-                while (--Trav >= Run_ptr)                                                    \
-                {                                                                            \
-                    TYPE  c = *Trav;                                                         \
-                    TYPE *High, *Low;                                                        \
-                    for (High = Low = Trav; (Low -= 1) >= Tmp_ptr; High = Low) *High = *Low; \
-                    *High = c;                                                               \
-                }                                                                            \
-            }                                                                                \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE void _Unguarded_LinearInsert_##NAME(TYPE* Last)                                    \
-    {                                                                                        \
-        TYPE  Temp = *Last;                                                                  \
-        TYPE* Next = Last;                                                                   \
-        --Next;                                                                              \
-        while (Compare_Function(&Temp, Next) < 0)                                            \
-        {                                                                                    \
-            *Last = *Next;                                                                   \
-            Last  = Next;                                                                    \
-            --Next;                                                                          \
-        }                                                                                    \
-        *Last = Temp;                                                                        \
-    }                                                                                        \
-    SCOPE void _InsertionSort_Small_##NAME(TYPE* Low, TYPE* High)                            \
-    {                                                                                        \
-        if (Low == High) return;                                                             \
-        for (TYPE* i = Low + 1; i != High; ++i)                                              \
-        {                                                                                    \
-            if (Compare_Function(i, Low) < 0)                                                \
-            {                                                                                \
-                TYPE Temp = *i;                                                              \
-                memmove(Low + 1, Low, (i - Low) * sizeof(TYPE));                             \
-                *Low = Temp;                                                                 \
-            }                                                                                \
-            else _Unguarded_LinearInsert_##NAME(i);                                          \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE LTT_inline void _Unguarded_InsertionSort_##NAME(TYPE* Low, TYPE* High)             \
-    {                                                                                        \
-        for (TYPE* i = Low; i != High; ++i) _Unguarded_LinearInsert_##NAME(i);               \
-    }                                                                                        \
-    SCOPE void _Final_InsertionSort_##NAME(TYPE* Low, TYPE* High)                            \
-    {                                                                                        \
-        if (High - Low > S_Threshold)                                                        \
-        {                                                                                    \
-            _InsertionSort_Small_##NAME(Low, Low + S_Threshold);                             \
-            _Unguarded_InsertionSort_##NAME(Low + S_Threshold, High);                        \
-        }                                                                                    \
-        else _InsertionSort_Small_##NAME(Low, High);                                         \
-    }                                                                                        \
-    SCOPE TYPE* GetPartition_LTT_glibc_##NAME(TYPE* LeftP, TYPE* RightP, TYPE* Pivot)        \
-    {                                                                                        \
-        do {                                                                                 \
-            while (Compare_Function(LeftP, Pivot) < 0) ++LeftP;                              \
-            while (Compare_Function(Pivot, RightP) < 0) --RightP;                            \
-            if (LeftP < RightP)                                                              \
-            {                                                                                \
-                SWAP(LeftP, RightP, TYPE);                                                   \
-                if (Pivot == LeftP) Pivot = RightP;                                          \
-                else if (Pivot == RightP) Pivot = LeftP;                                     \
-                ++LeftP;                                                                     \
-                --RightP;                                                                    \
-            }                                                                                \
-            else if (LeftP == RightP) return LeftP;                                          \
-        }                                                                                    \
-        while (LeftP <= RightP);                                                             \
-        return RightP;                                                                       \
-    }                                                                                        \
-    SCOPE TYPE* GetPartitionPivot_LTT_glibc_##NAME(TYPE* Low, TYPE* High)                    \
-    {                                                                                        \
-        TYPE* Mid = Low + ((High - Low) >> 1);                                               \
-        if (Compare_Function(Mid, Low) < 0) SWAP(Mid, Low, TYPE);                            \
-        if (Compare_Function(High, Mid) < 0) SWAP(Mid, High, TYPE);                          \
-        else goto A;                                                                         \
-        if (Compare_Function(Mid, Low) < 0) SWAP(Mid, Low, TYPE);                            \
-    A:                                                                                       \
-        return GetPartition_LTT_glibc_##NAME(Low + 1, High - 1, Mid);                        \
-    }                                                                                        \
-    SCOPE void QuickSort_LTT_glibc_Loop_##NAME(TYPE* Low, TYPE* High)                        \
-    {                                                                                        \
-        while (High - Low > S_Threshold)                                                     \
-        {                                                                                    \
-            TYPE* Cut = GetPartitionPivot_LTT_glibc_##NAME(Low, High - 1);                   \
-            QuickSort_LTT_glibc_Loop_##NAME(Cut, High);                                      \
-            High = Cut;                                                                      \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE void QuickSort_LTT_glibc_##NAME(TYPE* Base, size_t NumOfElements)                  \
-    {                                                                                        \
-        if (NumOfElements <= 1) return;                                                      \
-        QuickSort_LTT_glibc_Loop_##NAME(Base, &Base[NumOfElements]);                         \
-        _Final_InsertionSort_##NAME(Base, &Base[NumOfElements]);                             \
-    }                                                                                        \
-    SCOPE TYPE* GetPartition_libstdcpp_##NAME(TYPE* LeftP, TYPE* RightP, TYPE* Pivot)        \
-    {                                                                                        \
-        while (true)                                                                         \
-        {                                                                                    \
-            while (Compare_Function(LeftP, Pivot) < 0) ++LeftP;                              \
-            --RightP;                                                                        \
-            while (Compare_Function(RightP, Pivot) > 0) --RightP;                            \
-            if (!(LeftP < RightP)) return LeftP;                                             \
-            SWAP(LeftP, RightP, TYPE);                                                       \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE LTT_inline TYPE* GetPartitionPivot_LTT_libstdcpp_##NAME(TYPE* Low, TYPE* High)     \
-    {                                                                                        \
-        TYPE* Mid = Low + ((High - Low) >> 1);                                               \
-        MoveMidToFirst_##NAME(Low, Low + 1, Mid, High - 1);                                  \
-        return GetPartition_libstdcpp_##NAME(Low + 1, High, Low);                            \
-    }                                                                                        \
-    SCOPE void QuickSort_LTT_libstdcpp_Loop_##NAME(TYPE* Low, TYPE* High)                    \
-    {                                                                                        \
-        while (High - Low > S_Threshold)                                                     \
-        {                                                                                    \
-            TYPE* Cut = GetPartitionPivot_LTT_libstdcpp_##NAME(Low, High);                   \
-            QuickSort_LTT_libstdcpp_Loop_##NAME(Cut, High);                                  \
-            High = Cut;                                                                      \
-        }                                                                                    \
-    }                                                                                        \
-    SCOPE void QuickSort_LTT_libstdcpp_##NAME(TYPE* Base, size_t NumOfElements)              \
-    {                                                                                        \
-        if (NumOfElements <= 1) return;                                                      \
-        QuickSort_LTT_libstdcpp_Loop_##NAME(Base, &Base[NumOfElements]);                     \
-        _Final_InsertionSort_##NAME(Base, &Base[NumOfElements]);                             \
+#define SORT_IMPL(NAME, TYPE, SCOPE, Compare_Function)                                                                             \
+    SCOPE void MoveMidToFirst_##NAME(TYPE* Result, TYPE* a, TYPE* b, TYPE* c)                                                      \
+    {                                                                                                                              \
+        if (Compare_Function(a, b) < 0)                                                                                            \
+        {                                                                                                                          \
+            if (Compare_Function(b, c) < 0) SWAP(Result, b, TYPE);                                                                 \
+            else if (Compare_Function(a, c)) SWAP(Result, c, TYPE);                                                                \
+            else SWAP(Result, a, TYPE);                                                                                            \
+        }                                                                                                                          \
+        else if (Compare_Function(a, c) < 0) SWAP(Result, a, TYPE);                                                                \
+        else if (Compare_Function(b, c) < 0) SWAP(Result, c, TYPE);                                                                \
+        else SWAP(Result, b, TYPE);                                                                                                \
+    }                                                                                                                              \
+    SCOPE void BinaryInsertionSort_##NAME(TYPE* Base, size_t NumOfElements)                                                        \
+    {                                                                                                                              \
+        if (NumOfElements <= 0) return;                                                                                            \
+        TYPE Temp;                                                                                                                 \
+        for (size_t i = 1; i < NumOfElements; ++i)                                                                                 \
+        {                                                                                                                          \
+            Temp = Base[i];                                                                                                        \
+            int Position;                                                                                                          \
+            int Low  = 0;                                                                                                          \
+            int High = i - 1;                                                                                                      \
+            while (Low <= High)                                                                                                    \
+            {                                                                                                                      \
+                int Mid   = (Low + High) >> 1;                                                                                     \
+                int Delta = Compare_Function(&Temp, &Base[Mid]);                                                                   \
+                if (Delta == 0)                                                                                                    \
+                {                                                                                                                  \
+                    Position = Mid + 1;                                                                                            \
+                    goto A;                                                                                                        \
+                }                                                                                                                  \
+                else if (Delta < 0) High = Mid - 1;                                                                                \
+                else Low = Mid + 1;                                                                                                \
+            }                                                                                                                      \
+            Position = High + 1;                                                                                                   \
+        A:                                                                                                                         \
+            for (int j = i - 1; j >= Position; --j) Base[j + 1] = Base[j];                                                         \
+            Base[Position] = Temp;                                                                                                 \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE void ShellInsertionSort_Hibbard_##NAME(TYPE* Base, size_t NumOfElements)                                                 \
+    {                                                                                                                              \
+        if (NumOfElements <= 0) return;                                                                                            \
+        int* GapArray = GetHibbardStepArray(NumOfElements);                                                                        \
+        TYPE Temp;                                                                                                                 \
+        for (int i = 0;; ++i)                                                                                                      \
+        {                                                                                                                          \
+            int Gap = GapArray[i];                                                                                                 \
+            for (size_t j = Gap; j < NumOfElements; ++j)                                                                           \
+            {                                                                                                                      \
+                Temp         = Base[j];                                                                                            \
+                int Position = j - Gap;                                                                                            \
+                while (Position >= 0 && Compare_Function(&Base[Position], &Temp) > 0)                                              \
+                {                                                                                                                  \
+                    Base[Position + Gap]  = Base[Position];                                                                        \
+                    Position             -= Gap;                                                                                   \
+                }                                                                                                                  \
+                Base[Position + Gap] = Temp;                                                                                       \
+            }                                                                                                                      \
+            if (Gap == 1) break;                                                                                                   \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE void ShellInsertionSort_Sedgewick_##NAME(TYPE* Base, size_t NumOfElements)                                               \
+    {                                                                                                                              \
+        if (NumOfElements <= 0) return;                                                                                            \
+        int* GapArray = GetSedgewickStepArray(NumOfElements);                                                                      \
+        TYPE Temp;                                                                                                                 \
+        for (int i = 0;; ++i)                                                                                                      \
+        {                                                                                                                          \
+            int Gap = GapArray[i];                                                                                                 \
+            for (size_t j = Gap; j < NumOfElements; ++j)                                                                           \
+            {                                                                                                                      \
+                Temp         = Base[j];                                                                                            \
+                int Position = j - Gap;                                                                                            \
+                while (Position >= 0 && Compare_Function(&Base[Position], &Temp) > 0)                                              \
+                {                                                                                                                  \
+                    Base[Position + Gap]  = Base[Position];                                                                        \
+                    Position             -= Gap;                                                                                   \
+                }                                                                                                                  \
+                Base[Position + Gap] = Temp;                                                                                       \
+            }                                                                                                                      \
+            if (Gap == 1) break;                                                                                                   \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE void BubbleSort_##NAME(TYPE* Base, size_t NumOfElements)                                                                 \
+    {                                                                                                                              \
+        if (NumOfElements <= 0) return;                                                                                            \
+        for (size_t i = 0; i < NumOfElements - 1; ++i)                                                                             \
+        {                                                                                                                          \
+            bool Ordered = true;                                                                                                   \
+            for (size_t j = 0; j < NumOfElements - 1 - i; j++)                                                                     \
+            {                                                                                                                      \
+                if (Compare_Function(&Base[j], &Base[j + 1]) > 0)                                                                  \
+                {                                                                                                                  \
+                    SWAP(&Base[j], &Base[j + 1], TYPE);                                                                            \
+                    Ordered = false;                                                                                               \
+                }                                                                                                                  \
+            }                                                                                                                      \
+            if (Ordered) break;                                                                                                    \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE void BubbleSort_Fast_##NAME(TYPE* Base, size_t NumOfElements)                                                            \
+    {                                                                                                                              \
+        if (NumOfElements <= 0) return;                                                                                            \
+        bool   Ordered;                                                                                                            \
+        size_t HighPos = NumOfElements - 1;                                                                                        \
+        size_t LowPos  = 0;                                                                                                        \
+        for (size_t i = 0; i < NumOfElements - 1; ++i)                                                                             \
+        {                                                                                                                          \
+            Ordered            = true;                                                                                             \
+            size_t TempHighPos = HighPos;                                                                                          \
+            for (size_t j = LowPos; j < HighPos; ++j)                                                                              \
+            {                                                                                                                      \
+                if (Compare_Function(&Base[j], &Base[j + 1]) > 0)                                                                  \
+                {                                                                                                                  \
+                    SWAP(&Base[j], &Base[j + 1], TYPE);                                                                            \
+                    Ordered     = false;                                                                                           \
+                    TempHighPos = j;                                                                                               \
+                }                                                                                                                  \
+            }                                                                                                                      \
+            if (Ordered) break;                                                                                                    \
+            HighPos           = TempHighPos;                                                                                       \
+            size_t TempLowPos = LowPos;                                                                                            \
+            for (size_t j = HighPos; j > LowPos; --j)                                                                              \
+            {                                                                                                                      \
+                if (Compare_Function(&Base[j], &Base[j - 1]) < 0)                                                                  \
+                {                                                                                                                  \
+                    SWAP(&Base[j], &Base[j - 1], TYPE);                                                                            \
+                    Ordered    = false;                                                                                            \
+                    TempLowPos = j;                                                                                                \
+                }                                                                                                                  \
+            }                                                                                                                      \
+            if (Ordered) break;                                                                                                    \
+            LowPos = TempLowPos;                                                                                                   \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE void QuickSort_glibc_##NAME(TYPE* Base, size_t NumOfElements)                                                            \
+    {                                                                                                                              \
+        TYPE* Base_ptr = Base;                                                                                                     \
+        if (NumOfElements == 0) return;                                                                                            \
+        if (NumOfElements > MAX_THRESH)                                                                                            \
+        {                                                                                                                          \
+            TYPE*              Low  = Base_ptr;                                                                                    \
+            TYPE*              High = &Low[NumOfElements - 1];                                                                     \
+            stack_node_##NAME  Stack[STACK_SIZE];                                                                                  \
+            stack_node_##NAME* Top = Stack;                                                                                        \
+            PUSH(NULL, NULL);                                                                                                      \
+            while (STACK_NOT_EMPTY)                                                                                                \
+            {                                                                                                                      \
+                TYPE* Left_ptr;                                                                                                    \
+                TYPE* Right_ptr;                                                                                                   \
+                TYPE* Mid = Low + ((High - Low) >> 1);                                                                             \
+                if (Compare_Function(Mid, Low) < 0) SWAP(Mid, Low, TYPE);                                                          \
+                if (Compare_Function(High, Mid) < 0) SWAP(Mid, High, TYPE);                                                        \
+                else goto A;                                                                                                       \
+                if (Compare_Function(Mid, Low) < 0) SWAP(Mid, Low, TYPE);                                                          \
+            A:                                                                                                                     \
+                Left_ptr  = Low + 1;                                                                                               \
+                Right_ptr = High - 1;                                                                                              \
+                do {                                                                                                               \
+                    while (Compare_Function(Left_ptr, Mid) < 0) ++Left_ptr;                                                        \
+                    while (Compare_Function(Mid, Right_ptr) < 0) --Right_ptr;                                                      \
+                    if (Left_ptr < Right_ptr)                                                                                      \
+                    {                                                                                                              \
+                        SWAP(Left_ptr, Right_ptr, TYPE);                                                                           \
+                        if (Mid == Left_ptr) Mid = Right_ptr;                                                                      \
+                        else if (Mid == Right_ptr) Mid = Left_ptr;                                                                 \
+                        ++Left_ptr;                                                                                                \
+                        --Right_ptr;                                                                                               \
+                    }                                                                                                              \
+                    else if (Left_ptr == Right_ptr)                                                                                \
+                    {                                                                                                              \
+                        ++Left_ptr;                                                                                                \
+                        --Right_ptr;                                                                                               \
+                        break;                                                                                                     \
+                    }                                                                                                              \
+                }                                                                                                                  \
+                while (Left_ptr <= Right_ptr);                                                                                     \
+                if ((size_t)(Right_ptr - Low) <= MAX_THRESH)                                                                       \
+                {                                                                                                                  \
+                    if ((size_t)(High - Left_ptr) <= MAX_THRESH) POP(Low, High);                                                   \
+                    else Low = Left_ptr;                                                                                           \
+                }                                                                                                                  \
+                else if ((size_t)(High - Left_ptr) <= MAX_THRESH) High = Right_ptr;                                                \
+                else if ((Right_ptr - Low) > (High - Left_ptr))                                                                    \
+                {                                                                                                                  \
+                    PUSH(Low, Right_ptr);                                                                                          \
+                    Low = Left_ptr;                                                                                                \
+                }                                                                                                                  \
+                else                                                                                                               \
+                {                                                                                                                  \
+                    PUSH(Left_ptr, High);                                                                                          \
+                    High = Right_ptr;                                                                                              \
+                }                                                                                                                  \
+            }                                                                                                                      \
+        }                                                                                                                          \
+        TYPE* const End_ptr = &Base_ptr[NumOfElements - 1];                                                                        \
+        TYPE*       Tmp_ptr = Base_ptr;                                                                                            \
+        TYPE*       Thresh  = MIN(End_ptr, Base_ptr + MAX_THRESH);                                                                 \
+        TYPE*       Run_ptr;                                                                                                       \
+        for (Run_ptr = Tmp_ptr + 1; Run_ptr <= Thresh; ++Run_ptr)                                                                  \
+        {                                                                                                                          \
+            if (Compare_Function(Run_ptr, Tmp_ptr) < 0) Tmp_ptr = Run_ptr;                                                         \
+        }                                                                                                                          \
+        if (Tmp_ptr != Base_ptr) SWAP(Tmp_ptr, Base_ptr, TYPE);                                                                    \
+        Run_ptr = Base_ptr + 1;                                                                                                    \
+        while (++Run_ptr <= End_ptr)                                                                                               \
+        {                                                                                                                          \
+            Tmp_ptr = Run_ptr - 1;                                                                                                 \
+            while (Compare_Function(Run_ptr, Tmp_ptr) < 0) --Tmp_ptr;                                                              \
+            ++Tmp_ptr;                                                                                                             \
+            if (Tmp_ptr != Run_ptr)                                                                                                \
+            {                                                                                                                      \
+                TYPE* Trav;                                                                                                        \
+                Trav = Run_ptr + 1;                                                                                                \
+                while (--Trav >= Run_ptr)                                                                                          \
+                {                                                                                                                  \
+                    TYPE  c = *Trav;                                                                                               \
+                    TYPE *High, *Low;                                                                                              \
+                    for (High = Low = Trav; (--Low) >= Tmp_ptr; High = Low) *High = *Low;                                          \
+                    *High = c;                                                                                                     \
+                }                                                                                                                  \
+            }                                                                                                                      \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE void _Unguarded_LinearInsert_##NAME(TYPE* Last)                                                                          \
+    {                                                                                                                              \
+        TYPE  Temp = *Last;                                                                                                        \
+        TYPE* Next = Last;                                                                                                         \
+        --Next;                                                                                                                    \
+        while (Compare_Function(&Temp, Next) < 0)                                                                                  \
+        {                                                                                                                          \
+            *Last = *Next;                                                                                                         \
+            Last  = Next;                                                                                                          \
+            --Next;                                                                                                                \
+        }                                                                                                                          \
+        *Last = Temp;                                                                                                              \
+    }                                                                                                                              \
+    SCOPE void _InsertionSort_Small_##NAME(TYPE* Low, TYPE* High)                                                                  \
+    {                                                                                                                              \
+        if (Low == High) return;                                                                                                   \
+        for (TYPE* i = Low + 1; i != High; ++i)                                                                                    \
+        {                                                                                                                          \
+            if (Compare_Function(i, Low) < 0)                                                                                      \
+            {                                                                                                                      \
+                TYPE Temp = *i;                                                                                                    \
+                memmove(Low + 1, Low, (i - Low) * sizeof(TYPE));                                                                   \
+                *Low = Temp;                                                                                                       \
+            }                                                                                                                      \
+            else _Unguarded_LinearInsert_##NAME(i);                                                                                \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE LTT_inline void _Unguarded_InsertionSort_##NAME(TYPE* Low, TYPE* High)                                                   \
+    {                                                                                                                              \
+        for (TYPE* i = Low; i != High; ++i) _Unguarded_LinearInsert_##NAME(i);                                                     \
+    }                                                                                                                              \
+    SCOPE void _Final_InsertionSort_##NAME(TYPE* Low, TYPE* High)                                                                  \
+    {                                                                                                                              \
+        if (High - Low > S_Threshold)                                                                                              \
+        {                                                                                                                          \
+            _InsertionSort_Small_##NAME(Low, Low + S_Threshold);                                                                   \
+            _Unguarded_InsertionSort_##NAME(Low + S_Threshold, High);                                                              \
+        }                                                                                                                          \
+        else _InsertionSort_Small_##NAME(Low, High);                                                                               \
+    }                                                                                                                              \
+    SCOPE TYPE* GetPartition_libstdcpp_##NAME(TYPE* LeftP, TYPE* RightP, TYPE* Pivot)                                              \
+    {                                                                                                                              \
+        while (true)                                                                                                               \
+        {                                                                                                                          \
+            while (Compare_Function(LeftP, Pivot) < 0) ++LeftP;                                                                    \
+            --RightP;                                                                                                              \
+            while (Compare_Function(Pivot, RightP) < 0) --RightP;                                                                  \
+            if (!(LeftP < RightP)) return LeftP;                                                                                   \
+            SWAP(LeftP, RightP, TYPE);                                                                                             \
+            ++LeftP;                                                                                                               \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE LTT_inline TYPE* GetPartitionPivot_LTT_libstdcpp_##NAME(TYPE* Low, TYPE* High)                                           \
+    {                                                                                                                              \
+        TYPE* Mid = Low + ((High - Low) / 2);                                                                                      \
+        MoveMidToFirst_##NAME(Low, Low + 1, Mid, High - 1);                                                                        \
+        return GetPartition_libstdcpp_##NAME(Low + 1, High, Low);                                                                  \
+    }                                                                                                                              \
+    SCOPE void QuickSort_LTT_libstdcpp_Loop_##NAME(TYPE* Low, TYPE* High)                                                          \
+    {                                                                                                                              \
+        while (High - Low > S_Threshold)                                                                                           \
+        {                                                                                                                          \
+            TYPE* Cut = GetPartitionPivot_LTT_libstdcpp_##NAME(Low, High);                                                         \
+            QuickSort_LTT_libstdcpp_Loop_##NAME(Cut, High);                                                                        \
+            High = Cut;                                                                                                            \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE void QuickSort_LTT_libstdcpp_##NAME(TYPE* Base, size_t NumOfElements)                                                    \
+    {                                                                                                                              \
+        if (NumOfElements <= 1) return;                                                                                            \
+        QuickSort_LTT_libstdcpp_Loop_##NAME(Base, &Base[NumOfElements]);                                                           \
+        _Final_InsertionSort_##NAME(Base, &Base[NumOfElements]);                                                                   \
+    }                                                                                                                              \
+    SCOPE void SimpleSelectionSort_##NAME(TYPE* Base, size_t NumOfElements)                                                        \
+    {                                                                                                                              \
+        if (NumOfElements <= 0) return;                                                                                            \
+        for (size_t i = 0; i < NumOfElements; ++i)                                                                                 \
+        {                                                                                                                          \
+            TYPE* Min = &Base[i];                                                                                                  \
+            for (size_t j = i + 1; j < NumOfElements; ++j)                                                                         \
+            {                                                                                                                      \
+                if (Compare_Function(Min, &Base[j]) > 0) Min = &Base[j];                                                           \
+            }                                                                                                                      \
+            if (&Base[i] != Min) SWAP(&Base[i], Min, TYPE);                                                                        \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE void InsertionSort_##NAME(TYPE* Base, size_t NumOfElements) { _InsertionSort_Small_##NAME(Base, &Base[NumOfElements]); } \
+    SCOPE void Merge_##NAME(TYPE* First, TYPE* Mid, TYPE* Last, TYPE* Temp)                                                        \
+    {                                                                                                                              \
+        if (Mid == Last || Compare_Function(Mid - 1, Mid) <= 0) return;                                                            \
+        TYPE* i = First;                                                                                                           \
+        TYPE* j = Mid;                                                                                                             \
+        TYPE* k = Temp;                                                                                                            \
+        while (i < Mid && j < Last)                                                                                                \
+        {                                                                                                                          \
+            if (Compare_Function(i, j) < 0) *k++ = *i++;                                                                           \
+            else *k++ = *j++;                                                                                                      \
+        }                                                                                                                          \
+        if (i < Mid) memcpy(k, i, (Mid - i) * sizeof(TYPE));                                                                       \
+        if (j < Last) memcpy(k, j, (Last - j) * sizeof(TYPE));                                                                     \
+        memcpy(First, Temp, (Last - First) * sizeof(TYPE));                                                                        \
+    }                                                                                                                              \
+    SCOPE void MergeSort_Recursion_Loop_##NAME(TYPE* First, TYPE* Last, TYPE* Temp)                                                \
+    {                                                                                                                              \
+        size_t NumOfElements = Last - First;                                                                                       \
+        if (NumOfElements == 1) return;                                                                                            \
+        else if (NumOfElements > S_Threshold)                                                                                      \
+        {                                                                                                                          \
+            TYPE* Mid = First + (NumOfElements >> 1);                                                                              \
+            MergeSort_Recursion_Loop_##NAME(First, Mid, Temp);                                                                     \
+            MergeSort_Recursion_Loop_##NAME(Mid, Last, Temp);                                                                      \
+            Merge_##NAME(First, Mid, Last, Temp);                                                                                  \
+        }                                                                                                                          \
+        else _InsertionSort_Small_##NAME(First, Last);                                                                             \
+    }                                                                                                                              \
+    SCOPE void MergeSort_Recursion_##NAME(TYPE* Base, size_t NumOfElements)                                                        \
+    {                                                                                                                              \
+        if (NumOfElements <= 0) return;                                                                                            \
+        TYPE* Temp = (TYPE*)malloc(NumOfElements * sizeof(TYPE));                                                                  \
+        MergeSort_Recursion_Loop_##NAME(Base, &Base[NumOfElements], Temp);                                                         \
+        free(Temp);                                                                                                                \
+    }                                                                                                                              \
+    SCOPE void MergeSort_Iterative_##NAME(TYPE* Base, size_t NumOfElements)                                                        \
+    {                                                                                                                              \
+        TYPE*  Temp = (TYPE*)malloc(NumOfElements * sizeof(TYPE));                                                                 \
+        size_t CurrentSize;                                                                                                        \
+        TYPE*  First;                                                                                                              \
+        for (CurrentSize = 1; CurrentSize < NumOfElements; CurrentSize <<= 1)                                                      \
+        {                                                                                                                          \
+            for (First = Base; First < &Base[NumOfElements]; First += (CurrentSize << 1))                                          \
+            {                                                                                                                      \
+                TYPE* Mid  = (&First[CurrentSize] < &Base[NumOfElements]) ? &First[CurrentSize] : &Base[NumOfElements];            \
+                TYPE* Last = (&Mid[CurrentSize] < &Base[NumOfElements]) ? &Mid[CurrentSize] : &Base[NumOfElements];                \
+                Merge_##NAME(First, Mid, Last, Temp);                                                                              \
+            }                                                                                                                      \
+        }                                                                                                                          \
+        free(Temp);                                                                                                                \
+    }                                                                                                                              \
+    SCOPE void Merge_Inplace_##NAME(TYPE* First, TYPE* Mid, TYPE* Last)                                                            \
+    {                                                                                                                              \
+        if (Mid == Last || Compare_Function(Mid - 1, Mid) <= 0) return;                                                            \
+        TYPE Temp;                                                                                                                 \
+        while (First < Mid && Mid < Last)                                                                                          \
+        {                                                                                                                          \
+            if (Compare_Function(First, Mid) <= 0) ++First;                                                                        \
+            else                                                                                                                   \
+            {                                                                                                                      \
+                Temp = *Mid;                                                                                                       \
+                memmove(First + 1, First, (Mid - First) * sizeof(TYPE));                                                           \
+                *First = Temp;                                                                                                     \
+                ++First;                                                                                                           \
+                ++Mid;                                                                                                             \
+            }                                                                                                                      \
+        }                                                                                                                          \
+    }                                                                                                                              \
+    SCOPE void MergeSort_Inplace_Iterative_##NAME(TYPE* Base, size_t NumOfElements)                                                \
+    {                                                                                                                              \
+        size_t CurrentSize;                                                                                                        \
+        TYPE*  First;                                                                                                              \
+        for (CurrentSize = 1; CurrentSize < NumOfElements; CurrentSize <<= 1)                                                      \
+        {                                                                                                                          \
+            for (First = Base; First < &Base[NumOfElements]; First += (CurrentSize << 1))                                          \
+            {                                                                                                                      \
+                TYPE* Mid  = (&First[CurrentSize] < &Base[NumOfElements]) ? &First[CurrentSize] : &Base[NumOfElements];            \
+                TYPE* Last = (&Mid[CurrentSize] < &Base[NumOfElements]) ? &Mid[CurrentSize] : &Base[NumOfElements];                \
+                Merge_Inplace_##NAME(First, Mid, Last);                                                                            \
+            }                                                                                                                      \
+        }                                                                                                                          \
     }
+
 
 
 ///*
@@ -470,6 +528,50 @@
 //    }
 //A:
 //    memcpy(Base + RootIndex * SizeOfElements, TempValue, SizeOfElements);
+//}
+
+//SCOPE TYPE* GetPartition_LTT_glibc_##NAME(TYPE* LeftP, TYPE* RightP, TYPE* Pivot)
+//{
+//    do {
+//        while (Compare_Function(LeftP, Pivot) < 0) ++LeftP;
+//        while (Compare_Function(Pivot, RightP) < 0) --RightP;
+//        if (LeftP < RightP)
+//        {
+//            SWAP(LeftP, RightP, TYPE);
+//            if (Pivot == LeftP) Pivot = RightP;
+//            else if (Pivot == RightP) Pivot = LeftP;
+//            ++LeftP;
+//            --RightP;
+//        }
+//        else if (LeftP == RightP) return LeftP;
+//    }
+//    while (LeftP <= RightP);
+//    return RightP;
+//}
+//SCOPE TYPE* GetPartitionPivot_LTT_glibc_##NAME(TYPE* Low, TYPE* High)
+//{
+//    TYPE* Mid = Low + ((High - Low) >> 1);
+//    if (Compare_Function(Mid, Low) < 0) SWAP(Mid, Low, TYPE);
+//    if (Compare_Function(High, Mid) < 0) SWAP(Mid, High, TYPE);
+//    else goto A;
+//    if (Compare_Function(Mid, Low) < 0) SWAP(Mid, Low, TYPE);
+//A:
+//    return GetPartition_LTT_glibc_##NAME(Low + 1, High - 1, Mid);
+//}
+//SCOPE void QuickSort_LTT_glibc_Loop_##NAME(TYPE* Low, TYPE* High)
+//{
+//    while (High - Low > S_Threshold)
+//    {
+//        TYPE* Cut = GetPartitionPivot_LTT_glibc_##NAME(Low, High - 1);
+//        QuickSort_LTT_glibc_Loop_##NAME(Cut, High);
+//        High = Cut;
+//    }
+//}
+//SCOPE void QuickSort_LTT_glibc_##NAME(TYPE* Base, size_t NumOfElements)
+//{
+//    if (NumOfElements <= 1) return;
+//    QuickSort_LTT_glibc_Loop_##NAME(Base, &Base[NumOfElements]);
+//    _Final_InsertionSort_##NAME(Base, &Base[NumOfElements]);
 //}
 
 //inline static void PopHeap_##NAME(char* First, char* Last, char* Result, size_t SizeOfElements, CompareFunction Compare_Function)
@@ -532,41 +634,6 @@
 //}
 //
 
-///*
-//	此插入排序是专门用于一些递归排序算法中用于给元素个数小于S_Threshold的小数组排序用的
-//    此插入排序是一个通过每次都将比第一个元素小的元素移动到第一个的位置
-//	从而避免边界检查
-//*/
-
-//void InsertionSort_##NAME(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Compare_Function) { _InsertionSort_Small(Base, Base + NumOfElements * SizeOfElements, SizeOfElements, Compare_Function); }
-
-///*
-//	此插入排序是用来给一个长数组,且已经以S_Threshold长度为单位局部有序
-//	现在先将前S_Threshold个元素插入排序
-//	后面的元素就可以使用无边界检查的插入排序来增加性能
-//*/
-
-//static char* Unguarded_Partition(char* LeftP, char* RightP, char* Pivot, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    //使用的是Hoare partition scheme
-//    while (true)
-//    {
-//        while (Compare_Function(LeftP, Pivot) < 0) LeftP += SizeOfElements;
-//        RightP -= SizeOfElements;    //这里减一个是为了防止越界
-//        while (Compare_Function(RightP, Pivot) > 0) RightP -= SizeOfElements;
-//        if (!(LeftP < RightP)) return LeftP;
-//        SWAP(LeftP, RightP, SizeOfElements);
-//        LeftP += SizeOfElements;
-//    }
-//}
-//
-//inline static char* Unguarded_PartitionPivot(char* Low, char* High, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    char* Mid = Low + SizeOfElements * (((High - Low) / SizeOfElements) / 2);
-//    MoveMidToFirst(Low, Low + SizeOfElements, Mid, High - SizeOfElements, SizeOfElements, Compare_Function);
-//    return Unguarded_Partition(Low + SizeOfElements, High, Low, SizeOfElements, Compare_Function);
-//}
-//
 //static void IntroSort_Loop(char* Low, char* High, unsigned char DepthLimit, size_t SizeOfElements, CompareFunction Compare_Function)
 //{
 //    while ((High - Low) > S_Threshold * SizeOfElements)
@@ -583,7 +650,7 @@
 //        High = Cut;
 //    }
 //}
-//
+
 ///*
 //	此内省式排序则是几乎将libcstdc++库中的sort函数照搬过来的
 //*/
@@ -594,194 +661,6 @@
 //    _Final_InsertionSort(Base, Base + NumOfElements * SizeOfElements, SizeOfElements, Compare_Function);
 //}
 
-//void SimpleSelectionSort(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    for (int i = 0; i < NumOfElements; ++i)
-//    {
-//        char* Min = Base + i * SizeOfElements;
-//        for (int j = i + 1; j < NumOfElements; ++j)
-//        {
-//            if (Compare_Function(Min, Base + j * SizeOfElements) > 0) Min = Base + j * SizeOfElements;
-//        }
-//        if (Base + i * SizeOfElements != Min) SWAP(Base + i * SizeOfElements, Min, SizeOfElements);
-//    }
-//}
-
-//static void Merge(char* First, char* Mid, char* Last, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    //如果自然有序则直接退出
-//    if (Compare_Function(Mid, Mid + SizeOfElements) <= 0) return;
-//    //开始归并
-//    char* i = First;
-//    char* j = Mid + SizeOfElements;
-//    char* k = Temp_Merge;
-//    while (i <= Mid && j <= Last)
-//    {
-//        if (Compare_Function(i, j) <= 0)
-//        {
-//            memcpy(k, i, SizeOfElements);
-//            i += SizeOfElements;
-//            k += SizeOfElements;
-//        }
-//        else
-//        {
-//            memcpy(k, j, SizeOfElements);
-//            j += SizeOfElements;
-//            k += SizeOfElements;
-//        }
-//    }
-//    if (i <= Mid) memcpy(k, i, Mid - i + SizeOfElements);
-//    if (j <= Last) memcpy(k, j, Last - j + SizeOfElements);
-//    memcpy(First, Temp_Merge, Last - First + SizeOfElements);
-//}
-//
-////空间复杂度减到了O(1),但是时间复杂度为O(n^2),不推荐！
-//static void Merge_Inplace(char* First, char* Mid, char* Last, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    char* First_2 = Mid + SizeOfElements;
-//    //如果自然有序则直接退出
-//    if (Compare_Function(Mid, First_2) <= 0) return;
-//    //开始归并
-//    while (First <= Mid && First_2 <= Last)
-//    {
-//        if (Compare_Function(First, First_2) <= 0) First += SizeOfElements;
-//        else
-//        {
-//            memcpy(Temp, First_2, SizeOfElements);
-//            char* index = First_2;
-//            //将 [First,First_2-SizeOfElements]中的元素向后移动
-//            while (index != First)
-//            {
-//                memcpy(index, index - SizeOfElements, SizeOfElements);
-//                index -= SizeOfElements;
-//            }
-//            memcpy(First, Temp, SizeOfElements);
-//            First   += SizeOfElements;
-//            Mid     += SizeOfElements;
-//            First_2 += SizeOfElements;
-//        }
-//    }
-//}
-//
-///*
-//	一种适用于int型数组的一种奇技淫巧
-//	其原理就是,对于两个数a,b,首先判断对Max取余的大小,选取小的一个数
-//	然后令a = a + (min(a % Max, b % max)) * Max
-//	这样在原本数所在的位置,对Max的商,就是排序好了的数值,而取余则是原本所在的数值
-//	但是在计算a = a + (min(a % Max, b % max)) * Max时要特别注意数值溢出!
-//*/
-//static void Merge_Inplace_Int(int* First, int* Mid, int* Last)
-//{
-//    //首先找到待归并的数组中最大的元素并加1
-//    int Max = *First;
-//    for (int* i = First; i <= Last; i += 1)
-//    {
-//        if (*i > Max) Max = *i;
-//    }
-//    ++Max;
-//    int i = 0;
-//    int j = Mid - First + 1;
-//    int k = 0;
-//    while (First + i <= Mid && First + j <= Last)
-//    {
-//        if (First[i] % Max <= First[j] % Max)
-//        {
-//            First[k] = First[k] + (First[i] % Max) * Max;
-//            k++;
-//            i++;
-//        }
-//        else
-//        {
-//            First[k] = First[k] + (First[j] % Max) * Max;
-//            k++;
-//            j++;
-//        }
-//    }
-//    while (First + i <= Mid)
-//    {
-//        First[k] = First[k] + (First[i] % Max) * Max;
-//        k++;
-//        i++;
-//    }
-//    while (First + j <= Last)
-//    {
-//        First[k] = First[k] + (First[j] % Max) * Max;
-//        k++;
-//        j++;
-//    }
-//
-//    // 获取原始的有序序列
-//    for (int* i = First; i <= Last; i += 1) { *i = *i / Max; }
-//}
-//
-//static void MergeSort_Recursion_Loop(char* First, char* Last, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    int NumOfElements = (Last - First) / SizeOfElements + 1;
-//    if (NumOfElements == 1) return;
-//    else if (NumOfElements >= S_Threshold)    //对小数组采用插入排序
-//    {
-//        char* Mid = First + ((NumOfElements >> 1) - 1) * SizeOfElements;
-//        MergeSort_Recursion_Loop(First, Mid, SizeOfElements, Compare_Function);
-//        MergeSort_Recursion_Loop(Mid + SizeOfElements, Last, SizeOfElements, Compare_Function);
-//        Merge(First, Mid, Last, SizeOfElements, Compare_Function);
-//    }
-//    else _InsertionSort_Small(First, First + SizeOfElements * NumOfElements, SizeOfElements, Compare_Function);
-//}
-//
-//void MergeSort_Recursion(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    Temp_Merge = (char*)malloc(NumOfElements * SizeOfElements);
-//    MergeSort_Recursion_Loop(Base, Base + (NumOfElements - 1) * SizeOfElements, SizeOfElements, Compare_Function);
-//    free(Temp_Merge);
-//}
-//
-//void MergeSort_Iterative(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    Temp_Merge = (char*)malloc(NumOfElements * SizeOfElements);
-//    int   CurrentSize;                                                                                                                                                                                                    //标识当前合并的子数组的大小，从1到NumOfElements/2
-//    char* First;                                                                                                                                                                                                          //标识当前要合并的子数组的起点
-//    for (CurrentSize = 1; CurrentSize <= NumOfElements - 1; CurrentSize = 2 * CurrentSize)
-//    {
-//        for (First = Base; First < (char*)Base + (NumOfElements - 1) * SizeOfElements; First += (2 * CurrentSize) * SizeOfElements)                                                                                       //First必须在最后一个元素的前面,这样后面或者还有一组或者直接就是最后一个元素了
-//        {
-//            char* Mid  = (First + (CurrentSize - 1) * SizeOfElements < (char*)Base + (NumOfElements - 1) * SizeOfElements) ? First + (CurrentSize - 1) * SizeOfElements : Base + (NumOfElements - 1) * SizeOfElements;    //找到第一组数组的最后一个元素
-//            char* Last = (Mid + CurrentSize * SizeOfElements < (char*)Base + (NumOfElements - 1) * SizeOfElements) ? Mid + CurrentSize * SizeOfElements : Base + (NumOfElements - 1) * SizeOfElements;                    //找到第二组数组的最后的元素
-//            Merge(First, Mid, Last, SizeOfElements, Compare_Function);
-//        }
-//    }
-//    free(Temp_Merge);
-//}
-//
-//void MergeSort_Inplace_Iterative(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    int   CurrentSize;                                                                                                                                                                                                    //标识当前合并的子数组的大小，从1到NumOfElements/2
-//    char* First;                                                                                                                                                                                                          //标识当前要合并的子数组的起点
-//    for (CurrentSize = 1; CurrentSize <= NumOfElements - 1; CurrentSize = 2 * CurrentSize)
-//    {
-//        for (First = Base; First < (char*)Base + (NumOfElements - 1) * SizeOfElements; First += (2 * CurrentSize) * SizeOfElements)                                                                                       //First必须在最后一个元素的前面,这样后面或者还有一组或者直接就是最后一个元素了
-//        {
-//            char* Mid  = (First + (CurrentSize - 1) * SizeOfElements < (char*)Base + (NumOfElements - 1) * SizeOfElements) ? First + (CurrentSize - 1) * SizeOfElements : Base + (NumOfElements - 1) * SizeOfElements;    //找到第一组数组的最后一个元素
-//            char* Last = (Mid + CurrentSize * SizeOfElements < (char*)Base + (NumOfElements - 1) * SizeOfElements) ? Mid + CurrentSize * SizeOfElements : Base + (NumOfElements - 1) * SizeOfElements;                    //找到第二组数组的最后的元素
-//            Merge_Inplace(First, Mid, Last, SizeOfElements, Compare_Function);
-//        }
-//    }
-//}
-//
-//void MergeSort_Inplace_Iterative_For_Int(int* Base, size_t NumOfElements)
-//{
-//    int  CurrentSize;                                                                                                                 //标识当前合并的子数组的大小，从1到NumOfElements/2
-//    int* First;                                                                                                                       //标识当前要合并的子数组的起点
-//    for (CurrentSize = 1; CurrentSize <= NumOfElements - 1; CurrentSize = 2 * CurrentSize)
-//    {
-//        for (First = Base; First < &Base[NumOfElements - 1]; First += (2 * CurrentSize))                                              //First必须在最后一个元素的前面,这样后面或者还有一组或者直接就是最后一个元素了
-//        {
-//            int* Mid  = (&First[CurrentSize - 1] < &Base[NumOfElements - 1]) ? &First[CurrentSize - 1] : &Base[NumOfElements - 1];    //找到第一组数组的最后一个元素
-//            int* Last = (&Mid[CurrentSize] < &Base[NumOfElements - 1]) ? &Mid[CurrentSize] : &Base[NumOfElements - 1];                //找到第二组数组的最后的元素
-//            Merge_Inplace_Int(First, Mid, Last);
-//        }
-//    }
-//}
-//
 ///*
 //	此排序相当于从最低位到最高位对int型关键值进行计数排序
 //	每一位最多10个不同的元素,就开了10个桶
@@ -831,7 +710,7 @@
 //    free(Value);
 //    free(OrderedArray);
 //}
-//
+
 //static void RadixSort_MSD_Loop(int* Base, size_t NumOfElements, int Radix)
 //{
 //    if (Radix <= 0) return;
@@ -868,7 +747,7 @@
 //    }
 //    for (int i = 0; i < 10; ++i) free(Bucket[i]);
 //}
-//
+
 //void RadixSort_MSD(int* Base, size_t NumOfElements)
 //{
 //    if (NumOfElements <= 1) return;
@@ -884,7 +763,7 @@
 //    int Radix  = (int)pow(10, Digits - 1);
 //    RadixSort_MSD_Loop(Base, NumOfElements, Radix);
 //}
-//
+
 //void CountingSort(void* Base, size_t NumOfElements, size_t SizeOfElements, ValueFunction GetValue)
 //{
 //    if (NumOfElements <= 1) return;
@@ -927,7 +806,7 @@
 //    free(CountArray);
 //    free(OrderedArray);
 //}
-//
+
 //void BucketSort(void* Base, size_t NumOfElements, size_t SizeOfElements, ValueFunction GetValue)
 //{
 //    if (NumOfElements <= 1) return;
@@ -984,48 +863,7 @@
 //    free(Value);
 //    for (int i = 0; i < Bucket_NUM; ++i) free(Bucket[i]);
 //}
-//
-///*
-//	注意与计数排序的区别, 此排序只考虑每一个元素出现的次数,并且只能排序int数组
-//	本来PigeonholeSort是直接将int值直接映射到数值的索引上,并在上面记录个数
-//	然后再历遍一次数组将数全部放到原数组里面就可以了
-//	但是为了全部开空间INT_MAX也开不了(16GB),于是有了下面的改进算法
-//	与计数排序的区别就是他不实际记录每一个元素的位置,而是个数,最后依次输出即可
-//*/
-//
-//void PigeonholeSort(int* Base, size_t NumOfElements)
-//{
-//    if (NumOfElements <= 1) return;
-//    //得到数列的最大值和最小值，并算出差值Delta
-//    int Max = Base[0];
-//    int Min = Base[0];
-//    for (int i = 0; i < NumOfElements; ++i)
-//    {
-//        if (Base[i] > Max) Max = Base[i];
-//        if (Base[i] < Min) Min = Base[i];
-//    }
-//    int Delta       = Max - Min;
-//    //创建统计数组并统计对应元素的个数
-//    int* CountArray = (int*)calloc((Delta + 1), sizeof(int));
-//    if (CountArray == NULL)
-//    {
-//        printf("内存分配失败！\n");
-//        return;
-//    }
-//    for (int i = 0; i < NumOfElements; ++i) ++CountArray[Base[i] - Min];
-//    int index = 0;
-//    for (int i = 0; i <= Delta; ++i)
-//    {
-//        while (CountArray[i] != 0)
-//        {
-//            Base[index] = i + Min;
-//            --CountArray[i];
-//            ++index;
-//        }
-//    }
-//    free(CountArray);
-//}
-//
+
 //void BigoSort(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Compare_Function)
 //{
 //A:
@@ -1071,60 +909,153 @@ static LTT_inline LTT_unused unsigned char lg2(size_t n)
     return log_val;
 }
 
+static LTT_unused void Merge_Inplace_Int(int* First, int* Mid, int* Last)
+{
+    int Max = *First;
+    for (int* i = First; i < Last; ++i)
+    {
+        if (*i > Max) Max = *i;
+    }
+    ++Max;
+    int i = 0;
+    int j = Mid - First;
+    int k = 0;
+    while (First + i < Mid && First + j < Last)
+    {
+        First[k] += (First[i] % Max <= First[j] % Max) ? (First[i++] % Max * Max) : (First[j++] % Max * Max);
+        ++k;
+    }
+    while (First + i < Mid)
+    {
+        First[k] += First[i] % Max * Max;
+        ++k;
+        ++i;
+    }
+    while (First + j < Last)
+    {
+        First[k] += First[j] % Max * Max;
+        ++k;
+        ++j;
+    }
+    for (int* i = First; i < Last; ++i) *i /= Max;
+}
+
+static LTT_unused void MergeSort_Inplace_Iterative_Int(int* Base, size_t NumOfElements)
+{
+    size_t CurrentSize;
+    int*   First;
+    for (CurrentSize = 1; CurrentSize < NumOfElements; CurrentSize <<= 1)
+    {
+        for (First = Base; First < &Base[NumOfElements]; First += (CurrentSize << 1))
+        {
+            int* Mid  = (&First[CurrentSize] < &Base[NumOfElements]) ? &First[CurrentSize] : &Base[NumOfElements];
+            int* Last = (&Mid[CurrentSize] < &Base[NumOfElements]) ? &Mid[CurrentSize] : &Base[NumOfElements];
+            Merge_Inplace_Int(First, Mid, Last);
+        }
+    }
+}
+
+/*
+	注意与计数排序的区别, 此排序只考虑每一个元素出现的次数,并且只能排序int数组
+	本来PigeonholeSort是直接将int值直接映射到数值的索引上,并在上面记录个数
+	然后再历遍一次数组将数全部放到原数组里面就可以了
+	但是为了全部开空间INT_MAX也开不了(16GB),于是有了下面的改进算法
+	与计数排序的区别就是他不实际记录每一个元素的位置,而是个数,最后依次输出即可
+*/
+
+static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t NumOfElements)
+{
+    if (NumOfElements <= 1) return;
+    int Delta       = Max - Min;
+    // 创建统计数组并统计对应元素的个数
+    int* CountArray = (int*)calloc((Delta + 1), sizeof(int));
+    if (CountArray == NULL) return;
+    for (size_t i = 0; i < NumOfElements; ++i) ++CountArray[Base[i] - Min];
+    int index = 0;
+    for (int i = 0; i <= Delta; ++i)
+    {
+        while (CountArray[i] != 0)
+        {
+            Base[index] = i + Min;
+            --CountArray[i];
+            ++index;
+        }
+    }
+    free(CountArray);
+}
+
 #define SORT_INIT(NAME, TYPE, SCOPE, Compare_Function) \
     SORT_TYPE(NAME, TYPE)                              \
     SORT_IMPL(NAME, TYPE, SCOPE, Compare_Function)
 
 
 //###########基于插入##########
-//插入排序
-#define InsertionSort(NAME, Array, Number)                       InsertionSort_##NAME((Array), (Number))
-//折半插入
-#define BinaryInsertionSort(NAME, Array, Number)                 BinaryInsertionSort_##NAME((Array), (Number))
-//希尔排序
-#define ShellInsertionSort_Hibbard(NAME, Array, Number)          ShellInsertionSort_Hibbard_##NAME((Array), (Number))
-#define ShellInsertionSort_Sedgewick(NAME, Array, Number)        ShellInsertionSort_Sedgewick_##NAME((Array), (Number))
+// 插入排序
+#define InsertionSort(NAME, Array, Number)                 InsertionSort_##NAME((Array), (Number))
+// 折半插入
+#define BinaryInsertionSort(NAME, Array, Number)           BinaryInsertionSort_##NAME((Array), (Number))
+// 希尔排序
+#define ShellInsertionSort_Hibbard(NAME, Array, Number)    ShellInsertionSort_Hibbard_##NAME((Array), (Number))
+#define ShellInsertionSort_Sedgewick(NAME, Array, Number)  ShellInsertionSort_Sedgewick_##NAME((Array), (Number))
 //###########基于交换##########
-//冒泡排序
-#define BubbleSort(NAME, Array, Number)                          BubbleSort_##NAME((Array), (Number))
-#define BubbleSort_Fast(NAME, Array, Number)                     BubbleSort_Fast_##NAME((Array), (Number))
-//快速排序
-#define QuickSort_glibc(NAME, Array, Number)                     QuickSort_glibc_##NAME((Array), (Number))
-#define QuickSort_LTT_glibc(NAME, Array, Number)                 QuickSort_LTT_glibc_##NAME((Array), (Number))
-#define QuickSort_LTT_libstdcpp(NAME, Array, Number)             QuickSort_LTT_libstdcpp_##NAME((Array), (Number))
+// 冒泡排序
+#define BubbleSort(NAME, Array, Number)                    BubbleSort_##NAME((Array), (Number))
+#define BubbleSort_Fast(NAME, Array, Number)               BubbleSort_Fast_##NAME((Array), (Number))
+// 快速排序
+/*
+ * QuickSort_glibc是将glibc中原本的_qsort函数照搬过来
+ * 将其泛型化后，性能提升一倍
+ * Hoare partition scheme划分
+*/
+#define QuickSort_glibc(NAME, Array, Number)               QuickSort_glibc_##NAME((Array), (Number))
+/*
+ * QuickSort_LTT_libstdcpp是将GCC的libstdcpp里面的sort的快排部分照搬过来
+ * 一般情况下比QuickSort_glibc快一些
+ * Hoare partition scheme划分
+ * 本质上和QuickSort_glibc里面的划分是一样的
+*/
+#define QuickSort_LTT_libstdcpp(NAME, Array, Number)       QuickSort_LTT_libstdcpp_##NAME((Array), (Number))
 //###########基于选择##########
-//简单选择排序
-#define SimpleSelectionSort(NAME, Array, Number)                 SimpleSelectionSort_##NAME((Array), (Number))
-//堆排序
-#define HeapSort(NAME, Array, Number)                            HeapSort_##NAME((Array), (Number))
-#define PartialSort(NAME, Array, Number)                         PartialSort_##NAME((Array), (Number))
+// 简单选择排序
+#define SimpleSelectionSort(NAME, Array, Number)           SimpleSelectionSort_##NAME((Array), (Number))
+// 堆排序
+#define HeapSort(NAME, Array, Number)                      HeapSort_##NAME((Array), (Number))
+#define PartialSort(NAME, Array, Number)                   PartialSort_##NAME((Array), (Number))
 //###########基于归并##########
-//2-路归并排序
-#define MergeSort_Recursion(NAME, Array, Number)                 MergeSort_Recursion_##NAME((Array), (Number))
-#define MergeSort_Iterative(NAME, Array, Number)                 MergeSort_Iterative_##NAME((Array), (Number))
-#define MergeSort_Inplace_Iterative(NAME, Array, Number)         MergeSort_Inplace_Iterative_##NAME((Array), (Number))
-#define MergeSort_Inplace_Iterative_For_Int(NAME, Array, Number) MergeSort_Inplace_Iterative_For_Int_##NAME((Array), (Number))
+// 2-路归并排序
+#define MergeSort_Recursion(NAME, Array, Number)           MergeSort_Recursion_##NAME((Array), (Number))
+#define MergeSort_Iterative(NAME, Array, Number)           MergeSort_Iterative_##NAME((Array), (Number))
+#define MergeSort_Inplace_Iterative(NAME, Array, Number)   MergeSort_Inplace_Iterative_##NAME((Array), (Number))
+/*
+	一种适用于int型数组的一种奇技淫巧
+    Max是最大元素+1的值
+	其原理就是,对于两个数a,b,首先判断对Max取余的大小,选取小的一个数
+	然后令a = a + (min(a % Max, b % max)) * Max
+	这样在原本数所在的位置,对Max的商,就是排序好了的数值,而取余则是原本所在的数值
+	但是在计算a = a + (min(a % Max, b % max)) * Max时要特别注意数值溢出!
+*/
+#define MergeSort_Inplace_Iterative_For_Int(Array, Number) MergeSort_Inplace_Iterative_Int((Array), (Number))
 // k路归并排序
 //  Todo
 //
 ////////////
 
-//基数排序
-#define RadixSort_LSD(NAME, Array, Number)                       RadixSort_LSD_##NAME((Array), (Number))
-#define RadixSort_MSD(NAME, Array, Number)                       RadixSort_MSD_##NAME((Array), (Number))
-//桶排序
-#define BucketSort(NAME, Array, Number)                          BucketSort_##NAME((Array), (Number))
-//计数排序
-#define CountingSort(NAME, Array, Number)                        CountingSort_##NAME((Array), (Number))
-//鸽巢排序
-#define CountingSort(NAME, Array, Number)                        CountingSort_##NAME((Array), (Number))
-//猴子排序
-#define BigoSort(NAME, Array, Number)                            BigoSort_##NAME((Array), (Number))
-//内省式排序
-#define IntrospectiveSort(NAME, Array, Number)                   IntrospectiveSort_##NAME((Array), (Number))
+// 基数排序
+#define RadixSort_LSD(NAME, Array, Number)                 RadixSort_LSD_##NAME((Array), (Number))
+#define RadixSort_MSD(NAME, Array, Number)                 RadixSort_MSD_##NAME((Array), (Number))
+// 桶排序
+#define BucketSort(NAME, Array, Number)                    BucketSort_##NAME((Array), (Number))
+// 计数排序
+#define CountingSort(NAME, Array, Number)                  CountingSort_##NAME((Array), (Number))
+// 鸽巢排序
+#define PigeonholeSort(Array, Min, Max, Number)            PigeonholeSort_Int((Array), (Min), (Max), (Number))
+// 猴子排序
+#define BigoSort(NAME, Array, Number)                      BigoSort_##NAME((Array), (Number))
+// 内省式排序
+#define IntrospectiveSort(NAME, Array, Number)             IntrospectiveSort_##NAME((Array), (Number))
 
 // 函数实现
-#define LTT_SORT_INIT(NAME, TYPE, Compare_Function)              SORT_INIT(NAME, TYPE, static LTT_unused, Compare_Function)
+#define LTT_SORT_INIT(NAME, TYPE, Compare_Function)        SORT_INIT(NAME, TYPE, static LTT_unused, Compare_Function)
 
 // 函数声明
-#define LTT_SORT_DECLARE(NAME, TYPE)                             SORT_DECLARE(NAME, TYPE)
+#define LTT_SORT_DECLARE(NAME, TYPE)                       SORT_DECLARE(NAME, TYPE)

@@ -283,9 +283,3 @@ TEST_F(ArrayListTest, Clear)
     EXPECT_TRUE(ArrayList_IsEmpty(&ArrayList_G));
     Array.clear();
 }
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
