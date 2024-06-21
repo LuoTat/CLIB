@@ -6,12 +6,19 @@
 #include <stdlib.h>
 #include "Generic_tool.h"
 
+// ----------------------------------------------------------------------------------------
+// Benchmark                                              Time             CPU   Iterations
+// ----------------------------------------------------------------------------------------
+// ArrayStack_G_Push_Test/100000                      53271 ns        53263 ns        10000
+// stack_Push_Test/100000                            147762 ns       147759 ns         4510
+// ArrayStack_G_Pop_Test/100000/iterations:21474        176 ns          146 ns        21474
+// stack_Pop_Test/100000/iterations:21474             39987 ns        39972 ns        21474
 
 #define DEFAULT_ARRAYSTACK_CAPACITY  (16)
 #define SOFT_MAX_ARRAYSTACK_CAPACITY (INT_MAX - 8)
 
 
-#define ARRAYSTACK_TYPE(NAME, TYPE) \
+#define ARRAYSTACK_TYPE(NAME, TYPE)  \
     typedef struct ArrayStack_##NAME \
     {                                \
         TYPE* Array;                 \
@@ -20,7 +27,7 @@
     } ArrayStack_##NAME;
 
 
-#define ARRAYSTACK_PROTOTYPES(NAME, TYPE)                                                                \
+#define ARRAYSTACK_PROTOTYPES(NAME, TYPE)                                                                 \
     extern void ArrayStack_##NAME##_Init(ArrayStack_##NAME* const ArrayStack);                            \
     extern CODE ArrayStack_##NAME##_Push(ArrayStack_##NAME* const ArrayStack, const TYPE Data);           \
     extern CODE ArrayStack_##NAME##_Pop(ArrayStack_##NAME* const ArrayStack, TYPE* const Result);         \
@@ -32,7 +39,7 @@
     extern void ArrayStack_##NAME##_Destroy(ArrayStack_##NAME* const ArrayStack);
 
 
-#define ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                        \
+#define ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                         \
     SCOPE void ArrayStack_##NAME##_Init(ArrayStack_##NAME* const ArrayStack)                                                        \
     {                                                                                                                               \
         ArrayStack->Array    = NULL;                                                                                                \
@@ -72,7 +79,7 @@
             if (Success == ArrayStack_##NAME##_newCapacity(OldCapacity, MinCapacity - OldCapacity, OldCapacity >> 1, &NewCapacity)) \
             {                                                                                                                       \
                 TYPE* EA = (TYPE*)realloc(ArrayStack->Array, NewCapacity * sizeof(TYPE));                                           \
-                if (EA == NULL) return MemoryAllocationError;                                                                       \
+                if (unlikely(EA == NULL)) return MemoryAllocationError;                                                             \
                 ArrayStack->Array    = EA;                                                                                          \
                 ArrayStack->Capacity = NewCapacity;                                                                                 \
                 return Success;                                                                                                     \
@@ -83,7 +90,7 @@
         {                                                                                                                           \
             NewCapacity = (MinCapacity > DEFAULT_ARRAYSTACK_CAPACITY) ? MinCapacity : DEFAULT_ARRAYSTACK_CAPACITY;                  \
             TYPE* EA    = (TYPE*)malloc(NewCapacity * sizeof(TYPE));                                                                \
-            if (EA == NULL) return MemoryAllocationError;                                                                           \
+            if (unlikely(EA == NULL)) return MemoryAllocationError;                                                                 \
             ArrayStack->Array    = EA;                                                                                              \
             ArrayStack->Capacity = NewCapacity;                                                                                     \
             return Success;                                                                                                         \

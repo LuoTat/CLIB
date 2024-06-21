@@ -2,8 +2,19 @@
 #include <stdlib.h>
 #include "Generic_tool.h"
 
+// -------------------------------------------------------------------------------
+// Benchmark                                     Time             CPU   Iterations
+// -------------------------------------------------------------------------------
+// LinkedList_G_AddFirst_Test/100000       1164698 ns      1164540 ns          689
+// list_AddFirst_Test/100000               1421341 ns      1421333 ns          506
+// LinkedList_G_AddLast_Test/100000        1262992 ns      1262679 ns          529
+// list_AddLast_Test/100000                1614373 ns      1614376 ns          445
+// LinkedList_G_DeleteFirst_Test/100000     620178 ns       620170 ns         1137
+// list_DeleteFirst_Test/100000             990247 ns       990188 ns          690
+// LinkedList_G_DeleteLast_Test/100000      621517 ns       621492 ns         1118
+// list_DeleteLast_Test/100000              975274 ns       975269 ns          694
 
-#define LINKEDLIST_TYPE(NAME, TYPE)        \
+#define LINKEDLIST_TYPE(NAME, TYPE)         \
     typedef struct LinkedListNode_##NAME    \
     {                                       \
         struct LinkedListNode_##NAME* Prev; \
@@ -17,7 +28,7 @@
     } LinkedList_##NAME;
 
 
-#define LINKEDLIST_PROTOTYPES(NAME, TYPE)                                                                                                     \
+#define LINKEDLIST_PROTOTYPES(NAME, TYPE)                                                                                                      \
     extern void LinkedList_##NAME##_Init(LinkedList_##NAME* const LinkedList);                                                                 \
     extern CODE LinkedList_##NAME##_AddFirst(LinkedList_##NAME* const LinkedList, const TYPE Data);                                            \
     extern CODE LinkedList_##NAME##_AddLast(LinkedList_##NAME* const LinkedList, const TYPE Data);                                             \
@@ -39,7 +50,7 @@
     extern void LinkedList_##NAME##_Destroy(LinkedList_##NAME* const LinkedList);
 
 
-#define LINKEDLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                                                                     \
+#define LINKEDLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                                                                      \
     SCOPE void LinkedList_##NAME##_Init(LinkedList_##NAME* const LinkedList)                                                                                                                                     \
     {                                                                                                                                                                                                            \
         LinkedList->EndNode       = (LinkedListNode_##NAME*)malloc(sizeof(LinkedListNode_##NAME));                                                                                                               \
@@ -62,8 +73,8 @@
     }                                                                                                                                                                                                            \
     SCOPE bool LinkedList_##NAME##_CheckIndex(const LinkedList_##NAME* const LinkedList, const int Index)                                                                                                        \
     {                                                                                                                                                                                                            \
-        if (likely(0 <= Index && Index < LinkedList->Size)) return true;                                                                                                                                         \
-        else return false;                                                                                                                                                                                       \
+        if (unlikely(Index < 0 || Index > LinkedList->Size)) return false;                                                                                                                                       \
+        else return true;                                                                                                                                                                                        \
     }                                                                                                                                                                                                            \
     SCOPE LinkedListNode_##NAME* LinkedList_##NAME##_GetEndNode(const LinkedList_##NAME* const LinkedList) { return LinkedList->EndNode; }                                                                       \
     SCOPE LinkedListNode_##NAME* LinkedList_##NAME##_GetNode(const LinkedList_##NAME* const LinkedList, const int Index)                                                                                         \
@@ -97,7 +108,7 @@
     SCOPE CODE LinkedList_##NAME##_MakeNode(const TYPE Data, LinkedListNode_##NAME** const Result)                                                                                                               \
     {                                                                                                                                                                                                            \
         *Result = (LinkedListNode_##NAME*)malloc(sizeof(LinkedListNode_##NAME));                                                                                                                                 \
-        if (*Result == NULL) return MemoryAllocationError;                                                                                                                                                       \
+        if (unlikely(*Result == NULL)) return MemoryAllocationError;                                                                                                                                             \
         (*Result)->Data = Data;                                                                                                                                                                                  \
         return Success;                                                                                                                                                                                          \
     }                                                                                                                                                                                                            \
@@ -113,7 +124,7 @@
     SCOPE CODE LinkedList_##NAME##_AddLast(LinkedList_##NAME* const LinkedList, const TYPE Data) { return LinkedList_##NAME##_InsertPrevNode(LinkedList, LinkedList_##NAME##_GetEndNode(LinkedList), Data); }    \
     SCOPE CODE LinkedList_##NAME##_AddIndex(LinkedList_##NAME* const LinkedList, const TYPE Data, const int Index)                                                                                               \
     {                                                                                                                                                                                                            \
-        if (!LinkedList_##NAME##_CheckIndex(LinkedList, Index)) return ArrayIndexOutOfRange;                                                                                                                     \
+        if (unlikely(!LinkedList_##NAME##_CheckIndex(LinkedList, Index))) return ArrayIndexOutOfRange;                                                                                                           \
         if (Index == 0) return LinkedList_##NAME##_AddFirst(LinkedList, Data);                                                                                                                                   \
         if (Index == LinkedList->Size) return LinkedList_##NAME##_AddLast(LinkedList, Data);                                                                                                                     \
         LinkedListNode_##NAME* Position = LinkedList_##NAME##_GetNode(LinkedList, Index);                                                                                                                        \
@@ -122,7 +133,7 @@
     SCOPE bool LinkedList_##NAME##_IsEmpty(const LinkedList_##NAME* const LinkedList) { return LinkedList->Size == 0; }                                                                                          \
     SCOPE CODE LinkedList_##NAME##_DeleteFirst(LinkedList_##NAME* const LinkedList, TYPE* const Result)                                                                                                          \
     {                                                                                                                                                                                                            \
-        if (LinkedList_##NAME##_IsEmpty(LinkedList)) return NullPointerAccess;                                                                                                                                   \
+        if (unlikely(LinkedList_##NAME##_IsEmpty(LinkedList))) return NullPointerAccess;                                                                                                                         \
         LinkedListNode_##NAME* FirstNode = LinkedList_##NAME##_GetFirstNode(LinkedList);                                                                                                                         \
         *Result                          = FirstNode->Data;                                                                                                                                                      \
         LinkedList_##NAME##_EraseNode(LinkedList, FirstNode);                                                                                                                                                    \
@@ -130,7 +141,7 @@
     }                                                                                                                                                                                                            \
     SCOPE CODE LinkedList_##NAME##_DeleteLast(LinkedList_##NAME* const LinkedList, TYPE* const Result)                                                                                                           \
     {                                                                                                                                                                                                            \
-        if (LinkedList_##NAME##_IsEmpty(LinkedList)) return NullPointerAccess;                                                                                                                                   \
+        if (unlikely(LinkedList_##NAME##_IsEmpty(LinkedList))) return NullPointerAccess;                                                                                                                         \
         LinkedListNode_##NAME* LastNode = LinkedList->EndNode->Prev;                                                                                                                                             \
         *Result                         = LastNode->Data;                                                                                                                                                        \
         LinkedList_##NAME##_EraseNode(LinkedList, LastNode);                                                                                                                                                     \
@@ -138,7 +149,7 @@
     }                                                                                                                                                                                                            \
     SCOPE CODE LinkedList_##NAME##_DeleteIndex(LinkedList_##NAME* const LinkedList, const int Index, TYPE* const Result)                                                                                         \
     {                                                                                                                                                                                                            \
-        if (!LinkedList_##NAME##_CheckIndex(LinkedList, Index)) return ArrayIndexOutOfRange;                                                                                                                     \
+        if (unlikely(!LinkedList_##NAME##_CheckIndex(LinkedList, Index))) return ArrayIndexOutOfRange;                                                                                                           \
         if (Index == 0) return LinkedList_##NAME##_DeleteFirst(LinkedList, Result);                                                                                                                              \
         if (Index == LinkedList->Size) return LinkedList_##NAME##_DeleteLast(LinkedList, Result);                                                                                                                \
         LinkedListNode_##NAME* Position = LinkedList_##NAME##_GetNode(LinkedList, Index);                                                                                                                        \
@@ -148,7 +159,7 @@
     }                                                                                                                                                                                                            \
     SCOPE CODE LinkedList_##NAME##_SetFirst(const LinkedList_##NAME* const LinkedList, const TYPE Data, TYPE* const Result)                                                                                      \
     {                                                                                                                                                                                                            \
-        if (LinkedList_##NAME##_IsEmpty(LinkedList)) return NullPointerAccess;                                                                                                                                   \
+        if (unlikely(LinkedList_##NAME##_IsEmpty(LinkedList))) return NullPointerAccess;                                                                                                                         \
         LinkedListNode_##NAME* FirstNode = LinkedList_##NAME##_GetFirstNode(LinkedList);                                                                                                                         \
         *Result                          = FirstNode->Data;                                                                                                                                                      \
         FirstNode->Data                  = Data;                                                                                                                                                                 \
@@ -156,7 +167,7 @@
     }                                                                                                                                                                                                            \
     SCOPE CODE LinkedList_##NAME##_SetLast(const LinkedList_##NAME* const LinkedList, const TYPE Data, TYPE* const Result)                                                                                       \
     {                                                                                                                                                                                                            \
-        if (LinkedList_##NAME##_IsEmpty(LinkedList)) return NullPointerAccess;                                                                                                                                   \
+        if (unlikely(LinkedList_##NAME##_IsEmpty(LinkedList))) return NullPointerAccess;                                                                                                                         \
         LinkedListNode_##NAME* LastNode = LinkedList->EndNode->Prev;                                                                                                                                             \
         *Result                         = LastNode->Data;                                                                                                                                                        \
         LastNode->Data                  = Data;                                                                                                                                                                  \
@@ -164,7 +175,7 @@
     }                                                                                                                                                                                                            \
     SCOPE CODE LinkedList_##NAME##_SetIndex(const LinkedList_##NAME* const LinkedList, const TYPE Data, const int Index, TYPE* const Result)                                                                     \
     {                                                                                                                                                                                                            \
-        if (!LinkedList_##NAME##_CheckIndex(LinkedList, Index)) return ArrayIndexOutOfRange;                                                                                                                     \
+        if (unlikely(!LinkedList_##NAME##_CheckIndex(LinkedList, Index))) return ArrayIndexOutOfRange;                                                                                                           \
         LinkedListNode_##NAME* Position = LinkedList_##NAME##_GetNode(LinkedList, Index);                                                                                                                        \
         *Result                         = Position->Data;                                                                                                                                                        \
         Position->Data                  = Data;                                                                                                                                                                  \
@@ -172,21 +183,21 @@
     }                                                                                                                                                                                                            \
     SCOPE CODE LinkedList_##NAME##_GetFirst(const LinkedList_##NAME* const LinkedList, TYPE* const Result)                                                                                                       \
     {                                                                                                                                                                                                            \
-        if (LinkedList_##NAME##_IsEmpty(LinkedList)) return NullPointerAccess;                                                                                                                                   \
+        if (unlikely(LinkedList_##NAME##_IsEmpty(LinkedList))) return NullPointerAccess;                                                                                                                         \
         LinkedListNode_##NAME* FirstNode = LinkedList_##NAME##_GetFirstNode(LinkedList);                                                                                                                         \
         *Result                          = FirstNode->Data;                                                                                                                                                      \
         return Success;                                                                                                                                                                                          \
     }                                                                                                                                                                                                            \
     SCOPE CODE LinkedList_##NAME##_GetLast(const LinkedList_##NAME* const LinkedList, TYPE* const Result)                                                                                                        \
     {                                                                                                                                                                                                            \
-        if (LinkedList_##NAME##_IsEmpty(LinkedList)) return NullPointerAccess;                                                                                                                                   \
+        if (unlikely(LinkedList_##NAME##_IsEmpty(LinkedList))) return NullPointerAccess;                                                                                                                         \
         LinkedListNode_##NAME* LastNode = LinkedList->EndNode->Prev;                                                                                                                                             \
         *Result                         = LastNode->Data;                                                                                                                                                        \
         return Success;                                                                                                                                                                                          \
     }                                                                                                                                                                                                            \
     SCOPE CODE LinkedList_##NAME##_GetIndex(const LinkedList_##NAME* const LinkedList, const int Index, TYPE* const Result)                                                                                      \
     {                                                                                                                                                                                                            \
-        if (!LinkedList_##NAME##_CheckIndex(LinkedList, Index)) return ArrayIndexOutOfRange;                                                                                                                     \
+        if (unlikely(!LinkedList_##NAME##_CheckIndex(LinkedList, Index))) return ArrayIndexOutOfRange;                                                                                                           \
         LinkedListNode_##NAME* Position = LinkedList_##NAME##_GetNode(LinkedList, Index);                                                                                                                        \
         *Result                         = Position->Data;                                                                                                                                                        \
         return Success;                                                                                                                                                                                          \

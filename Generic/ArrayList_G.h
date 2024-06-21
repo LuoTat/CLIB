@@ -4,12 +4,29 @@
 #include <string.h>
 #include "Generic_tool.h"
 
+/*
+AddLast
+DeleteLast
+可优化
+*/
+
+// ----------------------------------------------------------------------------------------------
+// Benchmark                                                    Time             CPU   Iterations
+// ----------------------------------------------------------------------------------------------
+// ArrayList_G_AddFirst_Test/100000                     202540793 ns    202454596 ns            3
+// vector_AddFirst_Test/100000                          203211509 ns    203190876 ns            3
+// ArrayList_G_AddLast_Test/100000                          48800 ns        48796 ns        14471
+// vector_AddLast_Test/100000                               23979 ns        23977 ns        29279
+// ArrayList_G_DeleteFirst_Test/100000                  199706999 ns    199646427 ns            3
+// vector_DeleteFirst_Test/100000                       209752662 ns    209680216 ns            3
+// ArrayList_G_DeleteLast_Test/100000/iterations:21474        176 ns          158 ns        21474
+// vector_DeleteLast_Test/100000/iterations:21474             156 ns          140 ns        21474
 
 #define DEFAULT_ARRAYLIST_CAPACITY  (16)
 #define SOFT_MAX_ARRAYLIST_CAPACITY (INT_MAX - 8)
 
 
-#define ARRAYLIST_TYPE(NAME, TYPE) \
+#define ARRAYLIST_TYPE(NAME, TYPE)  \
     typedef struct ArrayList_##NAME \
     {                               \
         TYPE* Array;                \
@@ -18,7 +35,7 @@
     } ArrayList_##NAME;
 
 
-#define ARRAYLIST_PROTOTYPES(NAME, TYPE)                                                                                       \
+#define ARRAYLIST_PROTOTYPES(NAME, TYPE)                                                                                        \
     extern void ArrayList_##NAME##_Init(ArrayList_##NAME* const ArrayList);                                                     \
     extern CODE ArrayList_##NAME##_AddFirst(ArrayList_##NAME* const ArrayList, const TYPE Data);                                \
     extern CODE ArrayList_##NAME##_AddLast(ArrayList_##NAME* const ArrayList, const TYPE Data);                                 \
@@ -39,10 +56,10 @@
     extern void ArrayList_##NAME##_Destroy(ArrayList_##NAME* const ArrayList);
 
 
-#define ARRAYLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                       \
+#define ARRAYLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                        \
     SCOPE bool ArrayList_##NAME##_CheckIndex(const ArrayList_##NAME* const ArrayList, const int Index)                                                            \
     {                                                                                                                                                             \
-        if (Index < 0 || Index > ArrayList->Size) return false;                                                                                                   \
+        if (unlikely(Index < 0 || Index > ArrayList->Size)) return false;                                                                                                   \
         else return true;                                                                                                                                         \
     }                                                                                                                                                             \
     SCOPE void ArrayList_##NAME##_Init(ArrayList_##NAME* const ArrayList)                                                                                         \
@@ -84,7 +101,7 @@
             if (Success == ArrayList_##NAME##_newCapacity(OldCapacity, MinCapacity - OldCapacity, OldCapacity >> 1, &NewCapacity))                                \
             {                                                                                                                                                     \
                 TYPE* EA = (TYPE*)realloc(ArrayList->Array, NewCapacity * sizeof(TYPE));                                                                          \
-                if (EA == NULL) return MemoryAllocationError;                                                                                                     \
+                if (unlikely(EA == NULL)) return MemoryAllocationError;                                                                                                     \
                 ArrayList->Array    = EA;                                                                                                                         \
                 ArrayList->Capacity = NewCapacity;                                                                                                                \
                 return Success;                                                                                                                                   \
@@ -95,7 +112,7 @@
         {                                                                                                                                                         \
             NewCapacity = (MinCapacity > DEFAULT_ARRAYLIST_CAPACITY) ? MinCapacity : DEFAULT_ARRAYLIST_CAPACITY;                                                  \
             TYPE* EA    = (TYPE*)malloc(NewCapacity * sizeof(TYPE));                                                                                              \
-            if (EA == NULL) return MemoryAllocationError;                                                                                                         \
+            if (unlikely(EA == NULL)) return MemoryAllocationError;                                                                                                         \
             ArrayList->Array    = EA;                                                                                                                             \
             ArrayList->Capacity = NewCapacity;                                                                                                                    \
             return Success;                                                                                                                                       \
@@ -124,13 +141,13 @@
     }                                                                                                                                                             \
     SCOPE CODE ArrayList_##NAME##_AddIndex_Safe(ArrayList_##NAME* const ArrayList, const TYPE Data, const int Index)                                              \
     {                                                                                                                                                             \
-        if (!ArrayList_##NAME##_CheckIndex(ArrayList, Index)) return ArrayIndexOutOfRange;                                                                        \
+        if (unlikely(!ArrayList_##NAME##_CheckIndex(ArrayList, Index))) return ArrayIndexOutOfRange;                                                                        \
         return ArrayList_##NAME##_AddIndex_UnSafe(ArrayList, Data, Index);                                                                                        \
     }                                                                                                                                                             \
     SCOPE void ArrayList_##NAME##_FastDeleteIndex(ArrayList_##NAME* const ArrayList, const int Index)                                                             \
     {                                                                                                                                                             \
         int NewSize = ArrayList->Size - 1;                                                                                                                        \
-        if (NewSize > Index) memmove(ArrayList->Array + Index, ArrayList->Array + Index + 1, (NewSize - Index) * sizeof(TYPE));                                   \
+        if (unlikely(NewSize > Index)) memmove(ArrayList->Array + Index, ArrayList->Array + Index + 1, (NewSize - Index) * sizeof(TYPE));                                   \
         ArrayList->Size = NewSize;                                                                                                                                \
     }                                                                                                                                                             \
     SCOPE CODE ArrayList_##NAME##_DeleteFirst(ArrayList_##NAME* const ArrayList, TYPE* const Result)                                                              \
@@ -149,14 +166,14 @@
     }                                                                                                                                                             \
     SCOPE CODE ArrayList_##NAME##_DeleteIndex(ArrayList_##NAME* const ArrayList, const int Index, TYPE* const Result)                                             \
     {                                                                                                                                                             \
-        if (!ArrayList_##NAME##_CheckIndex(ArrayList, Index)) return ArrayIndexOutOfRange;                                                                        \
+        if (unlikely(!ArrayList_##NAME##_CheckIndex(ArrayList, Index))) return ArrayIndexOutOfRange;                                                                        \
         *Result = ArrayList->Array[Index];                                                                                                                        \
         ArrayList_##NAME##_FastDeleteIndex(ArrayList, Index);                                                                                                     \
         return Success;                                                                                                                                           \
     }                                                                                                                                                             \
     SCOPE CODE ArrayList_##NAME##_SetIndex(ArrayList_##NAME* const ArrayList, TYPE Data, const int Index, TYPE* const Result)                                     \
     {                                                                                                                                                             \
-        if (!ArrayList_##NAME##_CheckIndex(ArrayList, Index)) return ArrayIndexOutOfRange;                                                                        \
+        if (unlikely(!ArrayList_##NAME##_CheckIndex(ArrayList, Index))) return ArrayIndexOutOfRange;                                                                        \
         *Result                 = ArrayList->Array[Index];                                                                                                        \
         ArrayList->Array[Index] = Data;                                                                                                                           \
         return Success;                                                                                                                                           \
@@ -175,7 +192,7 @@
     }                                                                                                                                                             \
     SCOPE CODE ArrayList_##NAME##_GetIndex(ArrayList_##NAME* const ArrayList, const int Index, TYPE* const Result)                                                \
     {                                                                                                                                                             \
-        if (!ArrayList_##NAME##_CheckIndex(ArrayList, Index)) return ArrayIndexOutOfRange;                                                                        \
+        if (unlikely(!ArrayList_##NAME##_CheckIndex(ArrayList, Index))) return ArrayIndexOutOfRange;                                                                        \
         *Result = ArrayList->Array[Index];                                                                                                                        \
         return Success;                                                                                                                                           \
     }                                                                                                                                                             \

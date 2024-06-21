@@ -4,6 +4,23 @@
 #include <string.h>
 #include "Generic_tool.h"
 
+/*
+AddFirst
+AddLast
+可优化
+*/
+
+// ------------------------------------------------------------------------------------------------
+// Benchmark                                                      Time             CPU   Iterations
+// ------------------------------------------------------------------------------------------------
+// ArrayDeque_G_AddFirst_Test/100000                          50286 ns        50288 ns        12678
+// deque_AddFirst_Test/100000                                 45831 ns        45833 ns        14588
+// ArrayDeque_G_AddLast_Test/100000                           77435 ns        77408 ns         9004
+// deque_AddLast_Test/100000                                  55905 ns        55846 ns        13702
+// ArrayDeque_G_DeleteFirst_Test/100000/iterations:21474        214 ns          189 ns        21474
+// deque_DeleteFirst_Test/100000                              38704 ns        38707 ns        17942
+// ArrayDeque_G_DeleteLast_Test/100000/iterations:21474         245 ns          224 ns        21474
+// deque_DeleteLast_Test/100000                               41931 ns        41931 ns        17466
 
 #define DEFAULT_ARRAYDEQUE_CAPACITY  (16)
 #define SOFT_MAX_ARRAYDEQUE_CAPACITY (INT_MAX - 8)
@@ -43,7 +60,7 @@
     SCOPE CODE ArrayDeque_##NAME##_Init(ArrayDeque_##NAME* ArrayDeque)                                                                                          \
     {                                                                                                                                                           \
         ArrayDeque->Array = (TYPE*)malloc((DEFAULT_ARRAYDEQUE_CAPACITY + 1) * sizeof(TYPE));                                                                    \
-        if (ArrayDeque->Array == NULL) return MemoryAllocationError;                                                                                            \
+        if (unlikely(ArrayDeque->Array == NULL)) return MemoryAllocationError;                                                                                  \
         ArrayDeque->Capacity = DEFAULT_ARRAYDEQUE_CAPACITY + 1;                                                                                                 \
         ArrayDeque->Head = ArrayDeque->Tail = 0;                                                                                                                \
         return Success;                                                                                                                                         \
@@ -78,7 +95,7 @@
             if (Success != ArrayDeque_##NAME##_newCapacity(OldCapacity, Needed, Jump, &NewCapacity)) return MemoryOverflow;                                     \
         }                                                                                                                                                       \
         TYPE* EA = (TYPE*)realloc(ArrayDeque->Array, NewCapacity * sizeof(TYPE));                                                                               \
-        if (EA == NULL) return MemoryAllocationError;                                                                                                           \
+        if (unlikely(EA == NULL)) return MemoryAllocationError;                                                                                                 \
         ArrayDeque->Array    = EA;                                                                                                                              \
         ArrayDeque->Capacity = NewCapacity;                                                                                                                     \
         int Head             = ArrayDeque->Head;                                                                                                                \
@@ -94,7 +111,7 @@
     SCOPE CODE ArrayDeque_##NAME##_AddFirst(ArrayDeque_##NAME* const ArrayDeque, const TYPE Data)                                                               \
     {                                                                                                                                                           \
         ArrayDeque->Array[ArrayDeque->Head = DEC(ArrayDeque->Head, ArrayDeque->Capacity)] = Data;                                                               \
-        if (ArrayDeque->Head == ArrayDeque->Tail)                                                                                                               \
+        if (unlikely(ArrayDeque->Head == ArrayDeque->Tail))                                                                                                     \
         {                                                                                                                                                       \
             if (Success != ArrayDeque_##NAME##_Resize(ArrayDeque, 1)) return MemoryOverflow;                                                                    \
         }                                                                                                                                                       \
@@ -104,35 +121,34 @@
     {                                                                                                                                                           \
         ArrayDeque->Array[ArrayDeque->Tail] = Data;                                                                                                             \
         ArrayDeque->Tail                    = INC(ArrayDeque->Tail, ArrayDeque->Capacity);                                                                      \
-        if (ArrayDeque->Head == ArrayDeque->Tail)                                                                                                               \
+        if (unlikely(ArrayDeque->Head == ArrayDeque->Tail))                                                                                                     \
         {                                                                                                                                                       \
             if (Success != ArrayDeque_##NAME##_Resize(ArrayDeque, 1)) return MemoryOverflow;                                                                    \
         }                                                                                                                                                       \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
-    SCOPE bool ArrayDeque_##NAME##_IsEmpty(const ArrayDeque_##NAME* const ArrayDeque) { return ArrayDeque->Head == ArrayDeque->Tail; }                          \
     SCOPE CODE ArrayDeque_##NAME##_DeleteFirst(ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                         \
     {                                                                                                                                                           \
-        if (ArrayDeque->Head == ArrayDeque->Tail) return NullPointerAccess;                                                                                     \
+        if (unlikely(ArrayDeque->Head == ArrayDeque->Tail)) return NullPointerAccess;                                                                           \
         *Result          = ArrayDeque->Array[ArrayDeque->Head];                                                                                                 \
         ArrayDeque->Head = INC(ArrayDeque->Head, ArrayDeque->Capacity);                                                                                         \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
     SCOPE CODE ArrayDeque_##NAME##_DeleteLast(ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                          \
     {                                                                                                                                                           \
-        if (ArrayDeque->Head == ArrayDeque->Tail) return NullPointerAccess;                                                                                     \
+        if (unlikely(ArrayDeque->Head == ArrayDeque->Tail)) return NullPointerAccess;                                                                           \
         *Result = ArrayDeque->Array[ArrayDeque->Tail = DEC(ArrayDeque->Tail, ArrayDeque->Capacity)];                                                            \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
     SCOPE CODE ArrayDeque_##NAME##_GetFirst(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                      \
     {                                                                                                                                                           \
-        if (ArrayDeque_##NAME##_IsEmpty(ArrayDeque)) return NullPointerAccess;                                                                                  \
+        if (unlikely(ArrayDeque->Head == ArrayDeque->Tail)) return NullPointerAccess;                                                                           \
         *Result = ArrayDeque->Array[ArrayDeque->Head];                                                                                                          \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
     SCOPE CODE ArrayDeque_##NAME##_GetLast(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result)                                                       \
     {                                                                                                                                                           \
-        if (ArrayDeque_##NAME##_IsEmpty(ArrayDeque)) return NullPointerAccess;                                                                                  \
+        if (unlikely(ArrayDeque->Head == ArrayDeque->Tail)) return NullPointerAccess;                                                                           \
         *Result = ArrayDeque->Array[DEC(ArrayDeque->Tail, ArrayDeque->Capacity)];                                                                               \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
