@@ -167,7 +167,7 @@ AddLast
         return false;                                                                                                                                           \
     }                                                                                                                                                           \
     SCOPE void ArrayDeque_##NAME##_Clear(ArrayDeque_##NAME* const ArrayDeque) { ArrayDeque->Head = ArrayDeque->Tail = 0; }                                      \
-    SCOPE void ArrayDeque_##NAME##_Destroy(ArrayDeque_##NAME* ArrayDeque)                                                                                       \
+    SCOPE void ArrayDeque_##NAME##_Destroy(ArrayDeque_##NAME* const ArrayDeque)                                                                                 \
     {                                                                                                                                                           \
         free(ArrayDeque->Array);                                                                                                                                \
         ArrayDeque->Array    = NULL;                                                                                                                            \
