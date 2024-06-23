@@ -260,7 +260,7 @@ static void* LTT_HashMap_PutVal(HashMap* const HashMap, void* const Key, void* c
     HashNode*  LocatedNode;    //用来表示定位到的节点
     int        index;          //用来表示定位到的节点的索引
     int        Capacity;       //用来表示当前哈希表的长度
-    size_t        KeySize = HashMap->KeySize;
+    size_t     KeySize = HashMap->KeySize;
     //采用懒加载的方式，如果当前的哈希表为空或者长度为0，则进行扩容
     if ((Table = HashMap->Table) == NULL || (Capacity = HashMap->Capacity) == 0)
     {
@@ -325,7 +325,7 @@ HashNode* LTT_HashMap_GetNode(const HashMap* const HashMap, const void* const Ke
     HashNode**  Tab;
     HashNode*   First;
     HashNode*   Temp_HNP;
-    size_t         KeySize = HashMap->KeySize;
+    size_t      KeySize = HashMap->KeySize;
     int         Capacity;
     int         hash;
     const void* Temp_Key;
@@ -389,8 +389,8 @@ HashNode* LTT_HashMap_DeleteNode(HashMap* const HashMap, const void* const Key, 
     HashNode*  P;
     int        Capacity;
     int        index;
-    size_t        KeySize   = HashMap->KeySize;
-    size_t        ValueSize = HashMap->ValueSize;
+    size_t     KeySize   = HashMap->KeySize;
+    size_t     ValueSize = HashMap->ValueSize;
     //P是定位到的头节点
     if ((Tab = HashMap->Table) != NULL && (Capacity = HashMap->Capacity) > 0 && (P = Tab[index = hash & (Capacity - 1)]) != NULL)
     {
@@ -418,9 +418,9 @@ HashNode* LTT_HashMap_DeleteNode(HashMap* const HashMap, const void* const Key, 
         {
             if (node == P) Tab[index] = node->Next;
             else P->Next = node->Next;
+            --HashMap->Capacity;
+            return node;
         }
-        --HashMap->Capacity;
-        return node;
     }
     return NULL;
 }
