@@ -430,7 +430,7 @@ void* LTT_HashMap_DeleteKey(HashMap* const HashMap, const void* const Key)
     HashNode* e;
     void*     Value = (e = LTT_HashMap_DeleteNode(HashMap, Key, NULL, LTT_HashMap_hash(HashMap, Key), false)) == NULL ? NULL : e->Value;
     free(e);
-    return Value
+    return Value;
 }
 
 void* LTT_HashMap_DeleteKVPair(HashMap* const HashMap, const void* const Key, const void* const Value) { return LTT_HashMap_DeleteNode(HashMap, Key, Value, LTT_HashMap_hash(HashMap, Key), true); }
