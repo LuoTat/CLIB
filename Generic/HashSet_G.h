@@ -33,7 +33,7 @@
     DJBHash
     DEKHash
     BPHash
-    FNVHash
+    FNV_1aHash
     APHash
 */
 #define String_Hash_Function             DJBHash
