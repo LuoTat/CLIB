@@ -73,7 +73,7 @@
     }                                                                                                                                                                                                            \
     SCOPE bool LinkedList_##NAME##_CheckIndex(const LinkedList_##NAME* const LinkedList, const int Index)                                                                                                        \
     {                                                                                                                                                                                                            \
-        if (unlikely(Index < 0 || Index > LinkedList->Size)) return false;                                                                                                                                       \
+        if (unlikely(Index < 0 || Index >= LinkedList->Size)) return false;                                                                                                                                       \
         else return true;                                                                                                                                                                                        \
     }                                                                                                                                                                                                            \
     SCOPE LinkedListNode_##NAME* LinkedList_##NAME##_GetEndNode(const LinkedList_##NAME* const LinkedList) { return LinkedList->EndNode; }                                                                       \

@@ -59,7 +59,7 @@ DeleteLast
 #define ARRAYLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                        \
     SCOPE bool ArrayList_##NAME##_CheckIndex(const ArrayList_##NAME* const ArrayList, const int Index)                                                            \
     {                                                                                                                                                             \
-        if (unlikely(Index < 0 || Index > ArrayList->Size)) return false;                                                                                                   \
+        if (unlikely(Index < 0 || Index >= ArrayList->Size)) return false;                                                                                                   \
         else return true;                                                                                                                                         \
     }                                                                                                                                                             \
     SCOPE void ArrayList_##NAME##_Init(ArrayList_##NAME* const ArrayList)                                                                                         \
