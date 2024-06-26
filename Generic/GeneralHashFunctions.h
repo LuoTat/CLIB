@@ -149,21 +149,21 @@ static LTT_inline LTT_unused unsigned int BPHash(const char* str, size_t len)
 /* End Of BP Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int FNVHash(const char* str, size_t len)
+static LTT_inline LTT_unused unsigned int FNV_1aHash(const char* str, size_t len)
 {
-    const unsigned int fnv_prime = 0x811C9DC5;
-    unsigned int       hash      = 0;
+    const unsigned int FNV32_PRIME = 0x1000193;
+    unsigned int       hash        = 0x811C9DC5;
 
     for (size_t i = 0; i < len; ++str, ++i)
     {
-        hash *= fnv_prime;
         hash ^= (*str);
+        hash *= FNV32_PRIME;
     }
 
     return hash;
 }
 
-/* End Of FNV Hash Function */
+/* End Of FNV_1a Hash Function */
 
 
 static LTT_inline LTT_unused unsigned int APHash(const char* str, size_t len)
