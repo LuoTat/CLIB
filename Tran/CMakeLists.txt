@@ -1,0 +1,20 @@
+# 设置DEBUG后缀
+set( CMAKE_DEBUG_POSTFIX "_d" )
+
+# 增加子目录
+add_subdirectory(ArrayDeque)
+add_subdirectory(ArrayList)
+add_subdirectory(ArrayQueue)
+add_subdirectory(ArrayStack)
+add_subdirectory(../src/AVLTree)
+add_subdirectory(../src/BinaryTree)
+add_subdirectory(../src/BinaryTreeUtils)
+add_subdirectory(../src/BSTree)
+add_subdirectory(../src/BSTreeUtils)
+add_subdirectory(HashMap)
+add_subdirectory(../src/Iterator)
+add_subdirectory(LinkedList)
+add_subdirectory(../src/Predefined)
+add_subdirectory(SortingAlgorithm)
+add_subdirectory(../src/Undigraph)
+add_subdirectory(../src/UnionFindSet)
