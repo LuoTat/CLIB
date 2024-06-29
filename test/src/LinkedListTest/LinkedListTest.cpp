@@ -200,6 +200,58 @@ TEST_F(LinkedListTest, DeleteIndex)
     Array.clear();
 }
 
+// 测试SetFirst
+TEST_F(LinkedListTest, SetFirst)
+{
+    std::vector<int> Array;
+    AddLastDefault(Array);
+    int result;
+    int Index = 0;
+    EXPECT_EQ(LinkedList_SetFirst(INT, &LinkedList_G, 0, &result), Success);
+    // Index处的返回的原元素是否正确
+    EXPECT_EQ(result, Array[Index]);
+    LinkedListNode_INT* Node = LinkedList_G.EndNode->Next;
+    for (int i = 0; i < Index; ++i)
+    {
+        EXPECT_EQ(Node->Data, Array[i]);
+        Node = Node->Next;
+    }
+    EXPECT_EQ(Node->Data, 0);
+    Node = Node->Next;
+    for (int i = Index + 1; i < NUMBER; ++i)
+    {
+        EXPECT_EQ(Node->Data, Array[i]);
+        Node = Node->Next;
+    }
+    Array.clear();
+}
+
+// 测试SetLast
+TEST_F(LinkedListTest, SetLast)
+{
+    std::vector<int> Array;
+    AddLastDefault(Array);
+    int result;
+    int Index = NUMBER - 1;
+    EXPECT_EQ(LinkedList_SetLast(INT, &LinkedList_G, 0, &result), Success);
+    // Index处的返回的原元素是否正确
+    EXPECT_EQ(result, Array[Index]);
+    LinkedListNode_INT* Node = LinkedList_G.EndNode->Next;
+    for (int i = 0; i < Index; ++i)
+    {
+        EXPECT_EQ(Node->Data, Array[i]);
+        Node = Node->Next;
+    }
+    EXPECT_EQ(Node->Data, 0);
+    Node = Node->Next;
+    for (int i = Index + 1; i < NUMBER; ++i)
+    {
+        EXPECT_EQ(Node->Data, Array[i]);
+        Node = Node->Next;
+    }
+    Array.clear();
+}
+
 // 测试SetIndex
 TEST_F(LinkedListTest, SetIndex)
 {
