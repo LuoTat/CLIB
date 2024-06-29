@@ -6,18 +6,13 @@
 #include "Generic_tool.h"
 
 
-// SwapModeMacro
+// The Macro to control the swap mode
 #ifndef SWAPMODE
     #define SWAPMODE 1
 #endif
 
-// MAX_SIZEOFELEMENTS
-#ifndef MAX_SIZEOFELEMENTS
-    #define MAX_SIZEOFELEMENTS 1024
-#endif
-
+// A simple macro to get the minimum value
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
-
 
 #if SWAPMODE == 1
     #define SWAP(a, b, TYPE)    \
@@ -84,26 +79,30 @@
         while (0)
 #endif
 
-// 用来作为许多排序算法的临时存储空间
-//static char  Temp[MAX_SIZEOFELEMENTS];
-//static char* Temp_Merge;
+// Maximum length of each sub-array (4 elements in size), used in the QuickSort_glibc function.
+#define MAX_THRESH  16
+#define S_Threshold 16
+#define Bucket_NUM  8
 
-#define MAX_THRESH          16
-#define S_Threshold         16
-#define Bucket_NUM          8
-
-#define STACK_SIZE          (CHAR_BIT * sizeof(size_t))
-#define PUSH(LeftP, RightP) ((void)((Top->Low = (LeftP)), (Top->High = (RightP)), ++Top))
-#define POP(LeftP, RightP)  ((void)(--Top, ((LeftP) = Top->Low), ((RightP) = Top->High)))
-#define STACK_NOT_EMPTY     (Stack < Top)
-
-
+// Stack node declarations used to store unfulfilled partition obligations.
 #define SORT_TYPE(NAME, TYPE)        \
     typedef struct stack_node_##NAME \
     {                                \
         TYPE* Low;                   \
         TYPE* High;                  \
     } stack_node_##NAME;
+
+// The next 4 #defines implement a very fast in-line stack abstraction.
+/*
+ * The stack needs log (total_elements) entries (we could even subtract log(MAX_THRESH)).
+ * Since total_elements has type size_t, we get as upper bound for log (total_elements):
+ * bits per byte (CHAR_BIT) * sizeof(size_t).
+*/
+#define STACK_SIZE          (CHAR_BIT * sizeof(size_t))
+#define PUSH(LeftP, RightP) ((void)((Top->Low = (LeftP)), (Top->High = (RightP)), ++Top))
+#define POP(LeftP, RightP)  ((void)(--Top, ((LeftP) = Top->Low), ((RightP) = Top->High)))
+#define STACK_NOT_EMPTY     (Stack < Top)
+
 
 
 #define SORT_IMPL(NAME, TYPE, SCOPE, Compare_Function)                                                                             \
@@ -194,14 +193,17 @@
     SCOPE void BubbleSort_##NAME(TYPE* Base, size_t NumOfElements)                                                                 \
     {                                                                                                                              \
         if (NumOfElements <= 0) return;                                                                                            \
+        /* Need to sort NumOfElements-1 times in total */                                                                          \
         for (size_t i = 0; i < NumOfElements - 1; ++i)                                                                             \
         {                                                                                                                          \
             bool Ordered = true;                                                                                                   \
+            /* Select the largest value in this round of sorting and move it to the back */                                        \
             for (size_t j = 0; j < NumOfElements - 1 - i; j++)                                                                     \
             {                                                                                                                      \
                 if (Compare_Function(&Base[j], &Base[j + 1]) > 0)                                                                  \
                 {                                                                                                                  \
                     SWAP(&Base[j], &Base[j + 1], TYPE);                                                                            \
+                    /* If any swap happens, set Ordered to false */                                                                \
                     Ordered = false;                                                                                               \
                 }                                                                                                                  \
             }                                                                                                                      \
@@ -211,19 +213,25 @@
     SCOPE void BubbleSort_Fast_##NAME(TYPE* Base, size_t NumOfElements)                                                            \
     {                                                                                                                              \
         if (NumOfElements <= 0) return;                                                                                            \
-        bool   Ordered;                                                                                                            \
+        bool Ordered;                                                                                                              \
+        /* Used to record the position of the last swap of the largest number */                                                   \
         size_t HighPos = NumOfElements - 1;                                                                                        \
+        /* Used to record the position of the last swap of the smallest number */                                                  \
         size_t LowPos  = 0;                                                                                                        \
+        /* Need to sort NumOfElements-1 times in total */                                                                          \
         for (size_t i = 0; i < NumOfElements - 1; ++i)                                                                             \
         {                                                                                                                          \
             Ordered            = true;                                                                                             \
+            /* Find the maximum value in the forward direction */                                                                  \
             size_t TempHighPos = HighPos;                                                                                          \
             for (size_t j = LowPos; j < HighPos; ++j)                                                                              \
             {                                                                                                                      \
                 if (Compare_Function(&Base[j], &Base[j + 1]) > 0)                                                                  \
                 {                                                                                                                  \
                     SWAP(&Base[j], &Base[j + 1], TYPE);                                                                            \
+                    /* If any swap happens, set Ordered to false */                                                                \
                     Ordered     = false;                                                                                           \
+                    /* Record the position of the last swap */                                                                     \
                     TempHighPos = j;                                                                                               \
                 }                                                                                                                  \
             }                                                                                                                      \
@@ -235,7 +243,9 @@
                 if (Compare_Function(&Base[j], &Base[j - 1]) < 0)                                                                  \
                 {                                                                                                                  \
                     SWAP(&Base[j], &Base[j - 1], TYPE);                                                                            \
+                    /* If any swap happens, set Ordered to false */                                                                \
                     Ordered    = false;                                                                                            \
+                    /* Record the position of the last swap */                                                                     \
                     TempLowPos = j;                                                                                                \
                 }                                                                                                                  \
             }                                                                                                                      \
@@ -259,12 +269,15 @@
                 TYPE* Left_ptr;                                                                                                    \
                 TYPE* Right_ptr;                                                                                                   \
                 TYPE* Mid = Low + ((High - Low) >> 1);                                                                             \
+                /* Sort Low, High, Mid */                                                                                          \
                 if (Compare_Function(Mid, Low) < 0) SWAP(Mid, Low, TYPE);                                                          \
                 if (Compare_Function(High, Mid) < 0) SWAP(Mid, High, TYPE);                                                        \
                 else goto A;                                                                                                       \
                 if (Compare_Function(Mid, Low) < 0) SWAP(Mid, Low, TYPE);                                                          \
             A:                                                                                                                     \
+                /* Skip the first element with Left_ptr */                                                                         \
                 Left_ptr  = Low + 1;                                                                                               \
+                /* Skip the last element with Right_ptr */                                                                         \
                 Right_ptr = High - 1;                                                                                              \
                 do {                                                                                                               \
                     while (Compare_Function(Left_ptr, Mid) < 0) ++Left_ptr;                                                        \
@@ -285,24 +298,33 @@
                     }                                                                                                              \
                 }                                                                                                                  \
                 while (Left_ptr <= Right_ptr);                                                                                     \
+                /* Push the unsorted parts onto the stack */                                                                       \
+                /* Left side is small */                                                                                           \
                 if ((size_t)(Right_ptr - Low) <= MAX_THRESH)                                                                       \
                 {                                                                                                                  \
+                    /* Left side is small, right side is small, directly pop */                                                    \
                     if ((size_t)(High - Left_ptr) <= MAX_THRESH) POP(Low, High);                                                   \
+                    /* Left side is small, right side is large, start from the right side */                                       \
                     else Low = Left_ptr;                                                                                           \
                 }                                                                                                                  \
+                /* Left side is large, right side is small, start from the left side */                                            \
                 else if ((size_t)(High - Left_ptr) <= MAX_THRESH) High = Right_ptr;                                                \
+                /* Both sides are large, left side is greater than right side */                                                   \
                 else if ((Right_ptr - Low) > (High - Left_ptr))                                                                    \
                 {                                                                                                                  \
+                    /* Push the left side onto the stack, sort the right side first */                                             \
                     PUSH(Low, Right_ptr);                                                                                          \
                     Low = Left_ptr;                                                                                                \
                 }                                                                                                                  \
                 else                                                                                                               \
                 {                                                                                                                  \
+                    /* Push the right side onto the stack, sort the left side first */                                             \
                     PUSH(Left_ptr, High);                                                                                          \
                     High = Right_ptr;                                                                                              \
                 }                                                                                                                  \
             }                                                                                                                      \
         }                                                                                                                          \
+        /* The following section moves elements greater than Run_ptr backwards */                                                  \
         TYPE* const End_ptr = &Base_ptr[NumOfElements - 1];                                                                        \
         TYPE*       Tmp_ptr = Base_ptr;                                                                                            \
         TYPE*       Thresh  = MIN(End_ptr, Base_ptr + MAX_THRESH);                                                                 \
@@ -345,6 +367,10 @@
         }                                                                                                                          \
         *Last = Temp;                                                                                                              \
     }                                                                                                                              \
+    /* This insertion sort is specifically used in some recursive sorting algorithms */                                            \
+    /* to sort small arrays with fewer than S_Threshold elements */                                                                \
+    /* This insertion sort works by continuously moving elements smaller than the first element */                                 \
+    /* to the position of the first element, thus avoiding boundary checks */                                                      \
     SCOPE void _InsertionSort_Small_##NAME(TYPE* Low, TYPE* High)                                                                  \
     {                                                                                                                              \
         if (Low == High) return;                                                                                                   \
@@ -359,10 +385,15 @@
             else _Unguarded_LinearInsert_##NAME(i);                                                                                \
         }                                                                                                                          \
     }                                                                                                                              \
+    /* This insertion sort is a boundary-free insertion sort */                                                                    \
     SCOPE LTT_inline void _Unguarded_InsertionSort_##NAME(TYPE* Low, TYPE* High)                                                   \
     {                                                                                                                              \
         for (TYPE* i = Low; i != High; ++i) _Unguarded_LinearInsert_##NAME(i);                                                     \
     }                                                                                                                              \
+    /* This insertion sort is used to sort the first S_Threshold elements of a long array, */                                      \
+    /* which is already partially ordered in units of S_Threshold length */                                                        \
+    /* After sorting the first S_Threshold elements, subsequent elements can benefit from */                                       \
+    /* boundary-free insertion sort to improve performance */                                                                      \
     SCOPE void _Final_InsertionSort_##NAME(TYPE* Low, TYPE* High)                                                                  \
     {                                                                                                                              \
         if (High - Low > S_Threshold)                                                                                              \
@@ -377,6 +408,7 @@
         while (true)                                                                                                               \
         {                                                                                                                          \
             while (Compare_Function(LeftP, Pivot) < 0) ++LeftP;                                                                    \
+            /* Subtract one here to prevent out-of-bounds access */                                                                \
             --RightP;                                                                                                              \
             while (Compare_Function(Pivot, RightP) < 0) --RightP;                                                                  \
             if (!(LeftP < RightP)) return LeftP;                                                                                   \
@@ -502,34 +534,6 @@
         }                                                                                                                          \
     }
 
-
-
-///*
-//    这个AdjustHeap用来将以RootIndex为索引为根节点的子树的大顶堆化
-//*/
-//static void AdjustHeap_##NAME(char* Base, int RootIndex, int Length, void* TempValue, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    int SecondChild = RootIndex;                                                                                                    //记录子树的根的子节点
-//    while (SecondChild < (Length - 1) / 2)                                                                                          //判断是否有右子节点
-//    {
-//        SecondChild = 2 * (SecondChild + 1);                                                                                        //更新SecondChild为当前节点的右子节点
-//        if (Compare_Function(Base + (SecondChild - 1) * SizeOfElements, Base + SecondChild * SizeOfElements) > 0) --SecondChild;    //如果左子节点大于右子节点，更新SecondChild为左子节点,以确保选择较大的子节点
-//        if (Compare_Function(TempValue, Base + SecondChild * SizeOfElements) > 0) { goto A; }                                       //如果其父节点大于其子节点，则直接返回
-//        memcpy(Base + RootIndex * SizeOfElements, Base + SecondChild * SizeOfElements, SizeOfElements);                             //将更大的子节点放到父节点的位置
-//        RootIndex = SecondChild;                                                                                                    //更新根节点的索引
-//    }
-//    if ((Length & 1) == 0 && SecondChild == (Length - 2) / 2)                                                                       //如果范围长度是偶数且SecondChild刚好为最后一个非叶子节点的索引
-//    {
-//        SecondChild = 2 * (SecondChild + 1) - 1;                                                                                    //更新SecondChild为最后一个节点的索引
-//        if (Compare_Function(TempValue, Base + SecondChild * SizeOfElements) > 0) { goto A; };                                      //如果其父节点大于其子节点，则直接返回
-//        memcpy(Base + RootIndex * SizeOfElements, Base + SecondChild * SizeOfElements, SizeOfElements);
-//        RootIndex = SecondChild;
-//        //将更大的子节点放到父节点的位置
-//    }
-//A:
-//    memcpy(Base + RootIndex * SizeOfElements, TempValue, SizeOfElements);
-//}
-
 //SCOPE TYPE* GetPartition_LTT_glibc_##NAME(TYPE* LeftP, TYPE* RightP, TYPE* Pivot)
 //{
 //    do {
@@ -572,93 +576,6 @@
 //    if (NumOfElements <= 1) return;
 //    QuickSort_LTT_glibc_Loop_##NAME(Base, &Base[NumOfElements]);
 //    _Final_InsertionSort_##NAME(Base, &Base[NumOfElements]);
-//}
-
-//inline static void PopHeap_##NAME(char* First, char* Last, char* Result, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    //此函数的作用是将Result与Last,然后将其大顶堆化
-//    memcpy(Temp, Result, SizeOfElements);    //将Result存储起来
-//    memcpy(Result, First, SizeOfElements);
-//    //从将First节点，开始将整个树大顶堆化
-//    AdjustHeap(First, 0, (Last - First) / SizeOfElements, Temp, SizeOfElements, Compare_Function);
-//}
-
-//static void SortHeap_##NAME(char* First, char* Last, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    while (Last - First > SizeOfElements)
-//    {
-//        Last -= SizeOfElements;
-//        PopHeap(First, Last, Last, SizeOfElements, Compare_Function);
-//    }
-//}
-
-//static void MakeHeap_##NAME(char* First, char* Last, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    int Length = (Last - First) / SizeOfElements;    //元素的个数
-//    if (Length < 2) return;
-//    int LastParent = (Length - 2) / 2;               //最后一个父节点的索引
-//    //void* Temp       = (void*)malloc(SizeOfElements);
-//    while (true)
-//    {
-//        memcpy(Temp, First + LastParent * SizeOfElements, SizeOfElements);
-//        AdjustHeap(First, LastParent, Length, Temp, SizeOfElements, Compare_Function);    //将以LastParent顶点为根节点的子树大顶堆化
-//        if (LastParent == 0) return;
-//        LastParent--;
-//    }
-//    //free(Temp);
-//}
-
-//static void HeapSelect_##NAME(char* First, char* Middle, char* Last, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    //先将现有的前(First-Middle)项构建为一个大顶堆
-//    MakeHeap(First, Middle, SizeOfElements, Compare_Function);
-//    //然后历遍后面所有的节点，遇到比最大的First节点大的，就弹出First节点
-//    for (char* i = Middle; i < Last; i += SizeOfElements)
-//    {
-//        if (Compare_Function(i, First) > 0) PopHeap(First, Middle, i, SizeOfElements, Compare_Function);
-//    }
-//}
-
-////此函数是将数列的最大的前(First-Middle)项排序，并且放在前面
-//void _PartialSort_##NAME(char* First, char* Middle, char* Last, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    HeapSelect(First, Middle, Last, SizeOfElements, Compare_Function);    //构建一个大顶堆
-//    SortHeap(First, Middle, SizeOfElements, Compare_Function);            //将大顶堆排序
-//}
-
-//void HeapSort_##NAME(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Compare_Function) { _PartialSort(Base, Base + NumOfElements * SizeOfElements, Base + NumOfElements * SizeOfElements, SizeOfElements, Compare_Function); }
-//
-//void PartialSort_##NAME(void* Base, size_t k, size_t NumOfElements, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    if (k > 0 && k <= NumOfElements) _PartialSort(Base, Base + k * SizeOfElements, Base + NumOfElements * SizeOfElements, SizeOfElements, Compare_Function);
-//}
-//
-
-//static void IntroSort_Loop(char* Low, char* High, unsigned char DepthLimit, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    while ((High - Low) > S_Threshold * SizeOfElements)
-//    {
-//        if (DepthLimit == 0)
-//        {
-//            //使用堆排序
-//            _PartialSort(Low, High, High, SizeOfElements, Compare_Function);
-//            return;
-//        }
-//        --DepthLimit;
-//        char* Cut = Unguarded_PartitionPivot(Low, High, SizeOfElements, Compare_Function);
-//        IntroSort_Loop(Cut, High, DepthLimit, SizeOfElements, Compare_Function);
-//        High = Cut;
-//    }
-//}
-
-///*
-//	此内省式排序则是几乎将libcstdc++库中的sort函数照搬过来的
-//*/
-//void IntrospectiveSort(void* Base, size_t NumOfElements, size_t SizeOfElements, CompareFunction Compare_Function)
-//{
-//    if (NumOfElements <= 1) return;
-//    IntroSort_Loop(Base, Base + NumOfElements * SizeOfElements, lg2(NumOfElements) * 2, SizeOfElements, Compare_Function);
-//    _Final_InsertionSort(Base, Base + NumOfElements * SizeOfElements, SizeOfElements, Compare_Function);
 //}
 
 ///*
@@ -881,11 +798,11 @@
 //    }
 //}
 
-// 全局变量
+// Global variables
 static int HibbardStepArray[31]   = {2147483647, 1073741823, 536870911, 268435455, 134217727, 67108863, 33554431, 16777215, 8388607, 4194303, 2097151, 1048575, 524287, 262143, 131071, 65535, 32767, 16383, 8191, 4095, 2047, 1023, 511, 255, 127, 63, 31, 15, 7, 3, 1};
 static int SedgewickStepArray[14] = {603906049, 150958081, 37730305, 9427969, 2354689, 587521, 146305, 36289, 8929, 2161, 505, 109, 19, 1};
 
-// 内联函数
+// some static functions
 static LTT_unused int* GetHibbardStepArray(int Length)
 {
     for (int i = 0;; ++i)
@@ -962,7 +879,6 @@ static LTT_unused void MergeSort_Inplace_Iterative_Int(int* Base, size_t NumOfEl
 	但是为了全部开空间INT_MAX也开不了(16GB),于是有了下面的改进算法
 	与计数排序的区别就是他不实际记录每一个元素的位置,而是个数,最后依次输出即可
 */
-
 static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t NumOfElements)
 {
     if (NumOfElements <= 1) return;
@@ -989,73 +905,227 @@ static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t Nu
     SORT_IMPL(NAME, TYPE, SCOPE, Compare_Function)
 
 
-//###########基于插入##########
-// 插入排序
-#define InsertionSort(NAME, Array, Number)                 InsertionSort_##NAME((Array), (Number))
-// 折半插入
-#define BinaryInsertionSort(NAME, Array, Number)           BinaryInsertionSort_##NAME((Array), (Number))
-// 希尔排序
-#define ShellInsertionSort_Hibbard(NAME, Array, Number)    ShellInsertionSort_Hibbard_##NAME((Array), (Number))
-#define ShellInsertionSort_Sedgewick(NAME, Array, Number)  ShellInsertionSort_Sedgewick_##NAME((Array), (Number))
-//###########基于交换##########
-// 冒泡排序
-#define BubbleSort(NAME, Array, Number)                    BubbleSort_##NAME((Array), (Number))
-#define BubbleSort_Fast(NAME, Array, Number)               BubbleSort_Fast_##NAME((Array), (Number))
-// 快速排序
-/*
- * QuickSort_glibc是将glibc中原本的_qsort函数照搬过来
- * 将其泛型化后，性能提升一倍
- * Hoare partition scheme划分
-*/
-#define QuickSort_glibc(NAME, Array, Number)               QuickSort_glibc_##NAME((Array), (Number))
-/*
- * QuickSort_LTT_libstdcpp是将GCC的libstdcpp里面的sort的快排部分照搬过来
- * 一般情况下比QuickSort_glibc快一些
- * Hoare partition scheme划分
- * 本质上和QuickSort_glibc里面的划分是一样的
-*/
-#define QuickSort_LTT_libstdcpp(NAME, Array, Number)       QuickSort_LTT_libstdcpp_##NAME((Array), (Number))
-//###########基于选择##########
-// 简单选择排序
-#define SimpleSelectionSort(NAME, Array, Number)           SimpleSelectionSort_##NAME((Array), (Number))
-// 堆排序
-#define HeapSort(NAME, Array, Number)                      HeapSort_##NAME((Array), (Number))
-#define PartialSort(NAME, Array, Number)                   PartialSort_##NAME((Array), (Number))
-//###########基于归并##########
-// 2-路归并排序
-#define MergeSort_Recursion(NAME, Array, Number)           MergeSort_Recursion_##NAME((Array), (Number))
-#define MergeSort_Iterative(NAME, Array, Number)           MergeSort_Iterative_##NAME((Array), (Number))
-#define MergeSort_Inplace_Iterative(NAME, Array, Number)   MergeSort_Inplace_Iterative_##NAME((Array), (Number))
-/*
-	一种适用于int型数组的一种奇技淫巧
-    Max是最大元素+1的值
-	其原理就是,对于两个数a,b,首先判断对Max取余的大小,选取小的一个数
-	然后令a = a + (min(a % Max, b % max)) * Max
-	这样在原本数所在的位置,对Max的商,就是排序好了的数值,而取余则是原本所在的数值
-	但是在计算a = a + (min(a % Max, b % max)) * Max时要特别注意数值溢出!
-*/
-#define MergeSort_Inplace_Iterative_For_Int(Array, Number) MergeSort_Inplace_Iterative_Int((Array), (Number))
-// k路归并排序
-//  Todo
-//
-////////////
+//################################################### Based on Insertion ##################################################
 
-// 基数排序
-#define RadixSort_LSD(NAME, Array, Number)                 RadixSort_LSD_##NAME((Array), (Number))
-#define RadixSort_MSD(NAME, Array, Number)                 RadixSort_MSD_##NAME((Array), (Number))
-// 桶排序
-#define BucketSort(NAME, Array, Number)                    BucketSort_##NAME((Array), (Number))
-// 计数排序
-#define CountingSort(NAME, Array, Number)                  CountingSort_##NAME((Array), (Number))
-// 鸽巢排序
-#define PigeonholeSort(Array, Min, Max, Number)            PigeonholeSort_Int((Array), (Min), (Max), (Number))
-// 猴子排序
-#define BigoSort(NAME, Array, Number)                      BigoSort_##NAME((Array), (Number))
-// 内省式排序
-#define IntrospectiveSort(NAME, Array, Number)             IntrospectiveSort_##NAME((Array), (Number))
+/**
+ * @brief Insertion Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n^2)
+ */
+#define InsertionSort(NAME, Array, Number)                InsertionSort_##NAME((Array), (Number))
 
-// 函数实现
-#define LTT_SORT_INIT(NAME, TYPE, Compare_Function)        SORT_INIT(NAME, TYPE, static LTT_unused, Compare_Function)
+/**
+ * @brief Binary Insertion Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n^2)
+ */
+#define BinaryInsertionSort(NAME, Array, Number)          BinaryInsertionSort_##NAME((Array), (Number))
 
-// 函数声明
-#define LTT_SORT_DECLARE(NAME, TYPE)                       SORT_DECLARE(NAME, TYPE)
+/**
+ * @brief Shell Sort algorithm based on Hibbard's increment sequence
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n^(3/2))
+ */
+#define ShellInsertionSort_Hibbard(NAME, Array, Number)   ShellInsertionSort_Hibbard_##NAME((Array), (Number))
+
+/**
+ * @brief Shell Sort algorithm based on Sedgewick's increment sequence
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n^(4/3))
+ */
+#define ShellInsertionSort_Sedgewick(NAME, Array, Number) ShellInsertionSort_Sedgewick_##NAME((Array), (Number))
+
+//################################################### Based on Exchange ###################################################
+
+/**
+ * @brief Bubble Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n^2)
+ */
+#define BubbleSort(NAME, Array, Number)                   BubbleSort_##NAME((Array), (Number))
+
+/**
+ * @brief Bubble Sort algorithm with fast version
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n^2)
+ */
+#define BubbleSort_Fast(NAME, Array, Number)              BubbleSort_Fast_##NAME((Array), (Number))
+
+/**
+ * @brief Quick Sort algorithm \n
+ * This Quick_Sort algorithm is taken directly from the original _qsort function in glibc. \n
+ * After genericization, performance is doubled.
+ * use the Hoare partition scheme partitioning
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(nlogn)
+ */
+#define QuickSort_glibc(NAME, Array, Number)              QuickSort_glibc_##NAME((Array), (Number))
+
+/**
+ * @brief Quick Sort algorithm \n
+ * This Quick_Sort algorithm is taken directly from the sort part of GCC's libstdcpp. \n
+ * Generally faster than QuickSort_glibc. \n
+ * use the Hoare partition scheme partitioning \n
+ * Essentially the same partitioning as in QuickSort_glibc
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(nlogn)
+ */
+#define QuickSort_LTT_libstdcpp(NAME, Array, Number)      QuickSort_LTT_libstdcpp_##NAME((Array), (Number))
+
+//################################################### Based on Selection ###################################################
+
+/**
+ * @brief Simple Selection Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n^2)
+ */
+#define SimpleSelectionSort(NAME, Array, Number)          SimpleSelectionSort_##NAME((Array), (Number))
+// TODO: Heap Sort
+#define HeapSort(NAME, Array, Number)                     HeapSort_##NAME((Array), (Number))
+#define PartialSort(NAME, Array, Number)                  PartialSort_##NAME((Array), (Number))
+//################################################### Based on Merge ###################################################
+
+/**
+ * @brief Merge Sort algorithm based on recursion
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(nlogn)
+ */
+#define MergeSort_Recursion(NAME, Array, Number)          MergeSort_Recursion_##NAME((Array), (Number))
+
+/**
+ * @brief Merge Sort algorithm based on iteration
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(nlogn)
+ */
+#define MergeSort_Iterative(NAME, Array, Number)          MergeSort_Iterative_##NAME((Array), (Number))
+
+/**
+ * @brief In-place Merge Sort algorithm based on iteration \n
+ * Space complexity reduced to O(1), but time complexity is O(n^2), not recommended!
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n^2)
+ */
+#define MergeSort_Inplace_Iterative(NAME, Array, Number)  MergeSort_Inplace_Iterative_##NAME((Array), (Number))
+
+/**
+ * @brief In-place Merge Sort algorithm based on iteration only for int array \n
+ * A trick technique suitable for int arrays.
+ * Max is the value of the maximum element + 1.
+ * The principle is to compare the remainders of two numbers a and b with Max,
+ * select the smaller one, then set a = a + (min(a % Max, b % max)) * Max.
+ * Thus, the quotient of the original position of the number by Max is the sorted value,
+ * and the remainder is the original value.
+ * Be particularly careful about overflow when computing a = a + (min(a % Max, b % max)) * Max!
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n^2)
+ */
+#define MergeSort_Inplace_Iterative_For_Int(Array, Number) MergeSort_Inplace_Iterative_Int((Array), (Numb
+
+// Todo: k-way Merge Sort
+
+// Todo: RadixSort_LSD Sort
+/**
+ * @brief Radix Sort algorithm based on LSD (Least Significant Digit)
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n*k/d) \n
+ * k: Number of digits in the largest number \n
+ * d: Number of digits processed per pass.
+ */
+#define RadixSort_LSD(NAME, Array, Number)          RadixSort_LSD_##NAME((Array), (Number))
+
+// Todo: RadixSort_MSD Sort
+/**
+ * @brief Radix Sort algorithm based on MSD (Most Significant Digit)
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n*k/d) \n
+ * k: Number of digits in the largest number \n
+ * d: Number of digits processed per pass.
+ */
+#define RadixSort_MSD(NAME, Array, Number)          RadixSort_MSD_##NAME((Array), (Number))
+
+// Todo: Bucket Sort
+/**
+ * @brief Bucket Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n+n^2/k+k) \n
+ * k: Number of buckets \n
+ * Note that if k is chosen to be k=O(n), then the time complexity becomes O(n)
+ */
+#define BucketSort(NAME, Array, Number)             BucketSort_##NAME((Array), (Number))
+
+// Todo: Counting Sort
+/**
+ * @brief Counting Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n+k) \n
+ * k:the range of the non-negative key values
+ */
+#define CountingSort(NAME, Array, Number)           CountingSort_##NAME((Array), (Number))
+
+/**
+ * @brief Pigeonhole Sort algorithm
+ * @param Array The array to be sorted
+ * @param Min The minimum value of the array
+ * @param Max The maximum value of the array
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n)
+ */
+#define PigeonholeSort(Array, Min, Max, Number)     PigeonholeSort_Int((Array), (Min), (Max), (Number))
+
+// TODO: Bigo Sort
+/**
+ * @brief Bigo Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n*n!)
+ */
+#define BigoSort(NAME, Array, Number)               BigoSort_##NAME((Array), (Number))
+
+/**
+ * @brief Introspective Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(nlogn)
+ */
+#define IntrospectiveSort(NAME, Array, Number)      IntrospectiveSort_##NAME((Array), (Number))
+
+// Function implementation
+#define LTT_SORT_INIT(NAME, TYPE, Compare_Function) SORT_INIT(NAME, TYPE, static LTT_unused, Compare_Function)
+
+// Function declaration
+#define LTT_SORT_DECLARE(NAME, TYPE)                SORT_DECLARE(NAME, TYPE)

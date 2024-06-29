@@ -18,12 +18,15 @@
 #define SOFT_MAX_ARRAYSTACK_CAPACITY (INT_MAX - 8)
 
 
-#define ARRAYSTACK_TYPE(NAME, TYPE)  \
-    typedef struct ArrayStack_##NAME \
-    {                                \
-        TYPE* Array;                 \
-        int   Capacity;              \
-        int   Size;                  \
+#define ARRAYSTACK_TYPE(NAME, TYPE)                 \
+    typedef struct ArrayStack_##NAME                \
+    {                                               \
+        /*Array of the elements*/                   \
+        TYPE* Array;                                \
+        /*The capacity of the Array*/               \
+        int Capacity;                               \
+        /*The number of the elements in the array*/ \
+        int Size;                                   \
     } ArrayStack_##NAME;
 
 
@@ -146,20 +149,90 @@
     ARRAYSTACK_TYPE(NAME, TYPE)                             \
     ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)
 
-
+/**
+ * @brief Get the ArrayStack_##NAME struct
+ * @param NAME
+ */
 #define ArrayStack(NAME)                                 ArrayStack_##NAME
+
+/**
+ * @brief Initialize the ArrayStack_##NAME struct
+ * @param NAME The name of the function
+ * @param ArrayStack The ArrayStack_##NAME struct
+ * @return CODE The result of the function
+ */
 #define ArrayStack_Init(NAME, ArrayStack)                ArrayStack_##NAME##_Init((ArrayStack))
+
+/**
+ * @brief Push the data to the ArrayStack_##NAME
+ * @param NAME The name of the function
+ * @param ArrayStack The ArrayStack_##NAME struct
+ * @param Data The data to push
+ * @return CODE The result of the function
+ */
 #define ArrayStack_Push(NAME, ArrayStack, Data)          ArrayStack_##NAME##_Push((ArrayStack), Data)
+
+/**
+ * @brief Pop the data from the ArrayStack_##NAME
+ * @param NAME The name of the function
+ * @param ArrayStack The ArrayStack_##NAME struct
+ * @param Result To store the deleted element
+ * @return CODE The result of the function
+ */
 #define ArrayStack_Pop(NAME, ArrayStack, Result)         ArrayStack_##NAME##_Pop((ArrayStack), (Result))
+
+/**
+ * @brief Peek the data from the ArrayStack_##NAME
+ * @param NAME The name of the function
+ * @param ArrayStack The ArrayStack_##NAME struct
+ * @param Result To store the element
+ * @return CODE The result of the function
+ */
 #define ArrayStack_Peek(NAME, ArrayStack, Result)        ArrayStack_##NAME##_Peek((ArrayStack), (Result))
+
+/**
+ * @brief Check if the ArrayStack_##NAME contains the data
+ * @param NAME The name of the function
+ * @param ArrayStack The ArrayStack_##NAME struct
+ * @param Data The data to check
+ * @retval true The ArrayStack_##NAME contains the data
+ * @retval false The ArrayStack_##NAME does not contain the data
+ */
 #define ArrayStack_Contains(NAME, ArrayStack, Data)      ArrayStack_##NAME##_Contains((ArrayStack), Data)
+
+/**
+ * @brief Get the size of the ArrayStack_##NAME
+ * @param NAME The name of the function
+ * @param ArrayStack The ArrayStack_##NAME struct
+ * @return int The size of the ArrayStack_##NAME
+ */
 #define ArrayStack_GetSize(ArrayStack)                   ((ArrayStack)->Size)
+
+/**
+ * @brief Check if the ArrayStack_##NAME is empty
+ * @param NAME The name of the function
+ * @param ArrayStack The ArrayStack_##NAME struct
+ * @retval true The ArrayStack_##NAME is empty
+ * @retval false The ArrayStack_##NAME is not empty
+ */
 #define ArrayStack_IsEmpty(ArrayStack)                   ((ArrayStack)->Size == 0)
+
+/**
+ * @brief Clear the ArrayStack_##NAME, it will not free the memory
+ * @param NAME The name of the function
+ * @param ArrayStack The ArrayStack_##NAME struct
+ */
 #define ArrayStack_Clear(ArrayStack)                     ((ArrayStack)->Size = 0)
+
+/**
+ * @brief Destroy the ArrayStack_##NAME, it will free the memory
+ * @param NAME The name of the function
+ * @param ArrayStack The ArrayStack_##NAME struct
+ */
 #define ArrayStack_Destroy(NAME, ArrayStack)             ArrayStack_##NAME##_Destroy((ArrayStack))
 
-// 函数实现
+// Function implementation
 #define LTT_ARRAYSTACK_INIT(NAME, TYPE, Equals_Function) ARRAYSTACK_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
 
-// 函数声明
+// Function declaration
 #define LTT_ARRAYSTACK_DECLARE(NAME, TYPE)               ARRAYSTACK_DECLARE(NAME, TYPE)

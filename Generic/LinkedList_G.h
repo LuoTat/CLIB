@@ -17,14 +17,18 @@
 #define LINKEDLIST_TYPE(NAME, TYPE)         \
     typedef struct LinkedListNode_##NAME    \
     {                                       \
+        /* The previous node */             \
         struct LinkedListNode_##NAME* Prev; \
+        /* The next node */                 \
         struct LinkedListNode_##NAME* Next; \
         TYPE                          Data; \
     } LinkedListNode_##NAME;                \
     typedef struct LinkedList_##NAME        \
     {                                       \
+        /* The end node */                  \
         LinkedListNode_##NAME* EndNode;     \
-        int                    Size;        \
+        /* The number of the nodes */       \
+        int Size;                           \
     } LinkedList_##NAME;
 
 
@@ -73,7 +77,7 @@
     }                                                                                                                                                                                                            \
     SCOPE bool LinkedList_##NAME##_CheckIndex(const LinkedList_##NAME* const LinkedList, const int Index)                                                                                                        \
     {                                                                                                                                                                                                            \
-        if (unlikely(Index < 0 || Index >= LinkedList->Size)) return false;                                                                                                                                       \
+        if (unlikely(Index < 0 || Index >= LinkedList->Size)) return false;                                                                                                                                      \
         else return true;                                                                                                                                                                                        \
     }                                                                                                                                                                                                            \
     SCOPE LinkedListNode_##NAME* LinkedList_##NAME##_GetEndNode(const LinkedList_##NAME* const LinkedList) { return LinkedList->EndNode; }                                                                       \
@@ -255,30 +259,189 @@
     LINKEDLIST_TYPE(NAME, TYPE)                             \
     LINKEDLIST_IMPL(NAME, TYPE, SCOPE, Equals_Function)
 
-
+/**
+ * @brief Get the LinkedList_##NAME struct
+ * @param NAME
+ */
 #define LinkedList(NAME)                                           LinkedList_##NAME
+
+/**
+ * @brief Initialize the LinkedList_##NAME struct
+ * @param NAME The name of the function
+ * @param ArrayDeque The LinkedList_##NAME struct
+ * @return CODE The result of the function
+ */
 #define LinkedList_Init(NAME, LinkedList)                          LinkedList_##NAME##_Init((LinkedList))
+
+/**
+ * @brief Add the data to the first of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Data The data to add
+ * @return CODE The result of the function
+ */
 #define LinkedList_AddFirst(NAME, LinkedList, Data)                LinkedList_##NAME##_AddFirst((LinkedList), (Data))
+
+/**
+ * @brief Add the data to the last of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Data The data to add
+ * @return CODE The result of the function
+ */
 #define LinkedList_AddLast(NAME, LinkedList, Data)                 LinkedList_##NAME##_AddLast((LinkedList), (Data))
+
+/**
+ * @brief Add the data to the index of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Data The data to add
+ * @param Index The index to add
+ * @return CODE The result of the function
+ */
 #define LinkedList_AddIndex(NAME, LinkedList, Data, Index)         LinkedList_##NAME##_AddIndex((LinkedList), (Data), (Index))
+
+/**
+ * @brief Delete the first data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Result To store the deleted element
+ * @return CODE The result of the function
+ */
 #define LinkedList_DeleteFirst(NAME, LinkedList, Result)           LinkedList_##NAME##_DeleteFirst((LinkedList), (Result))
+
+/**
+ * @brief Delete the last data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Result To store the deleted element
+ * @return CODE The result of the function
+ */
 #define LinkedList_DeleteLast(NAME, LinkedList, Result)            LinkedList_##NAME##_DeleteLast((LinkedList), (Result))
+
+/**
+ * @brief Delete the index data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Index The index to delete
+ * @param Result To store the deleted element
+ * @return CODE The result of the function
+ */
 #define LinkedList_DeleteIndex(NAME, LinkedList, Index, Result)    LinkedList_##NAME##_DeleteIndex((LinkedList), (Index), (Result))
+
+/**
+ * @brief Set the first data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Data The data to set
+ * @param Result To store the old element
+ * @return CODE The result of the function
+ */
 #define LinkedList_SetFirst(NAME, LinkedList, Data, Result)        LinkedList_##NAME##_SetFirst((LinkedList), (Data), (Result))
+
+/**
+ * @brief Set the last data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Data The data to set
+ * @param Result To store the old element
+ * @return CODE The result of the function
+ */
 #define LinkedList_SetLast(NAME, LinkedList, Data, Result)         LinkedList_##NAME##_SetLast((LinkedList), (Data), (Result))
+
+/**
+ * @brief Set the index data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Data The data to set
+ * @param Index The index to set
+ * @param Result To store the old element
+ * @return CODE The result of the function
+ */
 #define LinkedList_SetIndex(NAME, LinkedList, Data, Index, Result) LinkedList_##NAME##_SetIndex((LinkedList), (Data), (Index), (Result))
+
+/**
+ * @brief Get the first data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Result To store the first element
+ * @return CODE The result of the function
+ */
 #define LinkedList_GetFirst(NAME, LinkedList, Result)              LinkedList_##NAME##_GetFirst((LinkedList), (Result))
+
+/**
+ * @brief Get the last data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Result To store the last element
+ * @return CODE The result of the function
+ */
 #define LinkedList_GetLast(NAME, LinkedList, Result)               LinkedList_##NAME##_GetLast((LinkedList), (Result))
+
+/**
+ * @brief Get the index data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Index The index to get
+ * @param Result To store the element
+ * @return CODE The result of the function
+ */
 #define LinkedList_GetIndex(NAME, LinkedList, Index, Result)       LinkedList_##NAME##_GetIndex((LinkedList), (Index), (Result))
+
+/**
+ * @brief Get the first index of the data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Data The data to get
+ * @return int The index of the data
+ */
 #define LinkedList_IndexOf(NAME, LinkedList, Data)                 LinkedList_##NAME##_IndexOf((LinkedList), (Data))
+
+/**
+ * @brief Get the last index of the data of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Data The data to get
+ * @return int The index of the data
+ */
 #define LinkedList_LastIndexOf(NAME, LinkedList, Data)             LinkedList_##NAME##_LastIndexOf((LinkedList), (Data))
+
+/**
+ * @brief Check the data is in the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @param Data The data to check
+ * @retval true The data is in the LinkedList_##NAME
+ * @retval false The data is not in the LinkedList_##NAME
+ */
 #define LinkedList_Contains(NAME, LinkedList, Data)                (LinkedList_##NAME##_IndexOf((LinkedList), (Data)) >= 0)
+
+/**
+ * @brief Check the LinkedList_##NAME is empty
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @retval true The LinkedList_##NAME is empty
+ * @retval false The LinkedList_##NAME is not empty
+ */
 #define LinkedList_IsEmpty(LinkedList)                             ((LinkedList)->Size == 0)
+
+/**
+ * @brief Get the size of the LinkedList_##NAME
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ * @return int The size of the LinkedList_##NAME
+ */
 #define LinkedList_GetSize(LinkedList)                             ((LinkedList)->Size)
+
+/**
+ * @brief Destroy the LinkedList_##NAME struct, it will free all the nodes
+ * @param NAME The name of the function
+ * @param LinkedList The LinkedList_##NAME struct
+ */
 #define LinkedList_Destroy(NAME, LinkedList)                       LinkedList_##NAME##_Destroy((LinkedList))
 
-// 函数实现
+// Function implementation
 #define LTT_LINKEDLIST_INIT(NAME, TYPE, Equals_Function)           LINKEDLIST_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
 
-// 函数声明
+// Function declaration
 #define LTT_LINKEDLIST_DECLARE(NAME, TYPE)                         LINKEDLIST_DECLARE(NAME, TYPE)
