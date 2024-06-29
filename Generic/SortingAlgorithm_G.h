@@ -1044,7 +1044,7 @@ static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t Nu
  * @param Number The number of elements in the array
  * @note Time complexity: O(n^2)
  */
-#define MergeSort_Inplace_Iterative_For_Int(Array, Number) MergeSort_Inplace_Iterative_Int((Array), (Numb
+#define MergeSort_Inplace_Iterative_For_Int(Array, Number) MergeSort_Inplace_Iterative_Int((Array), (Number))
 
 // Todo: k-way Merge Sort
 
