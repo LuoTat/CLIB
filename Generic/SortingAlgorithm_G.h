@@ -85,7 +85,7 @@
 #define Bucket_NUM  8
 
 // Stack node declarations used to store unfulfilled partition obligations.
-#define SORT_TYPE(NAME, TYPE)        \
+#define SORT_CMP_TYPE(NAME, TYPE)    \
     typedef struct stack_node_##NAME \
     {                                \
         TYPE* Low;                   \
@@ -105,7 +105,7 @@
 
 
 
-#define SORT_IMPL(NAME, TYPE, SCOPE, Compare_Function)                                                                             \
+#define SORT_CMP_IMPL(NAME, TYPE, SCOPE, Compare_Function)                                                                         \
     SCOPE void MoveMidToFirst_##NAME(TYPE* Result, TYPE* a, TYPE* b, TYPE* c)                                                      \
     {                                                                                                                              \
         if (Compare_Function(a, b) < 0)                                                                                            \
@@ -120,7 +120,7 @@
     }                                                                                                                              \
     SCOPE void BinaryInsertionSort_##NAME(TYPE* Base, size_t NumOfElements)                                                        \
     {                                                                                                                              \
-        if (NumOfElements <= 0) return;                                                                                            \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
         TYPE Temp;                                                                                                                 \
         for (size_t i = 1; i < NumOfElements; ++i)                                                                                 \
         {                                                                                                                          \
@@ -148,109 +148,100 @@
     }                                                                                                                              \
     SCOPE void ShellInsertionSort_Hibbard_##NAME(TYPE* Base, size_t NumOfElements)                                                 \
     {                                                                                                                              \
-        if (NumOfElements <= 0) return;                                                                                            \
-        int* GapArray = GetHibbardStepArray(NumOfElements);                                                                        \
-        TYPE Temp;                                                                                                                 \
-        for (int i = 0;; ++i)                                                                                                      \
-        {                                                                                                                          \
-            int Gap = GapArray[i];                                                                                                 \
-            for (size_t j = Gap; j < NumOfElements; ++j)                                                                           \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
+        size_t* GapArray = GetHibbardStepArray(NumOfElements);                                                                     \
+        TYPE    Temp;                                                                                                              \
+        do {                                                                                                                       \
+            size_t Gap = *GapArray;                                                                                                \
+            for (size_t i = Gap; i < NumOfElements; ++i)                                                                           \
             {                                                                                                                      \
-                Temp         = Base[j];                                                                                            \
-                int Position = j - Gap;                                                                                            \
-                while (Position >= 0 && Compare_Function(&Base[Position], &Temp) > 0)                                              \
+                Temp            = Base[i];                                                                                         \
+                size_t Position = i;                                                                                               \
+                while (Position >= Gap && Compare_Function(&Base[Position - Gap], &Temp) > 0)                                      \
                 {                                                                                                                  \
-                    Base[Position + Gap]  = Base[Position];                                                                        \
-                    Position             -= Gap;                                                                                   \
+                    Base[Position]  = Base[Position - Gap];                                                                        \
+                    Position       -= Gap;                                                                                         \
                 }                                                                                                                  \
-                Base[Position + Gap] = Temp;                                                                                       \
+                Base[Position] = Temp;                                                                                             \
             }                                                                                                                      \
-            if (Gap == 1) break;                                                                                                   \
         }                                                                                                                          \
+        while (*GapArray++ != 1);                                                                                                  \
     }                                                                                                                              \
     SCOPE void ShellInsertionSort_Sedgewick_##NAME(TYPE* Base, size_t NumOfElements)                                               \
     {                                                                                                                              \
-        if (NumOfElements <= 0) return;                                                                                            \
-        int* GapArray = GetSedgewickStepArray(NumOfElements);                                                                      \
-        TYPE Temp;                                                                                                                 \
-        for (int i = 0;; ++i)                                                                                                      \
-        {                                                                                                                          \
-            int Gap = GapArray[i];                                                                                                 \
-            for (size_t j = Gap; j < NumOfElements; ++j)                                                                           \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
+        size_t* GapArray = GetSedgewickStepArray(NumOfElements);                                                                   \
+        TYPE    Temp;                                                                                                              \
+        do {                                                                                                                       \
+            size_t Gap = *GapArray;                                                                                                \
+            for (size_t i = Gap; i < NumOfElements; ++i)                                                                           \
             {                                                                                                                      \
-                Temp         = Base[j];                                                                                            \
-                int Position = j - Gap;                                                                                            \
-                while (Position >= 0 && Compare_Function(&Base[Position], &Temp) > 0)                                              \
+                Temp            = Base[i];                                                                                         \
+                size_t Position = i;                                                                                               \
+                while (Position >= Gap && Compare_Function(&Base[Position - Gap], &Temp) > 0)                                      \
                 {                                                                                                                  \
-                    Base[Position + Gap]  = Base[Position];                                                                        \
-                    Position             -= Gap;                                                                                   \
+                    Base[Position]  = Base[Position - Gap];                                                                        \
+                    Position       -= Gap;                                                                                         \
                 }                                                                                                                  \
-                Base[Position + Gap] = Temp;                                                                                       \
+                Base[Position] = Temp;                                                                                             \
             }                                                                                                                      \
-            if (Gap == 1) break;                                                                                                   \
         }                                                                                                                          \
+        while (*GapArray++ != 1);                                                                                                  \
     }                                                                                                                              \
     SCOPE void BubbleSort_##NAME(TYPE* Base, size_t NumOfElements)                                                                 \
     {                                                                                                                              \
-        if (NumOfElements <= 0) return;                                                                                            \
-        /* Need to sort NumOfElements-1 times in total */                                                                          \
-        for (size_t i = 0; i < NumOfElements - 1; ++i)                                                                             \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
+        bool Exchanged = true;                                                                                                     \
+        /* Need to sort NumOfElements-1 times in total or  until no exchange occurs */                                             \
+        for (size_t i = 0; Exchanged && i < NumOfElements - 1; ++i)                                                                \
         {                                                                                                                          \
-            bool Ordered = true;                                                                                                   \
+            Exchanged = false;                                                                                                     \
             /* Select the largest value in this round of sorting and move it to the back */                                        \
-            for (size_t j = 0; j < NumOfElements - 1 - i; j++)                                                                     \
+            for (size_t j = 0; j < NumOfElements - 1 - i; ++j)                                                                     \
             {                                                                                                                      \
                 if (Compare_Function(&Base[j], &Base[j + 1]) > 0)                                                                  \
                 {                                                                                                                  \
                     SWAP(&Base[j], &Base[j + 1], TYPE);                                                                            \
-                    /* If any swap happens, set Ordered to false */                                                                \
-                    Ordered = false;                                                                                               \
+                    /* If any swap happens, set Exchanged to true */                                                               \
+                    Exchanged = true;                                                                                              \
                 }                                                                                                                  \
             }                                                                                                                      \
-            if (Ordered) break;                                                                                                    \
         }                                                                                                                          \
     }                                                                                                                              \
-    SCOPE void BubbleSort_Fast_##NAME(TYPE* Base, size_t NumOfElements)                                                            \
+    SCOPE void CockTailSort_##NAME(TYPE* Base, size_t NumOfElements)                                                               \
     {                                                                                                                              \
-        if (NumOfElements <= 0) return;                                                                                            \
-        bool Ordered;                                                                                                              \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
+        bool Exchanged = true;                                                                                                     \
         /* Used to record the position of the last swap of the largest number */                                                   \
         size_t HighPos = NumOfElements - 1;                                                                                        \
         /* Used to record the position of the last swap of the smallest number */                                                  \
         size_t LowPos  = 0;                                                                                                        \
-        /* Need to sort NumOfElements-1 times in total */                                                                          \
-        for (size_t i = 0; i < NumOfElements - 1; ++i)                                                                             \
+        /* When no exchange occurs or LowPos is greater than HighPos, the sorting is completed */                                  \
+        while (Exchanged && LowPos < HighPos)                                                                                      \
         {                                                                                                                          \
-            Ordered            = true;                                                                                             \
+            Exchanged = false;                                                                                                     \
             /* Find the maximum value in the forward direction */                                                                  \
-            size_t TempHighPos = HighPos;                                                                                          \
-            for (size_t j = LowPos; j < HighPos; ++j)                                                                              \
+            for (size_t i = LowPos; i < HighPos; ++i)                                                                              \
             {                                                                                                                      \
-                if (Compare_Function(&Base[j], &Base[j + 1]) > 0)                                                                  \
+                if (Compare_Function(&Base[i], &Base[i + 1]) > 0)                                                                  \
                 {                                                                                                                  \
-                    SWAP(&Base[j], &Base[j + 1], TYPE);                                                                            \
-                    /* If any swap happens, set Ordered to false */                                                                \
-                    Ordered     = false;                                                                                           \
-                    /* Record the position of the last swap */                                                                     \
-                    TempHighPos = j;                                                                                               \
+                    SWAP(&Base[i], &Base[i + 1], TYPE);                                                                            \
+                    /* If any swap happens, set Exchanged to true */                                                               \
+                    Exchanged = true;                                                                                              \
                 }                                                                                                                  \
             }                                                                                                                      \
-            if (Ordered) break;                                                                                                    \
-            HighPos           = TempHighPos;                                                                                       \
-            size_t TempLowPos = LowPos;                                                                                            \
-            for (size_t j = HighPos; j > LowPos; --j)                                                                              \
+            --HighPos;                                                                                                             \
+            /* Find the minimum value in the reverse direction */                                                                  \
+            for (size_t i = HighPos; i > LowPos; --i)                                                                              \
             {                                                                                                                      \
-                if (Compare_Function(&Base[j], &Base[j - 1]) < 0)                                                                  \
+                if (Compare_Function(&Base[i], &Base[i - 1]) < 0)                                                                  \
                 {                                                                                                                  \
-                    SWAP(&Base[j], &Base[j - 1], TYPE);                                                                            \
-                    /* If any swap happens, set Ordered to false */                                                                \
-                    Ordered    = false;                                                                                            \
-                    /* Record the position of the last swap */                                                                     \
-                    TempLowPos = j;                                                                                                \
+                    SWAP(&Base[i], &Base[i - 1], TYPE);                                                                            \
+                    /* If any swap happens, set Exchanged to true */                                                               \
+                    Exchanged = true;                                                                                              \
                 }                                                                                                                  \
             }                                                                                                                      \
-            if (Ordered) break;                                                                                                    \
-            LowPos = TempLowPos;                                                                                                   \
+            ++LowPos;                                                                                                              \
         }                                                                                                                          \
     }                                                                                                                              \
     SCOPE void QuickSort_glibc_##NAME(TYPE* Base, size_t NumOfElements)                                                            \
@@ -433,13 +424,13 @@
     }                                                                                                                              \
     SCOPE void QuickSort_LTT_libstdcpp_##NAME(TYPE* Base, size_t NumOfElements)                                                    \
     {                                                                                                                              \
-        if (NumOfElements <= 1) return;                                                                                            \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
         QuickSort_LTT_libstdcpp_Loop_##NAME(Base, &Base[NumOfElements]);                                                           \
         _Final_InsertionSort_##NAME(Base, &Base[NumOfElements]);                                                                   \
     }                                                                                                                              \
     SCOPE void SimpleSelectionSort_##NAME(TYPE* Base, size_t NumOfElements)                                                        \
     {                                                                                                                              \
-        if (NumOfElements <= 0) return;                                                                                            \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
         for (size_t i = 0; i < NumOfElements; ++i)                                                                                 \
         {                                                                                                                          \
             TYPE* Min = &Base[i];                                                                                                  \
@@ -481,13 +472,14 @@
     }                                                                                                                              \
     SCOPE void MergeSort_Recursion_##NAME(TYPE* Base, size_t NumOfElements)                                                        \
     {                                                                                                                              \
-        if (NumOfElements <= 0) return;                                                                                            \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
         TYPE* Temp = (TYPE*)malloc(NumOfElements * sizeof(TYPE));                                                                  \
         MergeSort_Recursion_Loop_##NAME(Base, &Base[NumOfElements], Temp);                                                         \
         free(Temp);                                                                                                                \
     }                                                                                                                              \
     SCOPE void MergeSort_Iterative_##NAME(TYPE* Base, size_t NumOfElements)                                                        \
     {                                                                                                                              \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
         TYPE*  Temp = (TYPE*)malloc(NumOfElements * sizeof(TYPE));                                                                 \
         size_t CurrentSize;                                                                                                        \
         TYPE*  First;                                                                                                              \
@@ -521,6 +513,7 @@
     }                                                                                                                              \
     SCOPE void MergeSort_Inplace_Iterative_##NAME(TYPE* Base, size_t NumOfElements)                                                \
     {                                                                                                                              \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                  \
         size_t CurrentSize;                                                                                                        \
         TYPE*  First;                                                                                                              \
         for (CurrentSize = 1; CurrentSize < NumOfElements; CurrentSize <<= 1)                                                      \
@@ -532,6 +525,49 @@
                 Merge_Inplace_##NAME(First, Mid, Last);                                                                            \
             }                                                                                                                      \
         }                                                                                                                          \
+    }
+
+
+#define SORT_INT_IMPL(NAME, TYPE, SCOPE, Value_Function)                                                                              \
+    SCOPE void PigeonholeSort_##NAME(TYPE* Base, int Min, int Max, size_t NumOfElements)                                              \
+    {                                                                                                                                 \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                     \
+        int Range          = Max - Min + 1;                                                                                           \
+        /* Allocate pigeonhole count array */                                                                                         \
+        int* CountArray    = (int*)calloc(Range, sizeof(int));                                                                        \
+        /* Allocate pigeonhole arrays */                                                                                              \
+        TYPE** Pigeonholes = (TYPE**)malloc(Range * sizeof(TYPE*));                                                                   \
+        for (int i = 0; i < Range; ++i) Pigeonholes[i] = (TYPE*)malloc(NumOfElements * sizeof(TYPE));                                 \
+        /* Count the number of elements in each pigeonhole and store the elements in corresponding pigeonholes */                     \
+        for (size_t i = 0; i < NumOfElements; ++i)                                                                                    \
+        {                                                                                                                             \
+            int Value                               = Value_Function(&Base[i]);                                                       \
+            int Index                               = Value - Min;                                                                    \
+            Pigeonholes[Index][CountArray[Index]++] = Base[i];                                                                        \
+        }                                                                                                                             \
+        /* Rearrange the elements in the array according to the number of elements in each pigeonhole */                              \
+        size_t k = 0;                                                                                                                 \
+        for (int i = 0; i < Range; ++i)                                                                                               \
+        {                                                                                                                             \
+            for (int j = 0; j < CountArray[i]; ++j) { Base[k++] = Pigeonholes[i][j]; }                                                \
+        }                                                                                                                             \
+        /* Free the pigeonhole count array and pigeonhole arrays */                                                                   \
+        free(CountArray);                                                                                                             \
+        for (int i = 0; i < Range; ++i) free(Pigeonholes[i]);                                                                         \
+        free(Pigeonholes);                                                                                                            \
+    }                                                                                                                                 \
+    SCOPE void CountingSort_##NAME(TYPE* Base, int Min, int Max, size_t NumOfElements)                                                \
+    {                                                                                                                                 \
+        if (unlikely(NumOfElements <= 1)) return;                                                                                     \
+        int   Range      = Max - Min + 1;                                                                                             \
+        int*  CountArray = (int*)calloc(Range, sizeof(int));                                                                          \
+        TYPE* TempArray  = (TYPE*)malloc(NumOfElements * sizeof(TYPE));                                                               \
+        for (size_t i = 0; i < NumOfElements; ++i) ++CountArray[Value_Function(&Base[i]) - Min];                                      \
+        for (int i = 1; i < Range; ++i) CountArray[i] += CountArray[i - 1];                                                           \
+        for (size_t i = NumOfElements - 1; i < NumOfElements; --i) TempArray[--CountArray[Value_Function(&Base[i]) - Min]] = Base[i]; \
+        memcpy(Base, TempArray, NumOfElements * sizeof(TYPE));                                                                        \
+        free(CountArray);                                                                                                             \
+        free(TempArray);                                                                                                              \
     }
 
 //SCOPE TYPE* GetPartition_LTT_glibc_##NAME(TYPE* LeftP, TYPE* RightP, TYPE* Pivot)
@@ -799,11 +835,11 @@
 //}
 
 // Global variables
-static int HibbardStepArray[31]   = {2147483647, 1073741823, 536870911, 268435455, 134217727, 67108863, 33554431, 16777215, 8388607, 4194303, 2097151, 1048575, 524287, 262143, 131071, 65535, 32767, 16383, 8191, 4095, 2047, 1023, 511, 255, 127, 63, 31, 15, 7, 3, 1};
-static int SedgewickStepArray[14] = {603906049, 150958081, 37730305, 9427969, 2354689, 587521, 146305, 36289, 8929, 2161, 505, 109, 19, 1};
+static size_t HibbardStepArray[31]   = {2147483647, 1073741823, 536870911, 268435455, 134217727, 67108863, 33554431, 16777215, 8388607, 4194303, 2097151, 1048575, 524287, 262143, 131071, 65535, 32767, 16383, 8191, 4095, 2047, 1023, 511, 255, 127, 63, 31, 15, 7, 3, 1};
+static size_t SedgewickStepArray[14] = {603906049, 150958081, 37730305, 9427969, 2354689, 587521, 146305, 36289, 8929, 2161, 505, 109, 19, 1};
 
 // some static functions
-static LTT_unused int* GetHibbardStepArray(int Length)
+static LTT_unused size_t* GetHibbardStepArray(size_t Length)
 {
     for (int i = 0;; ++i)
     {
@@ -811,11 +847,11 @@ static LTT_unused int* GetHibbardStepArray(int Length)
     }
 }
 
-static LTT_unused int* GetSedgewickStepArray(int Length)
+static LTT_unused size_t* GetSedgewickStepArray(size_t Length)
 {
     for (int i = 0;; ++i)
     {
-        if (SedgewickStepArray[i] <= Length) { return &HibbardStepArray[i]; }
+        if (SedgewickStepArray[i] <= Length) { return &SedgewickStepArray[i]; }
     }
 }
 
@@ -859,6 +895,7 @@ static LTT_unused void Merge_Inplace_Int(int* First, int* Mid, int* Last)
 
 static LTT_unused void MergeSort_Inplace_Iterative_Int(int* Base, size_t NumOfElements)
 {
+    if (unlikely(NumOfElements <= 1)) return;
     size_t CurrentSize;
     int*   First;
     for (CurrentSize = 1; CurrentSize < NumOfElements; CurrentSize <<= 1)
@@ -873,95 +910,98 @@ static LTT_unused void MergeSort_Inplace_Iterative_Int(int* Base, size_t NumOfEl
 }
 
 /*
-	注意与计数排序的区别, 此排序只考虑每一个元素出现的次数,并且只能排序int数组
+	注意与CountingSort的区别, 此排序只考虑每一个元素出现的次数,并且只能排序int数组
 	本来PigeonholeSort是直接将int值直接映射到数值的索引上,并在上面记录个数
 	然后再历遍一次数组将数全部放到原数组里面就可以了
 	但是为了全部开空间INT_MAX也开不了(16GB),于是有了下面的改进算法
 	与计数排序的区别就是他不实际记录每一个元素的位置,而是个数,最后依次输出即可
 */
-static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t NumOfElements)
+
+static LTT_unused void TallySort_Int(int* Base, int Min, int Max, size_t NumOfElements)
 {
-    if (NumOfElements <= 1) return;
-    int Delta       = Max - Min;
-    // 创建统计数组并统计对应元素的个数
-    int* CountArray = (int*)calloc((Delta + 1), sizeof(int));
-    if (CountArray == NULL) return;
+    if (unlikely(NumOfElements <= 1)) return;
+    int  Range      = Max - Min + 1;
+    int* CountArray = (int*)calloc(Range, sizeof(int));
     for (size_t i = 0; i < NumOfElements; ++i) ++CountArray[Base[i] - Min];
-    int index = 0;
-    for (int i = 0; i <= Delta; ++i)
+    for (int i = 0, j = 0; i < Range; ++i)
     {
-        while (CountArray[i] != 0)
-        {
-            Base[index] = i + Min;
-            --CountArray[i];
-            ++index;
-        }
+        for (int k = 0; k < CountArray[i]; ++k) Base[j++] = i + Min;
     }
     free(CountArray);
 }
 
-#define SORT_INIT(NAME, TYPE, SCOPE, Compare_Function) \
-    SORT_TYPE(NAME, TYPE)                              \
-    SORT_IMPL(NAME, TYPE, SCOPE, Compare_Function)
+#define SORT_CMP_INIT(NAME, TYPE, SCOPE, Compare_Function) \
+    SORT_CMP_TYPE(NAME, TYPE)                              \
+    SORT_CMP_IMPL(NAME, TYPE, SCOPE, Compare_Function)
+
+#define SORT_INT_INIT(NAME, TYPE, SCOPE, Vaule_Function)   SORT_INT_IMPL(NAME, TYPE, SCOPE, Vaule_Function)
 
 
-//################################################### Based on Insertion ##################################################
+//################################################################################################################ Comparison Sort ################################################################################################################
+
+// ------------------------------------------------ Based on Insertion ------------------------------------------------
 
 /**
  * @brief Insertion Sort algorithm
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(n^2)
+ * @note Time complexity: O(n^2) \n
+ * Space complexity: O(1)
  */
-#define InsertionSort(NAME, Array, Number)                InsertionSort_##NAME((Array), (Number))
+#define InsertionSort(NAME, Array, Number)                 InsertionSort_##NAME((Array), (Number))
 
 /**
  * @brief Binary Insertion Sort algorithm
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(n^2)
+ * @note Time complexity: O(n^2) \n
+ * Space complexity: O(1)
  */
-#define BinaryInsertionSort(NAME, Array, Number)          BinaryInsertionSort_##NAME((Array), (Number))
+#define BinaryInsertionSort(NAME, Array, Number)           BinaryInsertionSort_##NAME((Array), (Number))
 
 /**
  * @brief Shell Sort algorithm based on Hibbard's increment sequence
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(n^(3/2))
+ * @note Time complexity: O(n^(3/2)) \n
+ * Space complexity: O(1)
  */
-#define ShellInsertionSort_Hibbard(NAME, Array, Number)   ShellInsertionSort_Hibbard_##NAME((Array), (Number))
+#define ShellInsertionSort_Hibbard(NAME, Array, Number)    ShellInsertionSort_Hibbard_##NAME((Array), (Number))
 
 /**
  * @brief Shell Sort algorithm based on Sedgewick's increment sequence
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(n^(4/3))
+ * @note Time complexity: O(n^(4/3)) \n
+ * Space complexity: O(1)
  */
-#define ShellInsertionSort_Sedgewick(NAME, Array, Number) ShellInsertionSort_Sedgewick_##NAME((Array), (Number))
+#define ShellInsertionSort_Sedgewick(NAME, Array, Number)  ShellInsertionSort_Sedgewick_##NAME((Array), (Number))
 
-//################################################### Based on Exchange ###################################################
+//------------------------------------------------ Based on Exchange ------------------------------------------------
 
 /**
  * @brief Bubble Sort algorithm
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(n^2)
+ * @note Time complexity: O(n^2) \n
+ * Space complexity: O(1)
  */
-#define BubbleSort(NAME, Array, Number)                   BubbleSort_##NAME((Array), (Number))
+#define BubbleSort(NAME, Array, Number)                    BubbleSort_##NAME((Array), (Number))
 
 /**
- * @brief Bubble Sort algorithm with fast version
+ * @brief CockTail Sort algorithm
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(n^2)
+ * @note Time complexity: O(n^2) \n
+ * Space complexity: O(1)
  */
-#define BubbleSort_Fast(NAME, Array, Number)              BubbleSort_Fast_##NAME((Array), (Number))
+#define CockTailSort(NAME, Array, Number)                  CockTailSort_##NAME((Array), (Number))
 
 /**
  * @brief Quick Sort algorithm \n
@@ -971,9 +1011,10 @@ static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t Nu
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(nlogn)
+ * @note Time complexity: O(nlogn) \n
+ * Space complexity: O(logn)
  */
-#define QuickSort_glibc(NAME, Array, Number)              QuickSort_glibc_##NAME((Array), (Number))
+#define QuickSort_glibc(NAME, Array, Number)               QuickSort_glibc_##NAME((Array), (Number))
 
 /**
  * @brief Quick Sort algorithm \n
@@ -984,42 +1025,47 @@ static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t Nu
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(nlogn)
+ * @note Time complexity: O(nlogn) \n
+ * Space complexity: O(logn)
  */
-#define QuickSort_LTT_libstdcpp(NAME, Array, Number)      QuickSort_LTT_libstdcpp_##NAME((Array), (Number))
+#define QuickSort_LTT_libstdcpp(NAME, Array, Number)       QuickSort_LTT_libstdcpp_##NAME((Array), (Number))
 
-//################################################### Based on Selection ###################################################
+//------------------------------------------------ Based on Selection ------------------------------------------------
 
 /**
  * @brief Simple Selection Sort algorithm
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(n^2)
+ * @note Time complexity: O(n^2) \n
+ * Space complexity: O(1)
  */
-#define SimpleSelectionSort(NAME, Array, Number)          SimpleSelectionSort_##NAME((Array), (Number))
+#define SimpleSelectionSort(NAME, Array, Number)           SimpleSelectionSort_##NAME((Array), (Number))
 // TODO: Heap Sort
-#define HeapSort(NAME, Array, Number)                     HeapSort_##NAME((Array), (Number))
-#define PartialSort(NAME, Array, Number)                  PartialSort_##NAME((Array), (Number))
-//################################################### Based on Merge ###################################################
+#define HeapSort(NAME, Array, Number)                      HeapSort_##NAME((Array), (Number))
+#define PartialSort(NAME, Array, Number)                   PartialSort_##NAME((Array), (Number))
+
+//------------------------------------------------ Based on Merge ------------------------------------------------
 
 /**
  * @brief Merge Sort algorithm based on recursion
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(nlogn)
+ * @note Time complexity: O(nlogn) \n
+ * Space complexity: O(n)
  */
-#define MergeSort_Recursion(NAME, Array, Number)          MergeSort_Recursion_##NAME((Array), (Number))
+#define MergeSort_Recursion(NAME, Array, Number)           MergeSort_Recursion_##NAME((Array), (Number))
 
 /**
  * @brief Merge Sort algorithm based on iteration
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(nlogn)
+ * @note Time complexity: O(nlogn) \n
+ * Space complexity: O(n)
  */
-#define MergeSort_Iterative(NAME, Array, Number)          MergeSort_Iterative_##NAME((Array), (Number))
+#define MergeSort_Iterative(NAME, Array, Number)           MergeSort_Iterative_##NAME((Array), (Number))
 
 /**
  * @brief In-place Merge Sort algorithm based on iteration \n
@@ -1027,9 +1073,10 @@ static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t Nu
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(n^2)
+ * @note Time complexity: O(n(logn)^2) \n
+ * Space complexity: O(1)
  */
-#define MergeSort_Inplace_Iterative(NAME, Array, Number)  MergeSort_Inplace_Iterative_##NAME((Array), (Number))
+#define MergeSort_Inplace_Iterative(NAME, Array, Number)   MergeSort_Inplace_Iterative_##NAME((Array), (Number))
 
 /**
  * @brief In-place Merge Sort algorithm based on iteration only for int array \n
@@ -1042,68 +1089,12 @@ static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t Nu
  * Be particularly careful about overflow when computing a = a + (min(a % Max, b % max)) * Max!
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
- * @note Time complexity: O(n^2)
+ * @note Time complexity: O(n^2) \n
+ * Space complexity: O(1)
  */
 #define MergeSort_Inplace_Iterative_For_Int(Array, Number) MergeSort_Inplace_Iterative_Int((Array), (Number))
 
 // Todo: k-way Merge Sort
-
-// Todo: RadixSort_LSD Sort
-/**
- * @brief Radix Sort algorithm based on LSD (Least Significant Digit)
- * @param NAME The name of the function
- * @param Array The array to be sorted
- * @param Number The number of elements in the array
- * @note Time complexity: O(n*k/d) \n
- * k: Number of digits in the largest number \n
- * d: Number of digits processed per pass.
- */
-#define RadixSort_LSD(NAME, Array, Number)          RadixSort_LSD_##NAME((Array), (Number))
-
-// Todo: RadixSort_MSD Sort
-/**
- * @brief Radix Sort algorithm based on MSD (Most Significant Digit)
- * @param NAME The name of the function
- * @param Array The array to be sorted
- * @param Number The number of elements in the array
- * @note Time complexity: O(n*k/d) \n
- * k: Number of digits in the largest number \n
- * d: Number of digits processed per pass.
- */
-#define RadixSort_MSD(NAME, Array, Number)          RadixSort_MSD_##NAME((Array), (Number))
-
-// Todo: Bucket Sort
-/**
- * @brief Bucket Sort algorithm
- * @param NAME The name of the function
- * @param Array The array to be sorted
- * @param Number The number of elements in the array
- * @note Time complexity: O(n+n^2/k+k) \n
- * k: Number of buckets \n
- * Note that if k is chosen to be k=O(n), then the time complexity becomes O(n)
- */
-#define BucketSort(NAME, Array, Number)             BucketSort_##NAME((Array), (Number))
-
-// Todo: Counting Sort
-/**
- * @brief Counting Sort algorithm
- * @param NAME The name of the function
- * @param Array The array to be sorted
- * @param Number The number of elements in the array
- * @note Time complexity: O(n+k) \n
- * k:the range of the non-negative key values
- */
-#define CountingSort(NAME, Array, Number)           CountingSort_##NAME((Array), (Number))
-
-/**
- * @brief Pigeonhole Sort algorithm
- * @param Array The array to be sorted
- * @param Min The minimum value of the array
- * @param Max The maximum value of the array
- * @param Number The number of elements in the array
- * @note Time complexity: O(n)
- */
-#define PigeonholeSort(Array, Min, Max, Number)     PigeonholeSort_Int((Array), (Min), (Max), (Number))
 
 // TODO: Bigo Sort
 /**
@@ -1112,20 +1103,110 @@ static LTT_unused void PigeonholeSort_Int(int* Base, int Min, int Max, size_t Nu
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
  * @note Time complexity: O(n*n!)
+ * Space complexity: O(1)
  */
-#define BigoSort(NAME, Array, Number)               BigoSort_##NAME((Array), (Number))
+#define BigoSort(NAME, Array, Number)                      BigoSort_##NAME((Array), (Number))
 
+// TODO: Introspective Sort
 /**
  * @brief Introspective Sort algorithm
  * @param NAME The name of the function
  * @param Array The array to be sorted
  * @param Number The number of elements in the array
  * @note Time complexity: O(nlogn)
+ * Space complexity: O(logn)
  */
-#define IntrospectiveSort(NAME, Array, Number)      IntrospectiveSort_##NAME((Array), (Number))
+#define IntrospectiveSort(NAME, Array, Number)             IntrospectiveSort_##NAME((Array), (Number))
 
 // Function implementation
-#define LTT_SORT_INIT(NAME, TYPE, Compare_Function) SORT_INIT(NAME, TYPE, static LTT_unused, Compare_Function)
+#define LTT_SORT_CMP_INIT(NAME, TYPE, Compare_Function)    SORT_CMP_INIT(NAME, TYPE, static LTT_unused, Compare_Function)
 
 // Function declaration
-#define LTT_SORT_DECLARE(NAME, TYPE)                SORT_DECLARE(NAME, TYPE)
+#define LTT_SORT_CMP_DECLARE(NAME, TYPE)                   SORT_CMP_DECLARE(NAME, TYPE)
+
+
+//################################################################################################################ Integer Sort  ################################################################################################################
+
+/**
+ * @brief Pigeonhole Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Min The minimum value of the int key
+ * @param Max The maximum value of the int key
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n+k) \n
+ * Space complexity: O(n*k) \n
+ * k:The range of the non-negative key values
+ */
+#define PigeonholeSort(NAME, Array, Min, Max, Number)      PigeonholeSort_##NAME((Array), (Min), (Max), (Number))
+
+/**
+ * @brief Counting Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Min The minimum value of the int key
+ * @param Max The maximum value of the int key
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n+k) \n
+ * Space complexity: O(k) \n
+ * k:The range of the non-negative key values
+ */
+#define CountingSort(NAME, Array, Min, Max, Number)        CountingSort_##NAME((Array), (Min), (Max), (Number))
+
+/**
+ * @brief Tally Sort algorithm \n
+ * It's only suitable for sorting int arrays.
+ * @param Array The array to be sorted
+ * @param Min The minimum value of the arrays
+ * @param Max The maximum value of the arrays
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n+k) \n
+ * Space complexity: O(k) \n
+ * k:The range of the non-negative key values
+ */
+#define TallySort(Array, Min, Max, Number)                 TallySort_Int((Array), (Min), (Max), (Number))
+
+// Todo: RadixSort_LSD Sort
+/**
+ * @brief Radix Sort algorithm based on LSD (Least Significant Digit)
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n*k/d) \n
+ * Space complexity: O(n) \n
+ * k: Number of digits in the largest number \n
+ * d: Number of digits processed per pass.
+ */
+#define RadixSort_LSD(NAME, Array, Number)                 RadixSort_LSD_##NAME((Array), (Number))
+
+// Todo: RadixSort_MSD Sort
+/**
+ * @brief Radix Sort algorithm based on MSD (Most Significant Digit)
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n*k/d) \n
+ * Space complexity: O(n+k) \n
+ * k: Number of digits in the largest number \n
+ * d: Number of digits processed per pass.
+ */
+#define RadixSort_MSD(NAME, Array, Number)                 RadixSort_MSD_##NAME((Array), (Number))
+
+// Todo: Bucket Sort
+/**
+ * @brief Bucket Sort algorithm
+ * @param NAME The name of the function
+ * @param Array The array to be sorted
+ * @param Number The number of elements in the array
+ * @note Time complexity: O(n+n^2/k+k) \n
+ * Space complexity: O(n+k) \n
+ * k: Number of buckets \n
+ * Note that if k is chosen to be k=O(n), then the time complexity becomes O(n)
+ */
+#define BucketSort(NAME, Array, Number)                    BucketSort_##NAME((Array), (Number))
+
+// Function implementation
+#define LTT_SORT_INT_INIT(NAME, TYPE, Vaule_Function)      SORT_INT_INIT(NAME, TYPE, static LTT_unused, Vaule_Function)
+
+// Function declaration
+#define LTT_SORT_INT_DECLARE(NAME, TYPE)                   SORT_INT_DECLARE(NAME, TYPE)
