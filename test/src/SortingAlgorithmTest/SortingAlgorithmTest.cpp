@@ -16,7 +16,11 @@
 
 // 定义比较函数
 #define INTCMP(a, b) (((*(a)) < (*(b))) ? -1 : (((*(a)) == (*(b))) ? 0 : +1))
-LTT_SORT_INIT(INT, int, INTCMP);
+LTT_SORT_CMP_INIT(INT, int, INTCMP);
+
+// 定义整数键值函数
+#define INTKEY(a) (*(a))
+LTT_SORT_INT_INIT(INT, int, INTKEY);
 
 class SortingAlgorithmTest: public ::testing::Test
 {
@@ -40,7 +44,7 @@ protected:
 #if Mode == 1                                              // 顺序数组
         for (int i = 0; i < NUMBER; ++i) Array[i] = i;
 #elif Mode == 2                                            // 逆序数组
-        for (int i = 0; i < NUMBER; ++i) Array[i] = NUMBER - i;
+        for (int i = 0; i < NUMBER; ++i) Array[i] = NUMBER - i - 1;
 #elif Mode == 3                                            // 普通随机数组
         std::random_device                 rd;                      // 使用随机设备种子
         std::default_random_engine         eng(rd());               // 随机数引擎
@@ -98,10 +102,10 @@ TEST_F(SortingAlgorithmTest, BubbleSort)
     for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
 }
 
-// 测试BubbleSort_Fast
-TEST_F(SortingAlgorithmTest, BubbleSort_Fast)
+// 测试CockTailSort
+TEST_F(SortingAlgorithmTest, CockTailSort)
 {
-    BubbleSort_Fast(INT, Array, NUMBER);
+    CockTailSort(INT, Array, NUMBER);
     for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
 }
 
@@ -157,6 +161,20 @@ TEST_F(SortingAlgorithmTest, MergeSort_Inplace_Iterative_For_Int)
 // 测试PigeonholeSort
 TEST_F(SortingAlgorithmTest, PigeonholeSort)
 {
-    PigeonholeSort(Array, 0, NUMBER - 1, NUMBER);
+    PigeonholeSort(INT, Array, 0, NUMBER - 1, NUMBER);
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
+}
+
+// 测试CountingSort
+TEST_F(SortingAlgorithmTest, CountingSort)
+{
+    CountingSort(INT, Array, 0, NUMBER - 1, NUMBER);
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
+}
+
+// 测试TallySor
+TEST_F(SortingAlgorithmTest, TallySor)
+{
+    TallySort(Array, 0, NUMBER - 1, NUMBER);
     for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
 }

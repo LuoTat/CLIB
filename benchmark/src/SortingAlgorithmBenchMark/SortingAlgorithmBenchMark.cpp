@@ -21,23 +21,27 @@
 #define ShellInsertionSort_Hibbard_Test_Add          0
 #define ShellInsertionSort_Sedgewick_Test_Add        0
 #define BubbleSort_Test_Add                          0
-#define BubbleSort_Fast_Test_Add                     0
-#define QuickSort_glibc_Test_Add                     0
+#define CockTailSort_Test_Add                        0
+#define QuickSort_glibc_Test_Add                     1
 #define QuickSort_LTT_libstdcpp_Test_Add             1
 #define SimpleSelectionSort_Test_Add                 0
 #define MergeSort_Recursion_Test_Add                 0
 #define MergeSort_Iterative_Test_Add                 0
 #define MergeSort_Inplace_Iterative_Test_Add         0
 #define MergeSort_Inplace_Iterative_For_Int_Test_Add 0
-#define PigeonholeSort_Test_Add                      1
-#define qsort_Test_Add                               0
+#define PigeonholeSort_Test_Add                      0
+#define CountingSort_Test_Add                        1
+#define TallySort_Test_Add                           1
+#define qsort_Test_Add                               1
 #define sort_Test_Add                                1
 
 
 
 #define INTCMP(a, b)                                 (((*(a)) < (*(b))) ? -1 : (((*(a)) == (*(b))) ? 0 : +1))
-LTT_SORT_INIT(INT, int, INTCMP);
+LTT_SORT_CMP_INIT(INT, int, INTCMP);
 
+#define INTKEY(a) (*(a))
+LTT_SORT_INT_INIT(INT, int, INTKEY);
 
 int* Array     = new int[NUMBER];
 int* ArrayCopy = new int[NUMBER];
@@ -57,7 +61,7 @@ static void SetArray()
 #if Mode == 1      // 顺序数组
     for (int i = 0; i < NUMBER; ++i) Array[i] = i;
 #elif Mode == 2    // 逆序数组
-    for (int i = 0; i < NUMBER; ++i) Array[i] = NUMBER - i;
+    for (int i = 0; i < NUMBER; ++i) Array[i] = NUMBER - i - 1;
 #elif Mode == 3    // 普通随机数组
     std::random_device                 rd;                      // 使用随机设备种子
     std::default_random_engine         eng(rd());               // 随机数引擎
@@ -137,15 +141,15 @@ static LTT_unused void BubbleSort_Test(benchmark::State& state)
     }
 }
 
-// 测试BubbleSort_Fast性能
-static LTT_unused void BubbleSort_Fast_Test(benchmark::State& state)
+// 测试CockTailSort性能
+static LTT_unused void CockTailSort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
         state.PauseTiming();
         std::copy(Array, Array + NUMBER, ArrayCopy);
         state.ResumeTiming();
-        BubbleSort_Fast(INT, ArrayCopy, NUMBER);
+        CockTailSort(INT, ArrayCopy, NUMBER);
     }
 }
 
@@ -241,7 +245,31 @@ static LTT_unused void PigeonholeSort_Test(benchmark::State& state)
         state.PauseTiming();
         std::copy(Array, Array + NUMBER, ArrayCopy);
         state.ResumeTiming();
-        PigeonholeSort(ArrayCopy, 0, NUMBER - 1, NUMBER);
+        PigeonholeSort(INT, ArrayCopy, 0, NUMBER - 1, NUMBER);
+    }
+}
+
+// 测试CountingSort性能
+static LTT_unused void CountingSort_Test(benchmark::State& state)
+{
+    for (auto _ : state)
+    {
+        state.PauseTiming();
+        std::copy(Array, Array + NUMBER, ArrayCopy);
+        state.ResumeTiming();
+        CountingSort(INT, ArrayCopy, 0, NUMBER - 1, NUMBER);
+    }
+}
+
+// 测试TallySort性能
+static LTT_unused void TallySort_Test(benchmark::State& state)
+{
+    for (auto _ : state)
+    {
+        state.PauseTiming();
+        std::copy(Array, Array + NUMBER, ArrayCopy);
+        state.ResumeTiming();
+        TallySort(ArrayCopy, 0, NUMBER - 1, NUMBER);
     }
 }
 
@@ -284,8 +312,8 @@ BENCHMARK(ShellInsertionSort_Sedgewick_Test)->Unit(benchmark::TIMEUNIT);
 #if BubbleSort_Test_Add == 1
 BENCHMARK(BubbleSort_Test)->Unit(benchmark::TIMEUNIT);
 #endif
-#if BubbleSort_Fast_Test_Add == 1
-BENCHMARK(BubbleSort_Fast_Test)->Unit(benchmark::TIMEUNIT);
+#if CockTailSort_Test_Add == 1
+BENCHMARK(CockTailSort_Test)->Unit(benchmark::TIMEUNIT);
 #endif
 #if QuickSort_glibc_Test_Add == 1
 BENCHMARK(QuickSort_glibc_Test)->Unit(benchmark::TIMEUNIT);
@@ -310,6 +338,12 @@ BENCHMARK(MergeSort_Inplace_Iterative_For_Int_Test)->Unit(benchmark::TIMEUNIT);
 #endif
 #if PigeonholeSort_Test_Add == 1
 BENCHMARK(PigeonholeSort_Test)->Unit(benchmark::TIMEUNIT);
+#endif
+#if CountingSort_Test_Add == 1
+BENCHMARK(CountingSort_Test)->Unit(benchmark::TIMEUNIT);
+#endif
+#if TallySort_Test_Add == 1
+BENCHMARK(TallySort_Test)->Unit(benchmark::TIMEUNIT);
 #endif
 #if qsort_Test_Add == 1
 BENCHMARK(qsort_Test)->Unit(benchmark::TIMEUNIT);
