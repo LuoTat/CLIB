@@ -23,18 +23,18 @@
 #define DEFAULT_HASHSET_LOAD_FACTOR      (0.75f)
 
 /*
-    选择一个哈希函数
-    RSHash
-    JSHash
-    PJWHash
-    ELFHash
-    BKDRHash
-    SDBMHash
-    DJBHash
-    DEKHash
-    BPHash
-    FNV_1aHash
-    APHash
+ * The String hash function you can choose:
+ * RSHash
+ * JSHash
+ * PJWHash
+ * ELFHash
+ * BKDRHash
+ * SDBMHash
+ * DJBHash
+ * DEKHash
+ * BPHash
+ * FNV_1aHash
+ * APHash
 */
 #define String_Hash_Function             DJBHash
 
