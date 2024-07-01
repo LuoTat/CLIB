@@ -11,7 +11,9 @@
     Mode == 5 //有很多相同元素的数组
     Mode == 6 //16个元素的小数组
 */
-#define NUMBER       10000
+#define NUMBER 10000
+static int Min;
+static int Max;
 #define Mode         3
 
 // 定义比较函数
@@ -43,24 +45,36 @@ protected:
     {
 #if Mode == 1                                              // 顺序数组
         for (int i = 0; i < NUMBER; ++i) Array[i] = i;
+        Min = 0;
+        Max = NUMBER - 1;
 #elif Mode == 2                                            // 逆序数组
         for (int i = 0; i < NUMBER; ++i) Array[i] = NUMBER - i - 1;
+        Min = 0;
+        Max = NUMBER - 1;
 #elif Mode == 3                                            // 普通随机数组
         std::random_device                 rd;                      // 使用随机设备种子
         std::default_random_engine         eng(rd());               // 随机数引擎
         std::uniform_int_distribution<int> distr(0, NUMBER - 1);    // 定义分布范围
         for (int& i : Array) i = distr(eng);
+        Min = 0;
+        Max = NUMBER - 1;
 #elif Mode == 4                                            // 无相同元素的乱序数组
         GetTheRandomNonRepeatingArray(Array, NUMBER);
+        Min = 0;
+        Max = NUMBER - 1;
 #elif Mode == 5                                            // 有很多相同元素的数组
         std::random_device                 rd;               // 使用随机设备种子
         std::default_random_engine         eng(rd());        // 随机数引擎
         std::uniform_int_distribution<int> distr(0, 100);    // 定义分布范围
         for (int& i : Array) i = distr(eng);
+        Min = 0;
+        Max = 100;
 #elif Mode == 6                                            // 16个元素的小数组
     #undef NUMBER
     #define NUMBER 16
         GetTheRandomNonRepeatingArray(Array, NUMBER);
+        Min = 0;
+        Max = NUMBER - 1;
 #endif
         std::copy(Array, Array + NUMBER, OrderedArray);    // 复制Array到OrderedArray
         std::sort(OrderedArray, OrderedArray + NUMBER);    // 对OrderedArray进行排序
@@ -161,20 +175,20 @@ TEST_F(SortingAlgorithmTest, MergeSort_Inplace_Iterative_For_Int)
 // 测试PigeonholeSort
 TEST_F(SortingAlgorithmTest, PigeonholeSort)
 {
-    PigeonholeSort(INT, Array, 0, NUMBER - 1, NUMBER);
+    PigeonholeSort(INT, Array, Min, Max, NUMBER);
     for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
 }
 
 // 测试CountingSort
 TEST_F(SortingAlgorithmTest, CountingSort)
 {
-    CountingSort(INT, Array, 0, NUMBER - 1, NUMBER);
+    CountingSort(INT, Array, Min, Max, NUMBER);
     for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
 }
 
 // 测试TallySor
 TEST_F(SortingAlgorithmTest, TallySor)
 {
-    TallySort(Array, 0, NUMBER - 1, NUMBER);
+    TallySort(Array, Min, Max, NUMBER);
     for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(Array[i], OrderedArray[i]); }
 }

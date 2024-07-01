@@ -11,8 +11,10 @@
     Mode == 5 //有很多相同元素的数组
     Mode == 6 //16个元素的小数组
 */
-#define NUMBER                                       1000000
-#define Mode                                         3
+#define Mode   3
+#define NUMBER 1000000
+static int Min;
+static int Max;
 // kNanosecond kMicrosecond kMillisecond kSecond
 #define TIMEUNIT                                     kMillisecond
 
@@ -60,24 +62,36 @@ static void SetArray()
 {
 #if Mode == 1      // 顺序数组
     for (int i = 0; i < NUMBER; ++i) Array[i] = i;
+    Min = 0;
+    Max = NUMBER - 1;
 #elif Mode == 2    // 逆序数组
     for (int i = 0; i < NUMBER; ++i) Array[i] = NUMBER - i - 1;
+    Min = 0;
+    Max = NUMBER - 1;
 #elif Mode == 3    // 普通随机数组
     std::random_device                 rd;                      // 使用随机设备种子
     std::default_random_engine         eng(rd());               // 随机数引擎
     std::uniform_int_distribution<int> distr(0, NUMBER - 1);    // 定义分布范围
     for (int i = 0; i < NUMBER; ++i) Array[i] = distr(eng);
+    Min = 0;
+    Max = NUMBER - 1;
 #elif Mode == 4    // 无相同元素的乱序数组
     GetTheRandomNonRepeatingArray(Array, NUMBER);
+    Min = 0;
+    Max = NUMBER - 1;
 #elif Mode == 5    // 有很多相同元素的数组
-    std::random_device                 rd;              // 使用随机设备种子
-    std::default_random_engine         eng(rd());       // 随机数引擎
-    std::uniform_int_distribution<int> distr(0, 10);    // 定义分布范围
+    std::random_device                 rd;               // 使用随机设备种子
+    std::default_random_engine         eng(rd());        // 随机数引擎
+    std::uniform_int_distribution<int> distr(0, 100);    // 定义分布范围
     for (int i = 0; i < NUMBER; ++i) Array[i] = distr(eng);
+    Min = 0;
+    Max = 100;
 #elif Mode == 6    // 16个元素的小数组
     #undef NUMBER
     #define NUMBER 16
     GetTheRandomNonRepeatingArray(Array, NUMBER);
+    Min = 0;
+    Max = NUMBER - 1;
 #endif
 }
 
@@ -245,7 +259,7 @@ static LTT_unused void PigeonholeSort_Test(benchmark::State& state)
         state.PauseTiming();
         std::copy(Array, Array + NUMBER, ArrayCopy);
         state.ResumeTiming();
-        PigeonholeSort(INT, ArrayCopy, 0, NUMBER - 1, NUMBER);
+        PigeonholeSort(INT, ArrayCopy, Min, Max, NUMBER);
     }
 }
 
@@ -257,7 +271,7 @@ static LTT_unused void CountingSort_Test(benchmark::State& state)
         state.PauseTiming();
         std::copy(Array, Array + NUMBER, ArrayCopy);
         state.ResumeTiming();
-        CountingSort(INT, ArrayCopy, 0, NUMBER - 1, NUMBER);
+        CountingSort(INT, ArrayCopy, Min, Max, NUMBER);
     }
 }
 
@@ -269,7 +283,7 @@ static LTT_unused void TallySort_Test(benchmark::State& state)
         state.PauseTiming();
         std::copy(Array, Array + NUMBER, ArrayCopy);
         state.ResumeTiming();
-        TallySort(ArrayCopy, 0, NUMBER - 1, NUMBER);
+        TallySort(ArrayCopy, Min, Max, NUMBER);
     }
 }
 
