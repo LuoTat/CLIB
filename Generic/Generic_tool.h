@@ -24,7 +24,7 @@
 #endif /* LTT_unused */
 
 // 用于定义函数返回的错误码
-enum CODE
+typedef enum CODE
 {
     Success,                  // 成功
     MemoryAllocationError,    // 内存分配错误
@@ -35,4 +35,4 @@ enum CODE
     InvalidArgument,          // 参数错误
     InvalidOperation,         // 无效操作
     UnknownError              // 未知错误
-};
+} CODE;
