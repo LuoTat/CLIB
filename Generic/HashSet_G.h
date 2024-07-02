@@ -62,7 +62,7 @@
 
 #define HASHSET_PROTOTYPES(NAME, TYPE)                                                   \
     CODE HashSet_##NAME##_Init(HashSet_##NAME* HashSet);                                 \
-    bool HashSet_##NAME##_Add(HashSet_##NAME* const HashSet, const TYPE Key);            \
+    CODE HashSet_##NAME##_Add(HashSet_##NAME* const HashSet, const TYPE Key);            \
     bool HashSet_##NAME##_Delete(HashSet_##NAME* const HashSet, const TYPE Key);         \
     bool HashSet_##NAME##_Contains(const HashSet_##NAME* const HashSet, const TYPE Key); \
     bool HashSet_##NAME##_IsEmpty(const HashSet_##NAME* const HashSet);                  \
@@ -203,7 +203,7 @@
         free(OldTab);                                                                                                                                                                                                   \
         return Success;                                                                                                                                                                                                 \
     }                                                                                                                                                                                                                   \
-    SCOPE bool HashSet_##NAME##_Add(HashSet_##NAME* const HashSet, const TYPE Key)                                                                                                                                      \
+    SCOPE CODE HashSet_##NAME##_Add(HashSet_##NAME* const HashSet, const TYPE Key)                                                                                                                                      \
     {                                                                                                                                                                                                                   \
         HashSetNode_##NAME** Table;                                                                                                                                                                                     \
         HashSetNode_##NAME** LocatedNode;                                                                                                                                                                               \
@@ -211,19 +211,22 @@
         int                  HashCode = HashSet_##NAME##_HashCode(Key);                                                                                                                                                 \
         if ((Table = HashSet->Table) == NULL || (Capacity = HashSet->Capacity) == 0)                                                                                                                                    \
         {                                                                                                                                                                                                               \
-            HashSet_##NAME##_Resize(HashSet);                                                                                                                                                                           \
+            if (unlikely(Success != HashSet_##NAME##_Resize(HashSet))) return MemoryAllocationError;                                                                                                                    \
             Table    = HashSet->Table;                                                                                                                                                                                  \
             Capacity = HashSet->Capacity;                                                                                                                                                                               \
         }                                                                                                                                                                                                               \
         LocatedNode = &Table[(Capacity - 1) & HashCode];                                                                                                                                                                \
         while (*LocatedNode)                                                                                                                                                                                            \
         {                                                                                                                                                                                                               \
-            if ((*LocatedNode)->HashCode == HashCode && Equals_Function(Key, (*LocatedNode)->Key)) return false;                                                                                                        \
+            if ((*LocatedNode)->HashCode == HashCode && Equals_Function(Key, (*LocatedNode)->Key)) return KeyDuplicated;                                                                                                \
             LocatedNode = &(*LocatedNode)->Next;                                                                                                                                                                        \
         }                                                                                                                                                                                                               \
-        if (Success != HashSet_##NAME##_MakeNode(HashCode, Key, NULL, LocatedNode)) return false;                                                                                                                       \
-        if (++HashSet->Size > HashSet->Threshold) HashSet_##NAME##_Resize(HashSet);                                                                                                                                     \
-        return true;                                                                                                                                                                                                    \
+        if (Success != HashSet_##NAME##_MakeNode(HashCode, Key, NULL, LocatedNode)) return MemoryAllocationError;                                                                                                       \
+        if (++HashSet->Size > HashSet->Threshold)                                                                                                                                                                       \
+        {                                                                                                                                                                                                               \
+            if (unlikely(Success != HashSet_##NAME##_Resize(HashSet))) return MemoryAllocationError;                                                                                                                    \
+        }                                                                                                                                                                                                               \
+        return Success;                                                                                                                                                                                                 \
     }                                                                                                                                                                                                                   \
     SCOPE bool HashSet_##NAME##_Delete(HashSet_##NAME* const HashSet, const TYPE Key)                                                                                                                                   \
     {                                                                                                                                                                                                                   \
@@ -419,8 +422,7 @@
  * @param NAME The name of the HashSet_##NAME struct
  * @param HashSet The HashSet_##NAME struct
  * @param Key The key to add
- * @retval true The key was added
- * @retval false The key was not added
+ * @return CODE The result of the function
  */
 #define HashSet_Add(NAME, HashSet, Key)                              HashSet_##NAME##_Add((HashSet), (Key))
 
