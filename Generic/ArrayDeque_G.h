@@ -38,20 +38,18 @@
     } ArrayDeque_##NAME;
 
 
-#define ARRAYDEQUE_PROTOTYPES(NAME, TYPE)                                                                                    \
-    extern CODE ArrayDeque_##NAME##_Init(ArrayDeque_##NAME* ArrayDeque);                                                     \
-    extern CODE ArrayDeque_##NAME##_newCapacity(const int OldCapacity, const int Needed, const int Jump, int* const Result); \
-    extern CODE ArrayDeque_##NAME##_Resize(ArrayDeque_##NAME* const ArrayDeque, const int Needed);                           \
-    extern CODE ArrayDeque_##NAME##_AddFirst(ArrayDeque_##NAME* const ArrayDeque, const TYPE Data);                          \
-    extern CODE ArrayDeque_##NAME##_AddLast(ArrayDeque_##NAME* const ArrayDeque, const TYPE Data);                           \
-    extern CODE ArrayDeque_##NAME##_DeleteFirst(ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result);                    \
-    extern CODE ArrayDeque_##NAME##_DeleteLast(ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result);                     \
-    extern CODE ArrayDeque_##NAME##_GetFirst(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result);                 \
-    extern CODE ArrayDeque_##NAME##_GetLast(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result);                  \
-    extern int  ArrayDeque_##NAME##_GetSize(const ArrayDeque_##NAME* const ArrayDeque);                                      \
-    extern bool ArrayDeque_##NAME##_IsEmpty(const ArrayDeque_##NAME* const ArrayDeque);                                      \
-    extern bool ArrayDeque_##NAME##_Contains(const ArrayDeque_##NAME* const ArrayDeque, const TYPE Data);                    \
-    extern void ArrayDeque_##NAME##_Clear(ArrayDeque_##NAME* const ArrayDeque);                                              \
+#define ARRAYDEQUE_PROTOTYPES(NAME, TYPE)                                                                    \
+    extern CODE ArrayDeque_##NAME##_Init(ArrayDeque_##NAME* ArrayDeque);                                     \
+    extern CODE ArrayDeque_##NAME##_AddFirst(ArrayDeque_##NAME* const ArrayDeque, const TYPE Data);          \
+    extern CODE ArrayDeque_##NAME##_AddLast(ArrayDeque_##NAME* const ArrayDeque, const TYPE Data);           \
+    extern CODE ArrayDeque_##NAME##_DeleteFirst(ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result);    \
+    extern CODE ArrayDeque_##NAME##_DeleteLast(ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result);     \
+    extern CODE ArrayDeque_##NAME##_GetFirst(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result); \
+    extern CODE ArrayDeque_##NAME##_GetLast(const ArrayDeque_##NAME* const ArrayDeque, TYPE* const Result);  \
+    extern int  ArrayDeque_##NAME##_GetSize(const ArrayDeque_##NAME* const ArrayDeque);                      \
+    extern bool ArrayDeque_##NAME##_IsEmpty(const ArrayDeque_##NAME* const ArrayDeque);                      \
+    extern bool ArrayDeque_##NAME##_Contains(const ArrayDeque_##NAME* const ArrayDeque, const TYPE Data);    \
+    extern void ArrayDeque_##NAME##_Clear(ArrayDeque_##NAME* const ArrayDeque);                              \
     extern void ArrayDeque_##NAME##_Destroy(ArrayDeque_##NAME* ArrayDeque);
 
 
