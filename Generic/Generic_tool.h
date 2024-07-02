@@ -31,6 +31,7 @@ typedef enum CODE
     MemoryOverflow,           // 内存溢出
     NullPointerAccess,        // 访问NULL指针
     ArrayIndexOutOfRange,     // 数组越界
+    KeyDuplicated,            // 键重复
     InvalidIndex,             // 无效索引
     InvalidArgument,          // 参数错误
     InvalidOperation,         // 无效操作
