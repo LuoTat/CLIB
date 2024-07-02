@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <unordered_set>
 #include "HashSet_G.h"
 
 typedef struct Student
@@ -44,7 +43,7 @@ protected:
 
     void AddDefault_INT(HashSet(INT) & HashSet)
     {
-        for (int i = 0; i < NUMBER; ++i) { EXPECT_TRUE(HashSet_Add(INT, &HashSet, i)); }
+        for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(HashSet_Add(INT, &HashSet, i), Success); }
     }
 
     void AddDefault_STU(HashSet(STU) & HashSet)
@@ -54,7 +53,7 @@ protected:
         {
             stu.ID  = i;
             stu.age = i % 18;
-            EXPECT_TRUE(HashSet_Add(STU, &HashSet, stu));
+            EXPECT_EQ(HashSet_Add(STU, &HashSet, stu), Success);
         }
     }
 };
@@ -64,7 +63,7 @@ TEST_F(HashSetTest, Add)
 {
     AddDefault_INT(HashSet_int);
     EXPECT_EQ(HashSet_GetSize(&HashSet_int), NUMBER);
-    for (int i = 0; i < NUMBER; ++i) { EXPECT_FALSE(HashSet_Add(INT, &HashSet_int, i)); }
+    for (int i = 0; i < NUMBER; ++i) { EXPECT_EQ(HashSet_Add(INT, &HashSet_int, i), KeyDuplicated); }
 
     AddDefault_STU(HashSet_stu);
     EXPECT_EQ(HashSet_GetSize(&HashSet_stu), NUMBER);
@@ -73,7 +72,7 @@ TEST_F(HashSetTest, Add)
         Student stu;
         stu.ID  = i;
         stu.age = i % 18;
-        EXPECT_FALSE(HashSet_Add(STU, &HashSet_stu, stu));
+        EXPECT_EQ(HashSet_Add(STU, &HashSet_stu, stu), KeyDuplicated);
     }
 }
 
