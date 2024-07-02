@@ -77,7 +77,7 @@
         else                                                                                                                                                      \
         {                                                                                                                                                         \
             int MinCapacity = OldCapacity + MinGrowth;                                                                                                            \
-            if (MinCapacity < 0) return MemoryOverflow; /*Overflow*/                                                                                            \
+            if (MinCapacity < 0) return MemoryOverflow; /*Overflow*/                                                                                              \
             else if (MinCapacity <= SOFT_MAX_ARRAYLIST_CAPACITY)                                                                                                  \
             {                                                                                                                                                     \
                 *Result = SOFT_MAX_ARRAYLIST_CAPACITY;                                                                                                            \
