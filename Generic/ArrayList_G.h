@@ -77,7 +77,7 @@
         else                                                                                                                                                      \
         {                                                                                                                                                         \
             int MinCapacity = OldCapacity + MinGrowth;                                                                                                            \
-            if (MinCapacity < 0) return MemoryOverflow; /*Overflow*/                                                                                              \
+            if (MinCapacity < 0) return MemoryOverflow; /* Overflow */                                                                                            \
             else if (MinCapacity <= SOFT_MAX_ARRAYLIST_CAPACITY)                                                                                                  \
             {                                                                                                                                                     \
                 *Result = SOFT_MAX_ARRAYLIST_CAPACITY;                                                                                                            \
@@ -122,7 +122,7 @@
         {                                                                                                                                                         \
             if (Success != ArrayList_##NAME##_Resize(ArrayList, ArrayList->Size + 1)) return MemoryAllocationError;                                               \
         }                                                                                                                                                         \
-        /*move all elements after Index one position to the right*/                                                                                               \
+        /* move all elements after Index one position to the right */                                                                                             \
         memmove(ArrayList->Array + Index + 1, ArrayList->Array + Index, (ArrayList->Size - Index) * sizeof(TYPE));                                                \
         ArrayList->Array[Index] = Data;                                                                                                                           \
         ++ArrayList->Size;                                                                                                                                        \

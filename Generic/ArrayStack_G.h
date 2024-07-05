@@ -18,15 +18,15 @@
 #define SOFT_MAX_ARRAYSTACK_CAPACITY (INT_MAX - 8)
 
 
-#define ARRAYSTACK_TYPE(NAME, TYPE)                 \
-    typedef struct ArrayStack_##NAME                \
-    {                                               \
-        /*Array of the elements*/                   \
-        TYPE* Array;                                \
-        /*The capacity of the Array*/               \
-        int Capacity;                               \
-        /*The number of the elements in the array*/ \
-        int Size;                                   \
+#define ARRAYSTACK_TYPE(NAME, TYPE)                   \
+    typedef struct ArrayStack_##NAME                  \
+    {                                                 \
+        /* Array of the elements */                   \
+        TYPE* Array;                                  \
+        /* The capacity of the Array */               \
+        int Capacity;                                 \
+        /* The number of the elements in the array */ \
+        int Size;                                     \
     } ArrayStack_##NAME;
 
 

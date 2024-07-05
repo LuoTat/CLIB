@@ -24,17 +24,17 @@
 // #define SUB(Head, Tail, Capacity)    (((Tail) - (Head) + (Capacity)) % (Capacity))    // 同余类减法
 
 
-#define ARRAYDEQUE_TYPE(NAME, TYPE)       \
-    typedef struct ArrayDeque_##NAME      \
-    {                                     \
-        /*Array of the elements*/         \
-        TYPE* Array;                      \
-        /*The capacity of the Array*/     \
-        int Capacity;                     \
-        /*The index of the head element*/ \
-        int Head;                         \
-        /*The index of the tail element*/ \
-        int Tail;                         \
+#define ARRAYDEQUE_TYPE(NAME, TYPE)         \
+    typedef struct ArrayDeque_##NAME        \
+    {                                       \
+        /* Array of the elements */         \
+        TYPE* Array;                        \
+        /* The capacity of the Array */     \
+        int Capacity;                       \
+        /* The index of the head element */ \
+        int Head;                           \
+        /* The index of the tail element */ \
+        int Tail;                           \
     } ArrayDeque_##NAME;
 
 
@@ -67,7 +67,7 @@
         int MinCapacity;                                                                                                                                        \
         if ((MinCapacity = OldCapacity + Needed) - SOFT_MAX_ARRAYDEQUE_CAPACITY > 0)                                                                            \
         {                                                                                                                                                       \
-            if (unlikely(MinCapacity < 0)) return MemoryOverflow; /*Overflow*/                                                                                  \
+            if (unlikely(MinCapacity < 0)) return MemoryOverflow; /* Overflow */                                                                                \
             else                                                                                                                                                \
             {                                                                                                                                                   \
                 *Result = INT_MAX;                                                                                                                              \
@@ -86,7 +86,7 @@
     {                                                                                                                                                           \
         int OldCapacity = ArrayDeque->Capacity;                                                                                                                 \
         int NewCapacity;                                                                                                                                        \
-        int Jump = (OldCapacity < 64) ? (OldCapacity + 2) : (OldCapacity >> 1); /*Jump is the increment*/                                                       \
+        int Jump = (OldCapacity < 64) ? (OldCapacity + 2) : (OldCapacity >> 1); /* Jump is the increment */                                                     \
         if (Jump < Needed || (NewCapacity = OldCapacity + Jump) - SOFT_MAX_ARRAYDEQUE_CAPACITY > 0)                                                             \
         {                                                                                                                                                       \
             if (Success != ArrayDeque_##NAME##_newCapacity(OldCapacity, Needed, Jump, &NewCapacity)) return MemoryOverflow;                                     \
@@ -97,7 +97,7 @@
         ArrayDeque->Capacity = NewCapacity;                                                                                                                     \
         int Head             = ArrayDeque->Head;                                                                                                                \
         int Tail             = ArrayDeque->Tail;                                                                                                                \
-        /*if Tail<=Head, move the elements to the new space*/                                                                                                   \
+        /* if Tail<=Head, move the elements to the new space */                                                                                                 \
         if (Tail <= Head)                                                                                                                                       \
         {                                                                                                                                                       \
             int NewSpace = NewCapacity - OldCapacity;                                                                                                           \
