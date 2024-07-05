@@ -251,15 +251,15 @@ static void unordered_set_stu_Contains_Test(benchmark::State& state)
 }
 
 BENCHMARK(HashSet_int_Add_Test)->Arg(NUMBERS);
-BENCHMARK(HashSet_int_Delete_Test)->Arg(NUMBERS);
-BENCHMARK(HashSet_int_Contains_Test)->Arg(NUMBERS);
-BENCHMARK(HashSet_stu_Add_Test)->Arg(NUMBERS);
-BENCHMARK(HashSet_stu_Delete_Test)->Arg(NUMBERS);
-BENCHMARK(HashSet_stu_Contains_Test)->Arg(NUMBERS);
 BENCHMARK(unordered_set_int_Add_Test)->Arg(NUMBERS);
+BENCHMARK(HashSet_int_Delete_Test)->Arg(NUMBERS);
 BENCHMARK(unordered_set_int_Delete_Test)->Arg(NUMBERS);
+BENCHMARK(HashSet_int_Contains_Test)->Arg(NUMBERS);
 BENCHMARK(unordered_set_int_Contains_Test)->Arg(NUMBERS);
+BENCHMARK(HashSet_stu_Add_Test)->Arg(NUMBERS);
 BENCHMARK(unordered_set_stu_Add_Test)->Arg(NUMBERS);
+BENCHMARK(HashSet_stu_Delete_Test)->Arg(NUMBERS);
 BENCHMARK(unordered_set_stu_Delete_Test)->Arg(NUMBERS);
+BENCHMARK(HashSet_stu_Contains_Test)->Arg(NUMBERS);
 BENCHMARK(unordered_set_stu_Contains_Test)->Arg(NUMBERS);
 BENCHMARK_MAIN();
