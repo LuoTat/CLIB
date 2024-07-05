@@ -11,8 +11,8 @@
     Mode == 5 //有很多相同元素的数组
     Mode == 6 //16个元素的小数组
 */
-#define Mode   3
-#define NUMBER 1000000
+#define Mode    3
+#define NUMBERS 1000000
 static int Min;
 static int Max;
 // kNanosecond kMicrosecond kMillisecond kSecond
@@ -45,8 +45,8 @@ LTT_SORT_CMP_INIT(INT, int, INTCMP);
 #define INTKEY(a) (*(a))
 LTT_SORT_INT_INIT(INT, int, INTKEY);
 
-int* Array     = new int[NUMBER];
-int* ArrayCopy = new int[NUMBER];
+int* Array     = new int[NUMBERS];
+int* ArrayCopy = new int[NUMBERS];
 
 static LTT_unused void GetTheRandomNonRepeatingArray(int* array, int NumOfElements)
 {
@@ -61,37 +61,37 @@ static LTT_unused void GetTheRandomNonRepeatingArray(int* array, int NumOfElemen
 static void SetArray()
 {
 #if Mode == 1      // 顺序数组
-    for (int i = 0; i < NUMBER; ++i) Array[i] = i;
+    for (int i = 0; i < NUMBERS; ++i) Array[i] = i;
     Min = 0;
-    Max = NUMBER - 1;
+    Max = NUMBERS - 1;
 #elif Mode == 2    // 逆序数组
-    for (int i = 0; i < NUMBER; ++i) Array[i] = NUMBER - i - 1;
+    for (int i = 0; i < NUMBERS; ++i) Array[i] = NUMBERS - i - 1;
     Min = 0;
-    Max = NUMBER - 1;
+    Max = NUMBERS - 1;
 #elif Mode == 3    // 普通随机数组
-    std::random_device                 rd;                      // 使用随机设备种子
-    std::default_random_engine         eng(rd());               // 随机数引擎
-    std::uniform_int_distribution<int> distr(0, NUMBER - 1);    // 定义分布范围
-    for (int i = 0; i < NUMBER; ++i) Array[i] = distr(eng);
+    std::random_device                 rd;                       // 使用随机设备种子
+    std::default_random_engine         eng(rd());                // 随机数引擎
+    std::uniform_int_distribution<int> distr(0, NUMBERS - 1);    // 定义分布范围
+    for (int i = 0; i < NUMBERS; ++i) Array[i] = distr(eng);
     Min = 0;
-    Max = NUMBER - 1;
+    Max = NUMBERS - 1;
 #elif Mode == 4    // 无相同元素的乱序数组
-    GetTheRandomNonRepeatingArray(Array, NUMBER);
+    GetTheRandomNonRepeatingArray(Array, NUMBERS);
     Min = 0;
-    Max = NUMBER - 1;
+    Max = NUMBERS - 1;
 #elif Mode == 5    // 有很多相同元素的数组
     std::random_device                 rd;               // 使用随机设备种子
     std::default_random_engine         eng(rd());        // 随机数引擎
     std::uniform_int_distribution<int> distr(0, 100);    // 定义分布范围
-    for (int i = 0; i < NUMBER; ++i) Array[i] = distr(eng);
+    for (int i = 0; i < NUMBERS; ++i) Array[i] = distr(eng);
     Min = 0;
     Max = 100;
 #elif Mode == 6    // 16个元素的小数组
-    #undef NUMBER
-    #define NUMBER 16
-    GetTheRandomNonRepeatingArray(Array, NUMBER);
+    #undef NUMBERS
+    #define NUMBERS 16
+    GetTheRandomNonRepeatingArray(Array, NUMBERS);
     Min = 0;
-    Max = NUMBER - 1;
+    Max = NUMBERS - 1;
 #endif
 }
 
@@ -101,9 +101,9 @@ static LTT_unused void InsertionSort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        InsertionSort(INT, ArrayCopy, NUMBER);
+        InsertionSort(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -113,9 +113,9 @@ static LTT_unused void BinaryInsertionSort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        BinaryInsertionSort(INT, ArrayCopy, NUMBER);
+        BinaryInsertionSort(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -125,9 +125,9 @@ static LTT_unused void ShellInsertionSort_Hibbard_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        ShellInsertionSort_Hibbard(INT, ArrayCopy, NUMBER);
+        ShellInsertionSort_Hibbard(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -137,9 +137,9 @@ static LTT_unused void ShellInsertionSort_Sedgewick_Test(benchmark::State& state
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        ShellInsertionSort_Sedgewick(INT, ArrayCopy, NUMBER);
+        ShellInsertionSort_Sedgewick(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -149,9 +149,9 @@ static LTT_unused void BubbleSort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        BubbleSort(INT, ArrayCopy, NUMBER);
+        BubbleSort(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -161,9 +161,9 @@ static LTT_unused void CockTailSort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        CockTailSort(INT, ArrayCopy, NUMBER);
+        CockTailSort(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -173,9 +173,9 @@ static LTT_unused void QuickSort_glibc_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        QuickSort_glibc(INT, ArrayCopy, NUMBER);
+        QuickSort_glibc(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -185,9 +185,9 @@ static LTT_unused void QuickSort_LTT_libstdcpp_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        QuickSort_LTT_libstdcpp(INT, ArrayCopy, NUMBER);
+        QuickSort_LTT_libstdcpp(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -197,9 +197,9 @@ static LTT_unused void SimpleSelectionSort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        SimpleSelectionSort(INT, ArrayCopy, NUMBER);
+        SimpleSelectionSort(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -209,9 +209,9 @@ static LTT_unused void MergeSort_Recursion_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        MergeSort_Recursion(INT, ArrayCopy, NUMBER);
+        MergeSort_Recursion(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -221,9 +221,9 @@ static LTT_unused void MergeSort_Iterative_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        MergeSort_Iterative(INT, ArrayCopy, NUMBER);
+        MergeSort_Iterative(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -233,9 +233,9 @@ static LTT_unused void MergeSort_Inplace_Iterative_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        MergeSort_Inplace_Iterative(INT, ArrayCopy, NUMBER);
+        MergeSort_Inplace_Iterative(INT, ArrayCopy, NUMBERS);
     }
 }
 
@@ -245,9 +245,9 @@ static LTT_unused void MergeSort_Inplace_Iterative_For_Int_Test(benchmark::State
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        MergeSort_Inplace_Iterative_For_Int(ArrayCopy, NUMBER);
+        MergeSort_Inplace_Iterative_For_Int(ArrayCopy, NUMBERS);
     }
 }
 
@@ -257,9 +257,9 @@ static LTT_unused void PigeonholeSort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        PigeonholeSort(INT, ArrayCopy, Min, Max, NUMBER);
+        PigeonholeSort(INT, ArrayCopy, Min, Max, NUMBERS);
     }
 }
 
@@ -269,9 +269,9 @@ static LTT_unused void CountingSort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        CountingSort(INT, ArrayCopy, Min, Max, NUMBER);
+        CountingSort(INT, ArrayCopy, Min, Max, NUMBERS);
     }
 }
 
@@ -281,9 +281,9 @@ static LTT_unused void TallySort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        TallySort(ArrayCopy, Min, Max, NUMBER);
+        TallySort(ArrayCopy, Min, Max, NUMBERS);
     }
 }
 
@@ -293,9 +293,9 @@ static LTT_unused void qsort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        qsort(ArrayCopy, NUMBER, sizeof(int), [](const void* a, const void* b) -> int { return (*(int*)a - *(int*)b); });
+        qsort(ArrayCopy, NUMBERS, sizeof(int), [](const void* a, const void* b) -> int { return (*(int*)a - *(int*)b); });
     }
 }
 
@@ -305,9 +305,9 @@ static LTT_unused void sort_Test(benchmark::State& state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::copy(Array, Array + NUMBER, ArrayCopy);
+        std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        std::sort(ArrayCopy, ArrayCopy + NUMBER);
+        std::sort(ArrayCopy, ArrayCopy + NUMBERS);
     }
 }
 
