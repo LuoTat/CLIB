@@ -26,7 +26,7 @@ LTT_HASHSET_INT_INIT(INT);
 
 LTT_HASHSET_INIT(STU, Student, Student_Hash_Function, Student_Equals_Function);
 
-#define NUMBERS       100000
+#define NUMBERS 100000
 
 // 测试HashSet_int Add性能
 static void HashSet_int_Add_Test(benchmark::State& state)
@@ -198,7 +198,7 @@ static void unordered_set_stu_Add_Test(benchmark::State& state)
     }
 }
 
-// 测试unordered_set_int Delete性能
+// 测试unordered_set_stu Delete性能
 static void unordered_set_stu_Delete_Test(benchmark::State& state)
 {
     std::unordered_set<Student, StudentHash, StudentEqual> unordered_set_stu;
@@ -224,7 +224,7 @@ static void unordered_set_stu_Delete_Test(benchmark::State& state)
     }
 }
 
-// 测试unordered_set_int Contains性能
+// 测试unordered_set_stu Contains性能
 static void unordered_set_stu_Contains_Test(benchmark::State& state)
 {
     std::unordered_set<Student, StudentHash, StudentEqual> unordered_set_stu;
