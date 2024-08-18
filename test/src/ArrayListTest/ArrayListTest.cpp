@@ -1,6 +1,6 @@
+#include "ArrayList_G.h"
 #include <gtest/gtest.h>
 #include <vector>
-#include "ArrayList_G.h"
 
 // 定义比较函数
 #define INTCMP(a, b) ((a) == (b))

@@ -1,7 +1,7 @@
+#include "ArrayStack_G.h"
 #include <benchmark/benchmark.h>
 #include <random>
 #include <stack>
-#include "ArrayStack_G.h"
 
 #define INTCMP(a, b) ((a) == (b))
 LTT_ARRAYSTACK_INIT(INT, int, INTCMP)

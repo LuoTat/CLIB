@@ -1,7 +1,7 @@
+#include "BSTree.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "BSTree.h"
 
 #define Mode       1
 #define NodeNum    1000000

@@ -1,7 +1,7 @@
+#include "ArrayList_G.h"
 #include <benchmark/benchmark.h>
 #include <random>
 #include <vector>
-#include "ArrayList_G.h"
 
 #define INTCMP(a, b) ((a) == (b))
 LTT_ARRAYLIST_INIT(INT, int, INTCMP)

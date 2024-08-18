@@ -1,12 +1,12 @@
 #include "BSTree.h"
-#include <float.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "ArrayStack.h"
 #include "BSTreeUtils.h"
 #include "BinaryTree.h"
 #include "_BinaryTree.h"
+#include <float.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 BSTree* LTT_BSTree_New(const size_t DataSize, const CompareFunction Comparator)
 {

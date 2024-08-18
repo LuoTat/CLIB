@@ -1,7 +1,7 @@
+#include "ArrayDeque_G.h"
 #include <benchmark/benchmark.h>
 #include <deque>
 #include <random>
-#include "ArrayDeque_G.h"
 
 #define INTCMP(a, b) ((a) == (b))
 LTT_ARRAYDEQUE_INIT(INT, int, INTCMP)

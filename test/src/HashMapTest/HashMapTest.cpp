@@ -1,9 +1,9 @@
+#include "HashMap.h"
+#include <map>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <map>
 #include <unordered_map>
-#include "HashMap.h"
 
 
 using namespace std;

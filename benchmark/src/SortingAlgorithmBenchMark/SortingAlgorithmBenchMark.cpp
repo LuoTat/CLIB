@@ -1,7 +1,7 @@
-#include <benchmark/benchmark.h>
-#include <algorithm>
-#include <random>
 #include "SortingAlgorithm_G.h"
+#include <algorithm>
+#include <benchmark/benchmark.h>
+#include <random>
 
 /*
     Mode == 1 //顺序数组
@@ -295,7 +295,8 @@ static LTT_unused void qsort_Test(benchmark::State& state)
         state.PauseTiming();
         std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
-        qsort(ArrayCopy, NUMBERS, sizeof(int), [](const void* a, const void* b) -> int { return (*(int*)a - *(int*)b); });
+        qsort(ArrayCopy, NUMBERS, sizeof(int), [](const void* a, const void* b) -> int
+        { return (*(int*)a - *(int*)b); });
     }
 }
 

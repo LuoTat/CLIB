@@ -1,7 +1,7 @@
 #include "BinaryTree.h"
+#include "BinaryTreeUtils.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "BinaryTreeUtils.h"
 
 BinaryTreeNode Node_NULL = {NULL, 0, NULL};
 

@@ -16,8 +16,8 @@
  **************************************************************************
 */
 
-#include <stddef.h>
 #include "Generic_tool.h"
+#include <stddef.h>
 
 static LTT_inline LTT_unused unsigned int RSHash(const char* str, size_t len)
 {

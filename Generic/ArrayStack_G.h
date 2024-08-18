@@ -2,9 +2,9 @@
     这个ArrayStack采用懒加载的方式，只有在需要的时候才会分配内存，这样可以节省内存空间
 */
 #pragma once
+#include "Generic_tool.h"
 #include <limits.h>
 #include <stdlib.h>
-#include "Generic_tool.h"
 
 // ----------------------------------------------------------------------------------------
 // Benchmark                                              Time             CPU   Iterations

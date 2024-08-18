@@ -1,8 +1,8 @@
 #pragma once
+#include "Generic_tool.h"
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Generic_tool.h"
 
 
 // ----------------------------------------------------------------------------------------------

@@ -11,8 +11,7 @@ Status StrAssign(SqString* SqStringPointer, const char* Chars)
     if (SqStringPointer->String) free(SqStringPointer->String);
     int         Length = 0;
     const char* c      = Chars;
-    for (Length, c; *c; ++Length, ++c)
-        ;
+    for (Length, c; *c; ++Length, ++c);
     if (!Length)
     {
         SqStringPointer->String = NULL;

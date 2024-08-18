@@ -5,6 +5,15 @@
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
+// 用于导出静态函数
+#ifndef LTT_extern
+    #ifdef MAKE_LIBFUNC_GLOBAL
+        #define LTT_static extern
+    #else
+        #define LTT_static static
+    #endif
+#endif /* LTT_static */
+
 // 用于定义内联函数
 #ifndef LTT_inline
     #ifdef _MSC_VER

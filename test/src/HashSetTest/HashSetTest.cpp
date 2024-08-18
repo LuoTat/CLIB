@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include "HashSet_G.h"
+#include <gtest/gtest.h>
 
 typedef struct Student
 {

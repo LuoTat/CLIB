@@ -8,7 +8,7 @@ extern "C"
 #endif
     typedef struct _ArrayQueue ArrayQueue;
 
-    
+
     // 初始化队列
     ArrayQueue* LTT_ArrayQueue_New(const size_t DataSize, Equals_Function Equals);
     // 插入元素

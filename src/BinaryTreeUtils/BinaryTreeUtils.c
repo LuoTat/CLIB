@@ -1,8 +1,8 @@
 #include "BinaryTreeUtils.h"
-#include <stdlib.h>
 #include "ArrayQueue.h"
 #include "ArrayStack.h"
 #include "BinaryTree.h"
+#include <stdlib.h>
 
 void LTT_BiTreeUtils_DeleteSubTree(BinaryTreeNode** Root)
 {

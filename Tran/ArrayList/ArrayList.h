@@ -8,7 +8,7 @@ extern "C"
 #endif
     typedef struct _ArrayList ArrayList;
 
-    
+
     // 初始化数组，采用赖加载，只有在第一次使用的时候才会初始化
     ArrayList* LTT_ArrayList_New(const size_t DataSize, Equals_Function Equals);
     // 尾部插入元素

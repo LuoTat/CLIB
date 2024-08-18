@@ -8,7 +8,7 @@ extern "C"
 #endif
     typedef struct _LinkedList LinkedList;
 
-    
+
     // 初始化链表
     LinkedList* LTT_LinkedList_New(const size_t DataSize, Equals_Function Equals);
     // 头部添加元素

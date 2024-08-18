@@ -1,8 +1,8 @@
 #include "ArrayStack.h"
+#include "Predefined.h"
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "Predefined.h"
 
 
 #define DEFAULT_ARRAYSTACK_CAPACITY  (16)

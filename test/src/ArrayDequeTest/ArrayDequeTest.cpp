@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-#include <deque>
 #include "ArrayDeque_G.h"
+#include <deque>
+#include <gtest/gtest.h>
 
 // 定义比较函数
 #define INTCMP(a, b) ((a) == (b))

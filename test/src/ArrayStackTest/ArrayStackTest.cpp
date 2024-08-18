@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include "ArrayStack_G.h"
+#include <gtest/gtest.h>
 
 // 定义比较函数
 #define INTCMP(a, b) ((a) == (b))

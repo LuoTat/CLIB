@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-#include <algorithm>
-#include <random>
 #include "SortingAlgorithm_G.h"
+#include <algorithm>
+#include <gtest/gtest.h>
+#include <random>
 
 /*
     Mode == 1 //顺序数组

@@ -1,6 +1,6 @@
 #pragma once
-#include <stdlib.h>
 #include "Generic_tool.h"
+#include <stdlib.h>
 
 // -------------------------------------------------------------------------------
 // Benchmark                                     Time             CPU   Iterations

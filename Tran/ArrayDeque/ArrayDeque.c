@@ -5,19 +5,19 @@
 
 #define DEFAULT_ARRAYDEQUE_CAPACITY (16 + 1)
 #define MAX_ARRAYDEQUE_CAPACITY     (INT_MAX - 8)
-#define INC(Head, Capacity)         (((Head) + 1LL) % (Capacity))                 // 同余类+1
+#define INC(Head, Capacity)         (((Head) + 1LL) % (Capacity))                   // 同余类+1
 #define DEC(Head, Capacity)         (((Head) + ((Capacity) - 1LL)) % (Capacity))    // 同余类-1
 
 typedef struct _ArrayDeque
 {
-    void**          Array;                                                    // 数组,装的是元素的地址
-    int             Head;                                                     // 头部元素的下标
-    int             Tail;                                                     // 尾部元素的下标
-    int             Size;                                                     // 当前元素个数
-    int             Capacity;                                                 // 数组容量
+    void**          Array;                                                          // 数组,装的是元素的地址
+    int             Head;                                                           // 头部元素的下标
+    int             Tail;                                                           // 尾部元素的下标
+    int             Size;                                                           // 当前元素个数
+    int             Capacity;                                                       // 数组容量
     size_t          DataSize;
-    Iterator        Iterator;                                                 // 迭代器
-    Equals_Function Equals;                                                   // 比较函数
+    Iterator        Iterator;                                                       // 迭代器
+    Equals_Function Equals;                                                         // 比较函数
 } _ArrayDeque;
 
 void* LTT_ArrayDeque_GetCurrent(const Iterator* const IP) { return *(void**)IP->Current; }

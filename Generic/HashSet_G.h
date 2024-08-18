@@ -1,10 +1,10 @@
 #pragma once
+#include "GeneralHashFunctions.h"
+#include "Generic_tool.h"
 #include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include "GeneralHashFunctions.h"
-#include "Generic_tool.h"
 
 /*
  * The default initial capacity - MUST be a power of two.

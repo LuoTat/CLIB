@@ -1,7 +1,7 @@
+#include "AVLTree.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "AVLTree.h"
 
 #define Mode       1
 #define NodeNum    100000000

@@ -70,7 +70,7 @@ Status DestroyDigraph(OLDigraphPointer GP)
     return OK;
 }
 
-void*  GetOLVertex(OLDigraphPointer GP, OLVertexNodePointer VP) { return (OLVertexNodeExist(GP, VP)) ? VP->Data : NULL; }
+void* GetOLVertex(OLDigraphPointer GP, OLVertexNodePointer VP) { return (OLVertexNodeExist(GP, VP)) ? VP->Data : NULL; }
 
 Status PutOLVertex(OLDigraphPointer GP, OLVertexNodePointer VP, void* Data, size_t DataSize)
 {
@@ -628,8 +628,8 @@ Status ShortestPath_OL_Dijkstra(OLDigraph G, int Vid)
 
 Status ShortestPath_OL_Bellman_Ford(OLDigraph G, int Vid)
 {
-    int*            Distance    = (int*)calloc(G.OLVertexNum + 1, sizeof(int));
-    int*            Path        = (int*)calloc(G.OLVertexNum + 1, sizeof(int));
+    int* Distance               = (int*)calloc(G.OLVertexNum + 1, sizeof(int));
+    int* Path                   = (int*)calloc(G.OLVertexNum + 1, sizeof(int));
     //将所有的Arc全部提取出来
     ArcNodePointer* AllArcArray = (ArcNodePointer*)malloc((G.ArcNum + 1) * sizeof(ArcNodePointer));
     int             Count       = 0;

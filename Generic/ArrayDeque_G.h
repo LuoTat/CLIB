@@ -1,8 +1,8 @@
 #pragma once
+#include "Generic_tool.h"
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Generic_tool.h"
 
 
 // ------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@
     extern void ArrayDeque_##NAME##_Destroy(ArrayDeque_##NAME* ArrayDeque);
 
 
-#define ARRAYDEQUE_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                                                     \
+#define ARRAYDEQUE_IMPL(NAME, TYPE, Equals_Function, SCOPE)                                                                                                     \
     SCOPE CODE ArrayDeque_##NAME##_Init(ArrayDeque_##NAME* ArrayDeque)                                                                                          \
     {                                                                                                                                                           \
         ArrayDeque->Array = (TYPE*)malloc((DEFAULT_ARRAYDEQUE_CAPACITY + 1) * sizeof(TYPE));                                                                    \
@@ -62,7 +62,7 @@
         ArrayDeque->Head = ArrayDeque->Tail = 0;                                                                                                                \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
-    SCOPE CODE ArrayDeque_##NAME##_newCapacity(const int OldCapacity, const int Needed, const int Jump, int* const Result)                                      \
+    SCOPE static CODE ArrayDeque_##NAME##_newCapacity(const int OldCapacity, const int Needed, const int Jump, int* const Result)                               \
     {                                                                                                                                                           \
         int MinCapacity;                                                                                                                                        \
         if ((MinCapacity = OldCapacity + Needed) - SOFT_MAX_ARRAYDEQUE_CAPACITY > 0)                                                                            \
@@ -82,7 +82,7 @@
         *Result = (OldCapacity + Jump - SOFT_MAX_ARRAYDEQUE_CAPACITY < 0) ? OldCapacity + Jump : SOFT_MAX_ARRAYDEQUE_CAPACITY;                                  \
         return Success;                                                                                                                                         \
     }                                                                                                                                                           \
-    SCOPE CODE ArrayDeque_##NAME##_Resize(ArrayDeque_##NAME* const ArrayDeque, const int Needed)                                                                \
+    SCOPE static CODE ArrayDeque_##NAME##_Resize(ArrayDeque_##NAME* const ArrayDeque, const int Needed)                                                         \
     {                                                                                                                                                           \
         int OldCapacity = ArrayDeque->Capacity;                                                                                                                 \
         int NewCapacity;                                                                                                                                        \
@@ -179,9 +179,9 @@
     ARRAYDEQUE_PROTOTYPES(NAME, TYPE)
 
 
-#define ARRAYDEQUE_INIT(NAME, TYPE, SCOPE, Equals_Function) \
+#define ARRAYDEQUE_INIT(NAME, TYPE, Equals_Function, SCOPE) \
     ARRAYDEQUE_TYPE(NAME, TYPE)                             \
-    ARRAYDEQUE_IMPL(NAME, TYPE, SCOPE, Equals_Function)
+    ARRAYDEQUE_IMPL(NAME, TYPE, Equals_Function, SCOPE)
 
 // 内联函数
 // 同余类+1
@@ -305,7 +305,7 @@ static LTT_inline LTT_unused int SUB(int Head, int Tail, int Capacity) { return 
 #define ArrayDeque_Destroy(NAME, ArrayDeque)             ArrayDeque_##NAME##_Destroy((ArrayDeque))
 
 // Function implementation
-#define LTT_ARRAYDEQUE_INIT(NAME, TYPE, Equals_Function) ARRAYDEQUE_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_ARRAYDEQUE_INIT(NAME, TYPE, Equals_Function) ARRAYDEQUE_INIT(NAME, TYPE, Equals_Function, LTT_unused LTT_inline LTT_static)
 
 // Function declaration
 #define LTT_ARRAYSTACK_DECLARE(NAME, TYPE)               ARRAYDEQUE_DECLARE(NAME, TYPE)

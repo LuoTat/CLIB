@@ -1,7 +1,7 @@
 #include "UnionFindSet.h"
+#include "HashMap.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "HashMap.h"
 
 typedef struct _UnionFindSet
 {

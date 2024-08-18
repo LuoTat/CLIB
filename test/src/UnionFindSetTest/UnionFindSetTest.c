@@ -1,7 +1,7 @@
+#include "UnionFindSet.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "UnionFindSet.h"
 
 #define NUMBER 100000000
 

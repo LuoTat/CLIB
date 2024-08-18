@@ -1,7 +1,7 @@
 #pragma once
+#include "..\Predefined\Predefined.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#include "..\Predefined\Predefined.h"
 
 typedef struct
 {

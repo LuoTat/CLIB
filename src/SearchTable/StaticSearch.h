@@ -1,10 +1,10 @@
 #pragma once
+#include "..\Predefined\Predefined.h"
+#include "..\Tree\BinaryTree.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include "..\Predefined\Predefined.h"
-#include "..\Tree\BinaryTree.h"
 
 typedef struct
 {

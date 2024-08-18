@@ -1,8 +1,8 @@
+#include "LinkedList_G.h"
 #include <benchmark/benchmark.h>
 #include <limits.h>
 #include <list>
 #include <random>
-#include "LinkedList_G.h"
 
 #define INTCMP(a, b) ((a) == (b))
 LTT_LINKEDLIST_INIT(INT, int, INTCMP)

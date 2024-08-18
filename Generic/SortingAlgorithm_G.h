@@ -1,9 +1,9 @@
+#include "Generic_tool.h"
 #include <limits.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Generic_tool.h"
 
 
 // The Macro to control the swap mode

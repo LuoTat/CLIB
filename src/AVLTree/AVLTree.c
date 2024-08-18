@@ -1,7 +1,7 @@
 #include "AVLTree.h"
-#include <stdlib.h>
 #include "BSTreeUtils.h"
 #include "_AVLTreeNode.h"
+#include <stdlib.h>
 
 AVLTree* LTT_AVLTree_New(const size_t DataSize, const CompareFunction Comparator) { return (AVLTree*)LTT_BSTree_New(DataSize, Comparator); }
 

@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "BinaryTree.h"
+#include <stdio.h>
 
 Status PRINT(void* Data)
 {
