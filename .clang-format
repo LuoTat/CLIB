@@ -146,12 +146,12 @@ IntegerLiteralSeparator:
     DecimalMinDigits: 0
     Hex: 0
     HexMinDigits: 0
-JavaScriptQuotes: Leave
+JavaScriptQuotes: Double
 JavaScriptWrapImports: true
 KeepEmptyLinesAtTheStartOfBlocks: false
 KeepEmptyLinesAtEOF: false
-LambdaBodyIndentation: OuterScope
-LineEnding: DeriveLF
+LambdaBodyIndentation: Signature
+LineEnding: LF
 MacroBlockBegin: ""
 MacroBlockEnd: ""
 MaxEmptyLinesToKeep: 4
