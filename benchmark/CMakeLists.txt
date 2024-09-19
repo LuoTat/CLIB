@@ -1,7 +1,7 @@
 # sudo sh -c "echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
 
 # 设置头文件路径
-include_directories(../Generic)
+include_directories(${CMAKE_SOURCE_DIR}/Generic)
 
 # 添加GoogleBenchmark库
 find_package(benchmark REQUIRED)

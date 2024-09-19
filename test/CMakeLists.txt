@@ -1,5 +1,5 @@
 # 设置头文件路径
-include_directories(../Generic)
+include_directories(${CMAKE_SOURCE_DIR}/Generic)
 
 # 添加GoogleTest库
 find_package(GTest REQUIRED)
