@@ -14,7 +14,20 @@
         {
             "id": "EXE",
             "type": "pickString",
-            "options": ["ArrayDequeTest", "ArrayListTest", "ArrayQueueTest", "ArrayStackTest", "AVLTreeTest", "BinaryTreeTest", "BSTreeTest", "HashMapTest", "LinkedListTest", "SortingAlgorithmTest", "UndigraphTest", "UnionFindSet"],
+            "options": [
+                "ArrayDequeTest",
+                "ArrayListTest",
+                "ArrayQueueTest",
+                "ArrayStackTest",
+                "AVLTreeTest",
+                "BinaryTreeTest",
+                "BSTreeTest",
+                "HashMapTest",
+                "LinkedListTest",
+                "SortingAlgorithmTest",
+                "UndigraphTest",
+                "UnionFindSet"
+            ],
             "description": "请选择要调试的程序"
         }
     ]
