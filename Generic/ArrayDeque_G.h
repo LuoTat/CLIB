@@ -8,14 +8,16 @@
 // ------------------------------------------------------------------------------------------------
 // Benchmark                                                      Time             CPU   Iterations
 // ------------------------------------------------------------------------------------------------
-// ArrayDeque_G_AddFirst_Test/100000                          50286 ns        50288 ns        12678
-// deque_AddFirst_Test/100000                                 45831 ns        45833 ns        14588
-// ArrayDeque_G_AddLast_Test/100000                           77435 ns        77408 ns         9004
-// deque_AddLast_Test/100000                                  55905 ns        55846 ns        13702
-// ArrayDeque_G_DeleteFirst_Test/100000/iterations:21474        214 ns          189 ns        21474
-// deque_DeleteFirst_Test/100000                              38704 ns        38707 ns        17942
-// ArrayDeque_G_DeleteLast_Test/100000/iterations:21474         245 ns          224 ns        21474
-// deque_DeleteLast_Test/100000                               41931 ns        41931 ns        17466
+// ArrayDeque_G_AddFirst_Test/100000                          44928 ns        44926 ns        12510
+// deque_AddFirst_Test/100000                                 46131 ns        46130 ns        17694
+// ArrayDeque_G_AddLast_Test/100000                           74393 ns        74386 ns         9230
+// deque_AddLast_Test/100000                                  48245 ns        48244 ns        15590
+// ArrayDeque_G_DeleteFirst_Test/100000/iterations:21474        181 ns          156 ns        21474
+// deque_DeleteFirst_Test/100000                              31585 ns        31585 ns        22037
+// ArrayDeque_G_DeleteLast_Test/100000/iterations:21474         187 ns          164 ns        21474
+// deque_DeleteLast_Test/100000                               33572 ns        33567 ns        20830
+// ArrayDeque_G_random_Test/100000                           415159 ns       415158 ns         1665
+// deque_G_random_Test/100000                                491319 ns       491313 ns         1303
 
 #define DEFAULT_ARRAYDEQUE_CAPACITY  (16)
 #define SOFT_MAX_ARRAYDEQUE_CAPACITY (INT_MAX - 8)
@@ -185,13 +187,13 @@
 
 // 内联函数
 // 同余类+1
-static LTT_inline LTT_unused int INC(int Head, int Capacity) { return (++Head >= Capacity) ? 0 : Head; }
+inline static LTT_UNUSED int INC(int Head, int Capacity) { return (++Head >= Capacity) ? 0 : Head; }
 
 // 同余类-1
-static LTT_inline LTT_unused int DEC(int Head, int Capacity) { return (--Head < 0) ? Capacity - 1 : Head; }
+inline static LTT_UNUSED int DEC(int Head, int Capacity) { return (--Head < 0) ? Capacity - 1 : Head; }
 
 // 同余类减法
-static LTT_inline LTT_unused int SUB(int Head, int Tail, int Capacity) { return ((Tail -= Head) < 0) ? Tail + Capacity : Tail; }
+inline static LTT_UNUSED int SUB(int Head, int Tail, int Capacity) { return ((Tail -= Head) < 0) ? Tail + Capacity : Tail; }
 
 /**
  * @brief Get the ArrayDeque_##NAME struct
@@ -305,7 +307,7 @@ static LTT_inline LTT_unused int SUB(int Head, int Tail, int Capacity) { return 
 #define ArrayDeque_Destroy(NAME, ArrayDeque)             ArrayDeque_##NAME##_Destroy((ArrayDeque))
 
 // Function implementation
-#define LTT_ARRAYDEQUE_INIT(NAME, TYPE, Equals_Function) ARRAYDEQUE_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_ARRAYDEQUE_INIT(NAME, TYPE, Equals_Function) ARRAYDEQUE_INIT(NAME, TYPE, inline static LTT_UNUSED, Equals_Function)
 
 // Function declaration
 #define LTT_ARRAYSTACK_DECLARE(NAME, TYPE)               ARRAYDEQUE_DECLARE(NAME, TYPE)

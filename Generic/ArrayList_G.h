@@ -8,14 +8,16 @@
 // ----------------------------------------------------------------------------------------------
 // Benchmark                                                    Time             CPU   Iterations
 // ----------------------------------------------------------------------------------------------
-// ArrayList_G_AddFirst_Test/100000                     202540793 ns    202454596 ns            3
-// vector_AddFirst_Test/100000                          203211509 ns    203190876 ns            3
-// ArrayList_G_AddLast_Test/100000                          48800 ns        48796 ns        14471
-// vector_AddLast_Test/100000                               23979 ns        23977 ns        29279
-// ArrayList_G_DeleteFirst_Test/100000                  199706999 ns    199646427 ns            3
-// vector_DeleteFirst_Test/100000                       209752662 ns    209680216 ns            3
-// ArrayList_G_DeleteLast_Test/100000/iterations:21474        176 ns          158 ns        21474
-// vector_DeleteLast_Test/100000/iterations:21474             156 ns          140 ns        21474
+// ArrayList_G_AddFirst_Test/100000                     198505195 ns    198501648 ns            4
+// vector_AddFirst_Test/100000                          170095377 ns    170089711 ns            4
+// ArrayList_G_AddLast_Test/100000                          45929 ns        45926 ns        16141
+// vector_AddLast_Test/100000                               21016 ns        21015 ns        30598
+// ArrayList_G_DeleteFirst_Test/100000                  180084810 ns    180067790 ns            4
+// vector_DeleteFirst_Test/100000                       178856172 ns    178853067 ns            4
+// ArrayList_G_DeleteLast_Test/100000/iterations:21474        160 ns          142 ns        21474
+// vector_DeleteLast_Test/100000/iterations:21474             146 ns          129 ns        21474
+// ArrayList_G_random_Test/100000                         1170552 ns      1170549 ns          579
+// vector_random_Test/100000                              1244941 ns      1244938 ns          507
 
 #define DEFAULT_ARRAYLIST_CAPACITY  (16)
 #define SOFT_MAX_ARRAYLIST_CAPACITY (INT_MAX - 8)
@@ -404,7 +406,7 @@
 #define ArrayList_Destroy(NAME, ArrayList)                       ArrayList_##NAME##_Destroy((ArrayList))
 
 // Function implementation
-#define LTT_ARRAYLIST_INIT(NAME, TYPE, Equals_Function)          ARRAYLIST_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_ARRAYLIST_INIT(NAME, TYPE, Equals_Function)          ARRAYLIST_INIT(NAME, TYPE, inline static LTT_UNUSED, Equals_Function)
 
 // Function declaration
 #define LTT_ARRAYLIST_DECLARE(NAME, TYPE)                        ARRAYLIST_DECLARE(NAME, TYPE)

@@ -441,7 +441,7 @@
 #define LinkedList_Destroy(NAME, LinkedList)                       LinkedList_##NAME##_Destroy((LinkedList))
 
 // Function implementation
-#define LTT_LINKEDLIST_INIT(NAME, TYPE, Equals_Function)           LINKEDLIST_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_LINKEDLIST_INIT(NAME, TYPE, Equals_Function)           LINKEDLIST_INIT(NAME, TYPE, inline static LTT_UNUSED, Equals_Function)
 
 // Function declaration
 #define LTT_LINKEDLIST_DECLARE(NAME, TYPE)                         LINKEDLIST_DECLARE(NAME, TYPE)

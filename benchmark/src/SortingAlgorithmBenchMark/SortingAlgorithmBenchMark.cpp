@@ -48,7 +48,7 @@ LTT_SORT_INT_INIT(INT, int, INTKEY);
 int* Array     = new int[NUMBERS];
 int* ArrayCopy = new int[NUMBERS];
 
-static LTT_unused void GetTheRandomNonRepeatingArray(int* array, int NumOfElements)
+static LTT_UNUSED void GetTheRandomNonRepeatingArray(int* array, int NumOfElements)
 {
     for (int i = 0; i < NumOfElements; ++i) { array[i] = i; }
     // 创建随机数生成器
@@ -96,7 +96,7 @@ static void SetArray()
 }
 
 // 测试InsertionSort性能
-static LTT_unused void InsertionSort_Test(benchmark::State& state)
+static LTT_UNUSED void InsertionSort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -108,7 +108,7 @@ static LTT_unused void InsertionSort_Test(benchmark::State& state)
 }
 
 // 测试BinaryInsertionSort性能
-static LTT_unused void BinaryInsertionSort_Test(benchmark::State& state)
+static LTT_UNUSED void BinaryInsertionSort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -120,7 +120,7 @@ static LTT_unused void BinaryInsertionSort_Test(benchmark::State& state)
 }
 
 // 测试ShellInsertionSort_Hibbard性能
-static LTT_unused void ShellInsertionSort_Hibbard_Test(benchmark::State& state)
+static LTT_UNUSED void ShellInsertionSort_Hibbard_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -132,7 +132,7 @@ static LTT_unused void ShellInsertionSort_Hibbard_Test(benchmark::State& state)
 }
 
 // 测试ShellInsertionSort_Sedgewick性能
-static LTT_unused void ShellInsertionSort_Sedgewick_Test(benchmark::State& state)
+static LTT_UNUSED void ShellInsertionSort_Sedgewick_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -144,7 +144,7 @@ static LTT_unused void ShellInsertionSort_Sedgewick_Test(benchmark::State& state
 }
 
 // 测试BubbleSort性能
-static LTT_unused void BubbleSort_Test(benchmark::State& state)
+static LTT_UNUSED void BubbleSort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -156,7 +156,7 @@ static LTT_unused void BubbleSort_Test(benchmark::State& state)
 }
 
 // 测试CockTailSort性能
-static LTT_unused void CockTailSort_Test(benchmark::State& state)
+static LTT_UNUSED void CockTailSort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -168,7 +168,7 @@ static LTT_unused void CockTailSort_Test(benchmark::State& state)
 }
 
 // 测试QuickSort_glibc性能
-static LTT_unused void QuickSort_glibc_Test(benchmark::State& state)
+static LTT_UNUSED void QuickSort_glibc_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -180,7 +180,7 @@ static LTT_unused void QuickSort_glibc_Test(benchmark::State& state)
 }
 
 // 测试QuickSort_LTT_libstdcpp性能
-static LTT_unused void QuickSort_LTT_libstdcpp_Test(benchmark::State& state)
+static LTT_UNUSED void QuickSort_LTT_libstdcpp_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -192,7 +192,7 @@ static LTT_unused void QuickSort_LTT_libstdcpp_Test(benchmark::State& state)
 }
 
 // 测试SimpleSelectionSort性能
-static LTT_unused void SimpleSelectionSort_Test(benchmark::State& state)
+static LTT_UNUSED void SimpleSelectionSort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -204,7 +204,7 @@ static LTT_unused void SimpleSelectionSort_Test(benchmark::State& state)
 }
 
 // 测试MergeSort_Recursion性能
-static LTT_unused void MergeSort_Recursion_Test(benchmark::State& state)
+static LTT_UNUSED void MergeSort_Recursion_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -216,7 +216,7 @@ static LTT_unused void MergeSort_Recursion_Test(benchmark::State& state)
 }
 
 // 测试MergeSort_Iterative性能
-static LTT_unused void MergeSort_Iterative_Test(benchmark::State& state)
+static LTT_UNUSED void MergeSort_Iterative_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -228,7 +228,7 @@ static LTT_unused void MergeSort_Iterative_Test(benchmark::State& state)
 }
 
 // 测试MergeSort_Inplace_Iterative性能
-static LTT_unused void MergeSort_Inplace_Iterative_Test(benchmark::State& state)
+static LTT_UNUSED void MergeSort_Inplace_Iterative_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -240,7 +240,7 @@ static LTT_unused void MergeSort_Inplace_Iterative_Test(benchmark::State& state)
 }
 
 // 测试MergeSort_Inplace_Iterative_For_Int性能
-static LTT_unused void MergeSort_Inplace_Iterative_For_Int_Test(benchmark::State& state)
+static LTT_UNUSED void MergeSort_Inplace_Iterative_For_Int_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -252,7 +252,7 @@ static LTT_unused void MergeSort_Inplace_Iterative_For_Int_Test(benchmark::State
 }
 
 // 测试PigeonholeSort性能
-static LTT_unused void PigeonholeSort_Test(benchmark::State& state)
+static LTT_UNUSED void PigeonholeSort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -264,7 +264,7 @@ static LTT_unused void PigeonholeSort_Test(benchmark::State& state)
 }
 
 // 测试CountingSort性能
-static LTT_unused void CountingSort_Test(benchmark::State& state)
+static LTT_UNUSED void CountingSort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -276,7 +276,7 @@ static LTT_unused void CountingSort_Test(benchmark::State& state)
 }
 
 // 测试TallySort性能
-static LTT_unused void TallySort_Test(benchmark::State& state)
+static LTT_UNUSED void TallySort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -288,7 +288,7 @@ static LTT_unused void TallySort_Test(benchmark::State& state)
 }
 
 // 测试qsort性能
-static LTT_unused void qsort_Test(benchmark::State& state)
+static LTT_UNUSED void qsort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {
@@ -296,12 +296,12 @@ static LTT_unused void qsort_Test(benchmark::State& state)
         std::copy(Array, Array + NUMBERS, ArrayCopy);
         state.ResumeTiming();
         qsort(ArrayCopy, NUMBERS, sizeof(int), [](const void* a, const void* b) -> int
-        { return (*(int*)a - *(int*)b); });
+              { return (*(int*)a - *(int*)b); });
     }
 }
 
 // 测试sort性能
-static LTT_unused void sort_Test(benchmark::State& state)
+static LTT_UNUSED void sort_Test(benchmark::State& state)
 {
     for (auto _ : state)
     {

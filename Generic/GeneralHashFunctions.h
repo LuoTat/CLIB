@@ -19,7 +19,7 @@
 #include "Generic_tool.h"
 #include <stddef.h>
 
-static LTT_inline LTT_unused unsigned int RSHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int RSHash(const char* str, size_t len)
 {
     unsigned int b    = 378551;
     unsigned int a    = 63689;
@@ -37,7 +37,7 @@ static LTT_inline LTT_unused unsigned int RSHash(const char* str, size_t len)
 /* End Of RS Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int JSHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int JSHash(const char* str, size_t len)
 {
     unsigned int hash = 1315423911;
 
@@ -49,7 +49,7 @@ static LTT_inline LTT_unused unsigned int JSHash(const char* str, size_t len)
 /* End Of JS Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int PJWHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int PJWHash(const char* str, size_t len)
 {
     const unsigned int BitsInUnsignedInt = (unsigned int)(sizeof(unsigned int) * 8);
     const unsigned int ThreeQuarters     = (unsigned int)((BitsInUnsignedInt * 3) / 4);
@@ -71,7 +71,7 @@ static LTT_inline LTT_unused unsigned int PJWHash(const char* str, size_t len)
 /* End Of  P. J. Weinberger Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int ELFHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int ELFHash(const char* str, size_t len)
 {
     unsigned int hash = 0;
     unsigned int x    = 0;
@@ -89,7 +89,7 @@ static LTT_inline LTT_unused unsigned int ELFHash(const char* str, size_t len)
 /* End Of ELF Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int BKDRHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int BKDRHash(const char* str, size_t len)
 {
     unsigned int seed = 131; /* 31 131 1313 13131 131313 etc.. */
     unsigned int hash = 0;
@@ -102,7 +102,7 @@ static LTT_inline LTT_unused unsigned int BKDRHash(const char* str, size_t len)
 /* End Of BKDR Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int SDBMHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int SDBMHash(const char* str, size_t len)
 {
     unsigned int hash = 0;
 
@@ -114,7 +114,7 @@ static LTT_inline LTT_unused unsigned int SDBMHash(const char* str, size_t len)
 /* End Of SDBM Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int DJBHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int DJBHash(const char* str, size_t len)
 {
     unsigned int hash = 5381;
 
@@ -126,7 +126,7 @@ static LTT_inline LTT_unused unsigned int DJBHash(const char* str, size_t len)
 /* End Of DJB Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int DEKHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int DEKHash(const char* str, size_t len)
 {
     unsigned int hash = len;
 
@@ -137,7 +137,7 @@ static LTT_inline LTT_unused unsigned int DEKHash(const char* str, size_t len)
 /* End Of DEK Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int BPHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int BPHash(const char* str, size_t len)
 {
     unsigned int hash = 0;
 
@@ -149,7 +149,7 @@ static LTT_inline LTT_unused unsigned int BPHash(const char* str, size_t len)
 /* End Of BP Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int FNV_1aHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int FNV_1aHash(const char* str, size_t len)
 {
     const unsigned int FNV32_PRIME = 0x1000193;
     unsigned int       hash        = 0x811C9DC5;
@@ -166,7 +166,7 @@ static LTT_inline LTT_unused unsigned int FNV_1aHash(const char* str, size_t len
 /* End Of FNV_1a Hash Function */
 
 
-static LTT_inline LTT_unused unsigned int APHash(const char* str, size_t len)
+inline static LTT_UNUSED unsigned int APHash(const char* str, size_t len)
 {
     unsigned int hash = 0xAAAAAAAA;
 

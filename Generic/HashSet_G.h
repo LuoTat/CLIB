@@ -6,6 +6,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+// ---------------------------------------------------------------------------------
+// Benchmark                                       Time             CPU   Iterations
+// ---------------------------------------------------------------------------------
+// HashSet_int_Add_Test/100000               1981241 ns      1980696 ns          333
+// unordered_set_int_Add_Test/100000         1360646 ns      1360571 ns          478
+// HashSet_int_Delete_Test/100000             753460 ns       753412 ns          907
+// unordered_set_int_Delete_Test/100000       639720 ns       639708 ns         1050
+// HashSet_int_Contains_Test/100000           995958 ns       995903 ns          707
+// unordered_set_int_Contains_Test/100000     519168 ns       519148 ns         1366
+// HashSet_stu_Add_Test/100000               1974111 ns      1974078 ns          299
+// unordered_set_stu_Add_Test/100000         1519674 ns      1519664 ns          437
+// HashSet_stu_Delete_Test/100000             847869 ns       847806 ns          836
+// unordered_set_stu_Delete_Test/100000       670970 ns       670961 ns          922
+// HashSet_stu_Contains_Test/100000           967500 ns       967461 ns          720
+// unordered_set_stu_Contains_Test/100000     520291 ns       520267 ns         1348
+
 /*
  * The default initial capacity - MUST be a power of two.
  */
@@ -287,7 +303,7 @@
     HASHSET_TYPE(NAME, TYPE)                                             \
     HASHSET_IMPL(NAME, TYPE, SCOPE, Hash_Function, Equals_Function)
 
-#define HASHSET_INIT(NAME, TYPE, Hash_Function, Equals_Function)     HASHSET_INIT2(NAME, TYPE, static LTT_inline LTT_unused, Hash_Function, Equals_Function)
+#define HASHSET_INIT(NAME, TYPE, Hash_Function, Equals_Function)     HASHSET_INIT2(NAME, TYPE, inline static LTT_UNUSED, Hash_Function, Equals_Function)
 
 
 /* ------------------------------------------------------------------------ BEGIN OF HASH FUNCTIONS ------------------------------------------------------------------------ */

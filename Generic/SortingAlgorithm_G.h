@@ -377,7 +377,7 @@
         }                                                                                                                          \
     }                                                                                                                              \
     /* This insertion sort is a boundary-free insertion sort */                                                                    \
-    SCOPE LTT_inline void _Unguarded_InsertionSort_##NAME(TYPE* Low, TYPE* High)                                                   \
+    SCOPE inline void _Unguarded_InsertionSort_##NAME(TYPE* Low, TYPE* High)                                                       \
     {                                                                                                                              \
         for (TYPE* i = Low; i != High; ++i) _Unguarded_LinearInsert_##NAME(i);                                                     \
     }                                                                                                                              \
@@ -407,7 +407,7 @@
             ++LeftP;                                                                                                               \
         }                                                                                                                          \
     }                                                                                                                              \
-    SCOPE LTT_inline TYPE* GetPartitionPivot_LTT_libstdcpp_##NAME(TYPE* Low, TYPE* High)                                           \
+    SCOPE inline TYPE* GetPartitionPivot_LTT_libstdcpp_##NAME(TYPE* Low, TYPE* High)                                               \
     {                                                                                                                              \
         TYPE* Mid = Low + ((High - Low) / 2);                                                                                      \
         MoveMidToFirst_##NAME(Low, Low + 1, Mid, High - 1);                                                                        \
@@ -839,7 +839,7 @@ static size_t HibbardStepArray[31]   = {2147483647, 1073741823, 536870911, 26843
 static size_t SedgewickStepArray[14] = {603906049, 150958081, 37730305, 9427969, 2354689, 587521, 146305, 36289, 8929, 2161, 505, 109, 19, 1};
 
 // some static functions
-static LTT_unused size_t* GetHibbardStepArray(size_t Length)
+static LTT_UNUSED size_t* GetHibbardStepArray(size_t Length)
 {
     for (int i = 0;; ++i)
     {
@@ -847,7 +847,7 @@ static LTT_unused size_t* GetHibbardStepArray(size_t Length)
     }
 }
 
-static LTT_unused size_t* GetSedgewickStepArray(size_t Length)
+static LTT_UNUSED size_t* GetSedgewickStepArray(size_t Length)
 {
     for (int i = 0;; ++i)
     {
@@ -855,14 +855,14 @@ static LTT_unused size_t* GetSedgewickStepArray(size_t Length)
     }
 }
 
-static LTT_inline LTT_unused unsigned char lg2(size_t n)
+inline static LTT_UNUSED unsigned char lg2(size_t n)
 {
     unsigned char log_val = 0;
     while (n >>= 1) { ++log_val; }
     return log_val;
 }
 
-static LTT_unused void Merge_Inplace_Int(int* First, int* Mid, int* Last)
+static LTT_UNUSED void Merge_Inplace_Int(int* First, int* Mid, int* Last)
 {
     int Max = *First;
     for (int* i = First; i < Last; ++i)
@@ -893,7 +893,7 @@ static LTT_unused void Merge_Inplace_Int(int* First, int* Mid, int* Last)
     for (int* i = First; i < Last; ++i) *i /= Max;
 }
 
-static LTT_unused void MergeSort_Inplace_Iterative_Int(int* Base, size_t NumOfElements)
+static LTT_UNUSED void MergeSort_Inplace_Iterative_Int(int* Base, size_t NumOfElements)
 {
     if (unlikely(NumOfElements <= 1)) return;
     size_t CurrentSize;
@@ -917,7 +917,7 @@ static LTT_unused void MergeSort_Inplace_Iterative_Int(int* Base, size_t NumOfEl
 	与计数排序的区别就是他不实际记录每一个元素的位置,而是个数,最后依次输出即可
 */
 
-static LTT_unused void TallySort_Int(int* Base, int Min, int Max, size_t NumOfElements)
+static LTT_UNUSED void TallySort_Int(int* Base, int Min, int Max, size_t NumOfElements)
 {
     if (unlikely(NumOfElements <= 1)) return;
     int  Range      = Max - Min + 1;
@@ -1119,7 +1119,7 @@ static LTT_unused void TallySort_Int(int* Base, int Min, int Max, size_t NumOfEl
 #define IntrospectiveSort(NAME, Array, Number)             IntrospectiveSort_##NAME((Array), (Number))
 
 // Function implementation
-#define LTT_SORT_CMP_INIT(NAME, TYPE, Compare_Function)    SORT_CMP_INIT(NAME, TYPE, static LTT_unused, Compare_Function)
+#define LTT_SORT_CMP_INIT(NAME, TYPE, Compare_Function)    SORT_CMP_INIT(NAME, TYPE, static LTT_UNUSED, Compare_Function)
 
 // Function declaration
 #define LTT_SORT_CMP_DECLARE(NAME, TYPE)                   SORT_CMP_DECLARE(NAME, TYPE)
@@ -1206,7 +1206,7 @@ static LTT_unused void TallySort_Int(int* Base, int Min, int Max, size_t NumOfEl
 #define BucketSort(NAME, Array, Number)                    BucketSort_##NAME((Array), (Number))
 
 // Function implementation
-#define LTT_SORT_INT_INIT(NAME, TYPE, Vaule_Function)      SORT_INT_INIT(NAME, TYPE, static LTT_unused, Vaule_Function)
+#define LTT_SORT_INT_INIT(NAME, TYPE, Vaule_Function)      SORT_INT_INIT(NAME, TYPE, static LTT_UNUSED, Vaule_Function)
 
 // Function declaration
 #define LTT_SORT_INT_DECLARE(NAME, TYPE)                   SORT_INT_DECLARE(NAME, TYPE)
