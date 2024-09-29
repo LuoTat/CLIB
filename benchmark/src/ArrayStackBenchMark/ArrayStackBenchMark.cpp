@@ -4,7 +4,7 @@
 #include <stack>
 
 #define INTCMP(a, b) ((a) == (b))
-LTT_ARRAYSTACK_INIT(INT, int, INTCMP)
+LTT_ARRAYSTACK_INIT(INT, int, INTCMP, LTT_alloc);
 
 #define NUMBERS       100000
 #define ITERATIONSNUM (INT_MAX / NUMBERS)

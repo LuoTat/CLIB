@@ -8,7 +8,7 @@
 #define NUMBER       10000
 
 // 初始化ArrayStack类型
-LTT_ARRAYSTACK_INIT(INT, int, INTCMP);
+LTT_ARRAYSTACK_INIT(INT, int, INTCMP, LTT_alloc);
 
 class ArrayStackTest: public ::testing::Test
 {

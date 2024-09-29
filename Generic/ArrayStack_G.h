@@ -1,7 +1,5 @@
-/*
-    这个ArrayStack采用懒加载的方式，只有在需要的时候才会分配内存，这样可以节省内存空间
-*/
 #pragma once
+#include "Allocator_G.h"
 #include "Generic_tool.h"
 #include <limits.h>
 #include <stdlib.h>
@@ -9,10 +7,12 @@
 // ----------------------------------------------------------------------------------------
 // Benchmark                                              Time             CPU   Iterations
 // ----------------------------------------------------------------------------------------
-// ArrayStack_G_Push_Test/100000                      53271 ns        53263 ns        10000
-// stack_Push_Test/100000                            147762 ns       147759 ns         4510
-// ArrayStack_G_Pop_Test/100000/iterations:21474        176 ns          146 ns        21474
-// stack_Pop_Test/100000/iterations:21474             39987 ns        39972 ns        21474
+// ArrayStack_G_Push_Test/100000                      43342 ns        43339 ns        15086
+// stack_Push_Test/100000                            122554 ns       121598 ns         5974
+// ArrayStack_G_Pop_Test/100000/iterations:21474        149 ns          135 ns        21474
+// stack_Pop_Test/100000/iterations:21474             32488 ns        32483 ns        21474
+// ArrayStack_G_random_Test/100000                   203725 ns       203723 ns         3211
+// stack_random_Test/100000                          312955 ns       312917 ns         2222
 
 #define DEFAULT_ARRAYSTACK_CAPACITY  (16)
 #define SOFT_MAX_ARRAYSTACK_CAPACITY (INT_MAX - 8)
@@ -42,7 +42,9 @@
     extern void ArrayStack_##NAME##_Destroy(ArrayStack_##NAME* const ArrayStack);
 
 
-#define ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)                                                                         \
+#define ARRAYSTACK_IMPL(NAME, TYPE, Equals_Function, Alloc, SCOPE)                                                                  \
+    /* Simple_alloc*/                                                                                                               \
+    LTT_ALLOCATOR_INIT(Simple_alloc, TYPE, Alloc)                                                                                   \
     SCOPE void ArrayStack_##NAME##_Init(ArrayStack_##NAME* const ArrayStack)                                                        \
     {                                                                                                                               \
         ArrayStack->Array    = NULL;                                                                                                \
@@ -92,7 +94,7 @@
         else                                                                                                                        \
         {                                                                                                                           \
             NewCapacity = (MinCapacity > DEFAULT_ARRAYSTACK_CAPACITY) ? MinCapacity : DEFAULT_ARRAYSTACK_CAPACITY;                  \
-            TYPE* EA    = (TYPE*)malloc(NewCapacity * sizeof(TYPE));                                                                \
+            TYPE* EA    = Allocator_allocate(Simple_alloc, NewCapacity);                                                            \
             if (unlikely(EA == NULL)) return MemoryAllocationError;                                                                 \
             ArrayStack->Array    = EA;                                                                                              \
             ArrayStack->Capacity = NewCapacity;                                                                                     \
@@ -133,27 +135,26 @@
     SCOPE void ArrayStack_##NAME##_Clear(ArrayStack_##NAME* const ArrayStack) { ArrayStack->Size = 0; }                             \
     SCOPE void ArrayStack_##NAME##_Destroy(ArrayStack_##NAME* const ArrayStack)                                                     \
     {                                                                                                                               \
-        free(ArrayStack->Array);                                                                                                    \
+        Allocator_deallocate(Simple_alloc, ArrayStack->Array, ArrayStack->Capacity * sizeof(TYPE));                                 \
         ArrayStack->Array    = NULL;                                                                                                \
         ArrayStack->Size     = 0;                                                                                                   \
         ArrayStack->Capacity = 0;                                                                                                   \
     }
-
 
 #define ARRAYSTACK_DECLARE(NAME, TYPE) \
     ARRAYSTACK_TYPE(NAME, TYPE)        \
     ARRAYSTACK_PROTOTYPES(NAME, TYPE)
 
 
-#define ARRAYSTACK_INIT(NAME, TYPE, SCOPE, Equals_Function) \
-    ARRAYSTACK_TYPE(NAME, TYPE)                             \
-    ARRAYSTACK_IMPL(NAME, TYPE, SCOPE, Equals_Function)
+#define ARRAYSTACK_INIT(NAME, TYPE, Equals_Function, Alloc, SCOPE) \
+    ARRAYSTACK_TYPE(NAME, TYPE)                                    \
+    ARRAYSTACK_IMPL(NAME, TYPE, Equals_Function, Alloc, SCOPE)
 
 /**
  * @brief Get the ArrayStack_##NAME struct
  * @param NAME
  */
-#define ArrayStack(NAME)                                 ArrayStack_##NAME
+#define ArrayStack(NAME)                                        ArrayStack_##NAME
 
 /**
  * @brief Initialize the ArrayStack_##NAME struct
@@ -161,7 +162,7 @@
  * @param ArrayStack The ArrayStack_##NAME struct
  * @return CODE The result of the function
  */
-#define ArrayStack_Init(NAME, ArrayStack)                ArrayStack_##NAME##_Init((ArrayStack))
+#define ArrayStack_Init(NAME, ArrayStack)                       ArrayStack_##NAME##_Init((ArrayStack))
 
 /**
  * @brief Push the data to the ArrayStack_##NAME
@@ -170,7 +171,7 @@
  * @param Data The data to push
  * @return CODE The result of the function
  */
-#define ArrayStack_Push(NAME, ArrayStack, Data)          ArrayStack_##NAME##_Push((ArrayStack), Data)
+#define ArrayStack_Push(NAME, ArrayStack, Data)                 ArrayStack_##NAME##_Push((ArrayStack), Data)
 
 /**
  * @brief Pop the data from the ArrayStack_##NAME
@@ -179,7 +180,7 @@
  * @param Result To store the deleted element
  * @return CODE The result of the function
  */
-#define ArrayStack_Pop(NAME, ArrayStack, Result)         ArrayStack_##NAME##_Pop((ArrayStack), (Result))
+#define ArrayStack_Pop(NAME, ArrayStack, Result)                ArrayStack_##NAME##_Pop((ArrayStack), (Result))
 
 /**
  * @brief Peek the data from the ArrayStack_##NAME
@@ -188,7 +189,7 @@
  * @param Result To store the element
  * @return CODE The result of the function
  */
-#define ArrayStack_Peek(NAME, ArrayStack, Result)        ArrayStack_##NAME##_Peek((ArrayStack), (Result))
+#define ArrayStack_Peek(NAME, ArrayStack, Result)               ArrayStack_##NAME##_Peek((ArrayStack), (Result))
 
 /**
  * @brief Check if the ArrayStack_##NAME contains the data
@@ -198,7 +199,7 @@
  * @retval true The ArrayStack_##NAME contains the data
  * @retval false The ArrayStack_##NAME does not contain the data
  */
-#define ArrayStack_Contains(NAME, ArrayStack, Data)      ArrayStack_##NAME##_Contains((ArrayStack), Data)
+#define ArrayStack_Contains(NAME, ArrayStack, Data)             ArrayStack_##NAME##_Contains((ArrayStack), Data)
 
 /**
  * @brief Get the size of the ArrayStack_##NAME
@@ -206,7 +207,7 @@
  * @param ArrayStack The ArrayStack_##NAME struct
  * @return int The size of the ArrayStack_##NAME
  */
-#define ArrayStack_GetSize(ArrayStack)                   ((ArrayStack)->Size)
+#define ArrayStack_GetSize(ArrayStack)                          ((ArrayStack)->Size)
 
 /**
  * @brief Check if the ArrayStack_##NAME is empty
@@ -215,24 +216,24 @@
  * @retval true The ArrayStack_##NAME is empty
  * @retval false The ArrayStack_##NAME is not empty
  */
-#define ArrayStack_IsEmpty(ArrayStack)                   ((ArrayStack)->Size == 0)
+#define ArrayStack_IsEmpty(ArrayStack)                          ((ArrayStack)->Size == 0)
 
 /**
  * @brief Clear the ArrayStack_##NAME, it will not free the memory
  * @param NAME The name of the function
  * @param ArrayStack The ArrayStack_##NAME struct
  */
-#define ArrayStack_Clear(ArrayStack)                     ((ArrayStack)->Size = 0)
+#define ArrayStack_Clear(ArrayStack)                            ((ArrayStack)->Size = 0)
 
 /**
  * @brief Destroy the ArrayStack_##NAME, it will free the memory
  * @param NAME The name of the function
  * @param ArrayStack The ArrayStack_##NAME struct
  */
-#define ArrayStack_Destroy(NAME, ArrayStack)             ArrayStack_##NAME##_Destroy((ArrayStack))
+#define ArrayStack_Destroy(NAME, ArrayStack)                    ArrayStack_##NAME##_Destroy((ArrayStack))
 
 // Function implementation
-#define LTT_ARRAYSTACK_INIT(NAME, TYPE, Equals_Function) ARRAYSTACK_INIT(NAME, TYPE, static LTT_inline LTT_unused, Equals_Function)
+#define LTT_ARRAYSTACK_INIT(NAME, TYPE, Equals_Function, Alloc) ARRAYSTACK_INIT(NAME, TYPE, Equals_Function, Alloc, inline static LTT_UNUSED)
 
 // Function declaration
-#define LTT_ARRAYSTACK_DECLARE(NAME, TYPE)               ARRAYSTACK_DECLARE(NAME, TYPE)
+#define LTT_ARRAYSTACK_DECLARE(NAME, TYPE)                      ARRAYSTACK_DECLARE(NAME, TYPE)
