@@ -30,8 +30,8 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "CXX编译器参数:              ${CMAKE_CXX_FLAGS_RELEASE}")
 endif()
 
-# 开启测试
-enable_testing()
+# 设置Cmake模块路径
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # 添加测试目录
 add_subdirectory(test)
