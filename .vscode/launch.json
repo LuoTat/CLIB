@@ -17,16 +17,10 @@
             "options": [
                 "ArrayDequeTest",
                 "ArrayListTest",
-                "ArrayQueueTest",
                 "ArrayStackTest",
-                "AVLTreeTest",
-                "BinaryTreeTest",
-                "BSTreeTest",
-                "HashMapTest",
+                "HashSetTest",
                 "LinkedListTest",
-                "SortingAlgorithmTest",
-                "UndigraphTest",
-                "UnionFindSet"
+                "SortingAlgorithmTest"
             ],
             "description": "请选择要调试的程序"
         }
