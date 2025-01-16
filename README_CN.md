@@ -2,6 +2,8 @@
 
 <p align="center">一套易用且高性能的 C 泛型集合类库，基于宏，只有头文件</p>
 
+[**English**](README.md)&nbsp;&nbsp;&nbsp;[**简体中文**](README_CN.md)
+
 ## 目录
 
 -   [简介](#简介)
@@ -16,7 +18,7 @@ CLIB 是一个完全使用 C 语言开发的泛型集合类库，主要使用了
 
 ## [安装方法](#目录)
 
-如果只想快速使用 CLIB 库，可以只下载 Generic 文件夹，然后将 Generic 文件夹添加到头文件的搜索范围内即可使用。
+如果只想快速使用 CLIB 库，可以只下载 `Generic` 文件夹，然后将 `Generic` 文件夹添加到头文件的搜索范围内即可使用。
 
 如果想要进行性能测试或单元测试，则需要将整个项目克隆下来......
 
@@ -102,12 +104,12 @@ int main()
 
 ## [项目结构](#目录)
 
--   **benchmark** 使用 GoogleBenchmark 库来对 CLIB 和 C++的 STL 中的集合做对比
 -   **Generic** 存放 CLIB 库所有的泛型集合类库的头文件
+-   **benchmark** 使用 GoogleBenchmark 库来对 CLIB 和 C++的 STL 中的集合做对比
 -   **test** 使用 GoogleTest 库来对 CLIB 做单元测试
 
 目前还有一些遗留的文件及文件夹，后续将慢慢清理
 
 ## [API 文档](#目录)
 
-完整的 API 文档请点击[这里](api_reference_CN.md).
+完整的中文 API 文档请点击[这里](api_reference_CN.md).
