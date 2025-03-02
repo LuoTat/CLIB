@@ -24,18 +24,32 @@ endif()
 # 引入 GoogleTest 模块
 include(GoogleTest)
 
-# 增加子目录
-add_subdirectory(src/ArrayDequeTest)
-# add_subdirectory(src/ArrayListTest)
-# add_subdirectory(src/ArrayStackTest)
+# array_deque_test
+add_executable(array_deque_test src/array_deque_test.cxx)
+target_link_libraries(array_deque_test CLIB GTest::gtest_main)
+gtest_discover_tests(array_deque_test)
 
-# # add_subdirectory( src/AVLTreeTest )
-# # add_subdirectory( src/BinaryTreeTest )
-# # add_subdirectory( src/BSTreeTest )
-# # add_subdirectory(src/HashMapTest)
-# add_subdirectory(src/HashSetTest)
-# add_subdirectory(src/LinkedListTest)
-# add_subdirectory(src/SortingAlgorithmTest)
+# array_list_test
+add_executable(array_list_test src/array_list_test.cxx)
+target_link_libraries(array_list_test CLIB GTest::gtest_main)
+gtest_discover_tests(array_list_test)
 
-# # add_subdirectory( src/UndigraphTest )
-# # add_subdirectory( src/UnionFindSetTest )
+# array_stack_test
+add_executable(array_stack_test src/array_stack_test.cxx)
+target_link_libraries(array_stack_test CLIB GTest::gtest_main)
+gtest_discover_tests(array_stack_test)
+
+# hash_set_test
+add_executable(hash_set_test src/hash_set_test.cxx)
+target_link_libraries(hash_set_test CLIB GTest::gtest_main)
+gtest_discover_tests(hash_set_test)
+
+# linked_list_test
+add_executable(linked_list_test src/linked_list_test.cxx)
+target_link_libraries(linked_list_test CLIB GTest::gtest_main)
+gtest_discover_tests(linked_list_test)
+
+# sort_test
+add_executable(sort_test src/sort_test.cxx)
+target_link_libraries(sort_test CLIB GTest::gtest_main)
+gtest_discover_tests(sort_test)

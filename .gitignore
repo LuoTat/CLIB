@@ -1,7 +1,2 @@
-/.idea/
-/.cache/
 /build/
-/cmake-build-debug-clang/
-/cmake-build-debug-gcc/
-/cmake-build-release-clang/
-/cmake-build-release-gcc/
+/3rdparty/

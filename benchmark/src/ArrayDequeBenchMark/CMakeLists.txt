@@ -1,4 +1,0 @@
-# 输出ArrayDequeBenchMark的可执行文件
-add_executable(ArrayDequeBenchMark ArrayDequeBenchMark.cpp)
-
-target_link_libraries(ArrayDequeBenchMark benchmark::benchmark)

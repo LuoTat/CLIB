@@ -5,10 +5,10 @@ cmake_minimum_required(VERSION 3.30)
 project(LTTLIB VERSION 1.0.0 LANGUAGES C CXX)
 
 # 设置 C 标准
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 23)
 
 # 设置 C++ 标准
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 
 # 设置编译器的参数
 SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wextra -Werror")
@@ -36,12 +36,19 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "CXX编译器参数:              ${CMAKE_CXX_FLAGS_RELEASE}")
 endif()
 
-# 设置 CLIB 接口库
+# 添加 CLIB 接口库
 add_library(CLIB INTERFACE
-    src/Allocator_G.h src/ArrayDeque_G.h src/ArrayList_G.h
-    src/ArrayStack_G.h src/GeneralHashFunctions.h src/Generic_tool.h
-    src/HashSet_G.h src/LinkedList_G.h src/SortingAlgorithm_G.h
+    src/allocator.h
+    src/array_deque.h
+    src/array_list.h
+    src/array_stack.h
+    src/hash_set.h
+    src/hash_tool.h
+    src/linked_list.h
+    src/precomp.h
+    src/sort.h
 )
+
 target_include_directories(CLIB INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:include/CLIB>
@@ -51,4 +58,4 @@ target_include_directories(CLIB INTERFACE
 add_subdirectory(test)
 
 # 添加性能测试目录
-# add_subdirectory(benchmark)
+add_subdirectory(benchmark)
